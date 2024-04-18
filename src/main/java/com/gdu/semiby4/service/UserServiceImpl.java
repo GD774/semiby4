@@ -168,12 +168,9 @@ public class UserServiceImpl implements UserService {
   @Override
   public void signin(HttpServletRequest request, HttpServletResponse response) {
     try {
-
-			String employeeId = request.getParameter("employeeId");
       
       // 입력한 아이디
-      Optional<String> opt = Optional.ofNullable(request.getParameter("email"));
-			String email = opt.orElse("foo@bar.baz");
+      String email = request.getParameter("email");
       
       // 입력한 비밀번호 + SHA-256 방식의 암호화
       String pw = MySecurityUtils.getSha256(request.getParameter("pw"));
@@ -183,26 +180,25 @@ public class UserServiceImpl implements UserService {
       
       // 접속 수단 (요청 헤더의 User-Agent 값)
       String userAgent = request.getHeader("User-Agent");
-
+ 
       // DB로 보낼 정보 (email/pw: USER_T , email/ip/userAgent/sessionId: ACCESS_HISTORY_T) 
-      Map<String, Object> params = Map.of("employeeId", employeeId
-																				, "email", email
+      Map<String, Object> params = Map.of("email", email
                                         , "pw", pw
                                         , "ip", ip
-                                        , "userAgent", userAgent
-                                        , "sessionId", request.getSession().getId()
-																				);
+                                        , "userAgent", userAgent);
       
       // email/pw 가 일치하는 회원 정보 가져오기
       UserDto user = userMapper.getUserByMap(params);
-
+      
       // 일치하는 회원 있음 (Sign In 성공)
       if(user != null) {
+
         
         // 회원 정보를 세션(브라우저 닫기 전까지 정보가 유지되는 공간, 기본 30분 정보 유지)에 보관하기
         HttpSession session = request.getSession();
+        
         session.setAttribute("user", user);
-        session.setMaxInactiveInterval(60 * 10);  // 세션 유지 시간 1800초(30분) 설정
+        session.setMaxInactiveInterval(10);
         
         // Sign In 후 페이지 이동
         response.sendRedirect(request.getParameter("url"));
@@ -212,8 +208,8 @@ public class UserServiceImpl implements UserService {
         response.setContentType("text/html; charset=UTF-8");
         PrintWriter out = response.getWriter();
         out.println("<script>");
-        out.println("alert('일치하는 회원 정보가 없습니다.');");
-        out.println("location.href='" + request.getContextPath() + "/main.page';");
+        out.println("alert('일치하는 회원 정보가 없습니다.')");
+        out.println("location.href='" + request.getContextPath() + "/main.page'");
         out.println("</script>");
         out.flush();
         out.close();

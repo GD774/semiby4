@@ -7,11 +7,11 @@
 
   <select id="getUserByMap"
           parameterType="Map"
-          resultType="UserDto">
-    SELECT USER_NO, EMPLOYEE_ID, PW, EMAIL, NAME, GENDER, MOBILE, PW_MODIFY_DT, SIGNUP_DT
+          resultType="com.gdu.semiby4.dto.UserDto">
+    SELECT USER_NO, ROLE, PW, EMAIL, NAME, GENDER, MOBILE, PW_MODIFY_DT, SIGNUP_DT
       FROM USER_T
     <where>
-      <if test="employeeId!=null">EMPLOYEE_ID = #{employeeId}</if>
+      <if test="email!=null">EMAIL = #{email}</if>
       <if test="pw!=null">AND PW = #{pw}</if>
     </where>
   </select>
@@ -19,20 +19,20 @@
   <insert id="insertUser"
           parameterType="UserDto">
     INSERT INTO USER_T (
-	    USER_NO
-	  , EMPLOYEE_ID
-	  , PW
-	  , EMAIL
-	  , NAME
-	  , GENDER
-	  , MOBILE
-	  , PW_MODIFY_DT
-	  , SIGNUP_DT
+      USER_NO
+    , ROLE
+    , PW
+    , EMAIL
+    , NAME
+    , GENDER
+    , MOBILE
+    , PW_MODIFY_DT
+    , SIGNUP_DT
     ) VALUES (
         USER_SEQ.NEXTVAL
-      , #{employeeId}
+      , 0
       , #{pw}
-	  , #{email}
+      , #{email}
       , #{name}
       , #{gender}
       , #{mobile}
@@ -46,4 +46,6 @@
       FROM USER_T
      WHERE USER_NO = #{userNo}
   </delete>
+  
+
 </mapper>

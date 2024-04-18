@@ -62,7 +62,10 @@
         <li><a href="${contextPath}/board/write.page">게시글 작성하기</a><li>
       </ul>
     </div>
-
+      <c:if test="${sessionScope.user.role == 1}">
+            <a href="${contextPath}/board/admin.page">관리자 페이지</a>
+      </c:if>
+            <input type="hidden" id="adminLink" value="${contextPath}/board/admin.page">
   </div>
 
   <div class="main-wrap">
