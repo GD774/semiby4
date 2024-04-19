@@ -53,6 +53,12 @@
      WHERE RN BETWEEN #{begin} AND #{end}
   </select>
   
+  <update id="updateHit">
+    UPDATE BOARD_T
+       SET HIT = HIT + 1
+     WHERE BOARD_NO = #{boardNo}
+  </update>
+  
   <select id="getBoardByNo"
           resultMap="BoardMap">
     SELECT B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT

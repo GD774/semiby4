@@ -21,5 +21,6 @@ public interface BoardService {
   BoardDto getBoardByNo(int boardNo);
   int registerComment(HttpServletRequest request);
   Map<String, Object> getCommentList(HttpServletRequest request);
+  int updateHit(int boardNo);
 
 }

@@ -8,7 +8,7 @@
 <jsp:include page="../layout/header.jsp"/>
 
 <style>
-  .contents {
+  .board {
     width: 500px;
   }
   
@@ -53,7 +53,7 @@
       <c:forEach items="${boardList}" var="board" varStatus="vs">
         <tr>
           <td>${beginNo - vs.index}</td>
-          <td class="contents">
+          <td class="board" data-board-no="${board.boardNo}">
             <a id="bold" href="${contextPath}/board/detail.do?boardNo=${board.boardNo}">${board.title}</a>
           </td>
           <td>${board.user.email}</td>
@@ -88,10 +88,24 @@ const fnSort = () => {
     });
 };
 
+const fnUpdateHit = () => {
+	  
+	  $(document).on('click', '.board', (evt) => {
+
+	    if('${sessionScope.user.userNo}' ===  evt.target.dataset.userNo) {
+	      location.href = '${contextPath}/board/detail.do?boardNo=' + evt.target.dataset.boardNo;
+	    } else {
+	      location.href = '${contextPath}/board/updateHit.do?boardNo=' + evt.target.dataset.boardNo;
+	    }
+	  })
+}
+
+
+
 
 fnDisplay();
 fnSort();
-
+fnUpdateHit();
 
 </script>
 

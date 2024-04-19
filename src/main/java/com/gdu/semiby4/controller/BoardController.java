@@ -73,4 +73,10 @@ public class BoardController {
   public ResponseEntity<Map<String, Object>> commentList(HttpServletRequest request) {
     return ResponseEntity.ok(boardService.getCommentList(request));
   }
+  
+  @GetMapping("/updateHit.do")
+  public String updateHit(@RequestParam int boardNo) {
+    boardService.updateHit(boardNo);
+    return "redirect:/board/detail.do?boardNo=" + boardNo;
+  }
 }

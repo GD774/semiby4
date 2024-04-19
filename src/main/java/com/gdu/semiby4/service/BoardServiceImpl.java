@@ -181,6 +181,7 @@ public class BoardServiceImpl implements BoardService {
 	@Override
   public BoardDto getBoardByNo(int boardNo) {
     return boardMapper.getBoardByNo(boardNo);
+    
   }
 
   @Override
@@ -216,4 +217,10 @@ public class BoardServiceImpl implements BoardService {
     return Map.of("commentList", boardMapper.getCommentList(map)
                 , "paging", myPageUtils.getAsyncPaging());
   }
+  
+  @Override
+  public int updateHit(int boardNo) {
+    return boardMapper.updateHit(boardNo);
+  }
+  
 }

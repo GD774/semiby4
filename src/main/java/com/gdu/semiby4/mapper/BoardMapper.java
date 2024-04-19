@@ -23,5 +23,6 @@ public interface BoardMapper {
   List<CommentDto> getCommentList(Map<String, Object> map);
 	int getSearchCount(Map<String, Object> map);
   List<BoardDto> getSearchList(Map<String, Object> map);
+  int updateHit(int boardNo);
   
 }
