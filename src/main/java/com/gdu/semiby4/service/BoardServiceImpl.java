@@ -249,11 +249,10 @@ public class BoardServiceImpl implements BoardService {
     AttachDto attach = boardMapper.getAttachByNo(attachNo);
     
     // 첨부 파일 정보를 File 객체로 만든 뒤 Resource 객체로 변환
-    File file = new File(attach.getUploadPath(), attach.getFilesystemName()); //경로, 파일명
+    File file = new File(attach.getUploadPath(), attach.getFilesystemName()); 
     Resource resource = new FileSystemResource(file);
     
     // 첨부 파일 없으면 다운로드 취소
-    // 이런식으로 데이터가 필요없을 때는 응답코드 만으로도 메소드 반환해주고 끝낼 수 있다.
     if(!resource.exists()) {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -261,7 +260,7 @@ public class BoardServiceImpl implements BoardService {
     // DOWNLOAD_COUNT 증가
     boardMapper.updateDownloadCount(attachNo);
     
-    // 사용자가 다운로드 받을 파일명 결정 (originalFilename을 기본적으로 사용. originalFilename을 브라우저에 따라 다르게 인코딩 처리(주어MS))
+    // 사용자가 다운로드 받을 파일명 결정
     String originalFilename = attach.getOriginalFilename();
     String userAgent = request.getHeader("User-Agent");  
     try { 

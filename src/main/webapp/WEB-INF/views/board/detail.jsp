@@ -58,7 +58,7 @@
   <div> 
   
     <a id="download-all" href="${contextPath}/board/downloadAll.do?boardNo=${board.boardNo}">모두 다운로드</a>
-    <!-- 이 공간은 upload의 상세보기! model에 upload와 attach 둘다 있음  -->
+    
   </div>
   </c:if>
 </div>
@@ -99,7 +99,6 @@ const fnDownload = () => {
     $('.attach').on('click', (evt) => {
       if(confirm('해당 첨부 파일을 다운로드 할까요?')) {
         location.href = '${contextPath}/board/download.do?attachNo=' + evt.currentTarget.dataset.attachNo;
-     // 자바스크립트 구역은 모델 받아오는 구역이 아님. EL 아니라 evt.target.dataset.attachNo; 이거 쓰는 이유 EL 주석내에서 ㄴㄴㄴ!!! 무심코 쓴거 때문에 자꾸 오류난다
       }
     })
   }
@@ -108,7 +107,7 @@ const fnDownloadAll = () => {
     document.getElementById('download-all').addEventListener('click', (evt) => {
       if(!confirm('모두 다운로드 할까요?')) {         // yes 를 누를시 작성된 downloadAll 맵핑으로 연결됩니다.
         evt.preventDefault();
-         return; // 명시적 return
+         return;
       }
     })
   }
@@ -186,11 +185,11 @@ const fnCommentList = () => {
          }
          
          /************************* 답글 입력 화면 *************************/
-         if(comment.depth === 0) {    // 첫번째 댓글 후 대댓글을 달 수 없도록 조건을 주는 if 문: depth로 결정한다.
+         if(comment.depth === 0) { 
            str += '<div>';
            str +=   '<form class="frm-reply">';
            str +=     '<input type="hidden" name="groupNo" value="' + comment.groupNo + '">';
-           str +=     '<input type="hidden" name="boardNo" value="${board.boardNo}">';  // 상세보기 blogNo
+           str +=     '<input type="hidden" name="boardNo" value="${board.boardNo}">'; 
            str +=     '<input type="hidden" name="userNo" value ="${sessionScope.user.userNo}">'; 
            str +=     '<textarea name="contents" placeholder="답글 입력"></textarea>';
            str +=     '<button type="button" class="btn btn-warning btn-register-reply">작성완료</button>';
