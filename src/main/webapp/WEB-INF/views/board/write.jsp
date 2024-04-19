@@ -110,7 +110,16 @@
  <div>
   <label for="title">제목</label>
   <input type="text" class="form-control" name="title" id="title" placeholder="제목을 입력하세요">
- </div>      
+ </div> 
+ 
+ <div>
+  <select name="cateNo">
+    <option value="1">취업정보공유</option>
+    <option value="2">면접후기공유</option>
+    <option value="3">이야기나눠요</option>
+  </select>
+ </div>
+ 
  
  <div>
   <textarea id="contents" class="form-control" name="contents" placeholder="내용을 입력하세요"></textarea>

@@ -120,6 +120,7 @@ public class BoardServiceImpl implements BoardService {
     // Upload_T 테이블에 추가하기(ATTACH_T 삽입을 위해 이걸 가장 먼저 처리해줌)
     String title = multipartRequest.getParameter("title");
     String contents = multipartRequest.getParameter("contents");
+    String cateNo = multipartRequest.getParameter("cateNo");
     int userNo = Integer.parseInt(multipartRequest.getParameter("userNo"));
     
     UserDto user = new UserDto();
@@ -127,6 +128,7 @@ public class BoardServiceImpl implements BoardService {
     
     BoardDto board = BoardDto.builder()
                           .title(title)
+                          .cateNo(cateNo)
                           .contents(contents)
                           .user(user)
                         .build();

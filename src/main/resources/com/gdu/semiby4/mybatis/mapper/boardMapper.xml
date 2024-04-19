@@ -13,6 +13,7 @@
     <result property="createDt"    column="CREATE_DT"/>
     <result property="modifyDt"    column="MODIFY_DT"/>
     <result property="attachCount" column="ATTACH_COUNT"/>
+    <result property="cateNo" column="CATE_NO"/>
     <association property="user" javaType="UserDto">
       <id     property="userNo" column="USER_NO"/>
       <result property="email"  column="EMAIL"/>
@@ -73,6 +74,7 @@
           BOARD_NO
         , TITLE
         , CONTENTS
+        , CATE_NO
         , CREATE_DT
         , MODIFY_DT
         , USER_NO  
@@ -80,6 +82,7 @@
           #{boardNo}
         , #{title}
         , #{contents}
+        , #{cateNo}
         , SYSTIMESTAMP
         , SYSTIMESTAMP 
         , #{user.userNo}
