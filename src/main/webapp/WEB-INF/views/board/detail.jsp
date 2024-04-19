@@ -36,6 +36,35 @@
   <span>${board.contents}</span>
 </div>
 
+<!-- 첨부 목록 공간입니다.>>>>> ---------------------------------------------------------------------->
+<h3>첨부 파일 다운로드</h3>
+<div>
+  <c:if test="${empty attachList}">
+  <div>첨부 없음</div>
+  </c:if>
+  <c:if test="${not empty attachList}">
+  <c:forEach items="${attachList}" var="attach">
+  
+  <div class="attach" data-attach-no="${attach.attachNo}">
+  <c:if test="${attach.hasThumbnail == 1}">
+  <img src="${contextPath}${attach.uploadPath}/s_${attach.filesystemName}">
+  </c:if>
+  <c:if test="${attach.hasThumbnail == 0}">
+  <img src="${contextPath}/resources/images/attach.png" width="96px">
+  </c:if>
+  <a>${attach.originalFilename}</a>
+  </div>
+  </c:forEach>
+  <div> 
+  
+    <a id="download-all" href="${contextPath}/board/downloadAll.do?boardNo=${board.boardNo}">모두 다운로드</a>
+    <!-- 이 공간은 upload의 상세보기! model에 upload와 attach 둘다 있음  -->
+  </div>
+  </c:if>
+</div>
+
+
+<!-- <<<<< 첨부 목록 공간입니다. ---------------------------------------------------------------------->
 <hr>
 
 <form id="frm-comment">
@@ -46,6 +75,8 @@
   </c:if>
   <button type="button" id="btn-comment-register">댓글등록</button>
 </form>
+
+
 
 <hr>
 
@@ -62,6 +93,27 @@ const fnCheckSignin = () => {
     }
   }
 }
+
+//----------------------------------------------- 다운로드 ------------------------------------------------------->>>
+const fnDownload = () => {
+    $('.attach').on('click', (evt) => {
+      if(confirm('해당 첨부 파일을 다운로드 할까요?')) {
+        location.href = '${contextPath}/board/download.do?attachNo=' + evt.currentTarget.dataset.attachNo;
+     // 자바스크립트 구역은 모델 받아오는 구역이 아님. EL 아니라 evt.target.dataset.attachNo; 이거 쓰는 이유 EL 주석내에서 ㄴㄴㄴ!!! 무심코 쓴거 때문에 자꾸 오류난다
+      }
+    })
+  }
+
+const fnDownloadAll = () => {
+    document.getElementById('download-all').addEventListener('click', (evt) => {
+      if(!confirm('모두 다운로드 할까요?')) {         // yes 를 누를시 작성된 downloadAll 맵핑으로 연결됩니다.
+        evt.preventDefault();
+         return; // 명시적 return
+      }
+    })
+  }
+
+//<<<<----------------------------------------------- 다운로드 -------------------------------------------------------
 
 const fnRegisterComment = () => {    
   $('#btn-comment-register').on('click', (evt) => {
@@ -168,6 +220,8 @@ const fnPaging = (p) => {
 $('#contents').on('click', fnCheckSignin);
 fnRegisterComment();
 fnCommentList();
+fnDownload();
+fnDownloadAll();
 
 
 </script>

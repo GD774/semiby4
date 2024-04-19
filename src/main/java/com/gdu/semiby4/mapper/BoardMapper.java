@@ -24,4 +24,9 @@ public interface BoardMapper {
 	int getSearchCount(Map<String, Object> map);
   List<BoardDto> getSearchList(Map<String, Object> map);
   
+ // 순지선이 다운로드를 위해 추가한 맵퍼
+  AttachDto getAttachByNo(int attachNo);
+  int updateDownloadCount(int attachNo);
+  
+  
 }

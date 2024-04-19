@@ -12,6 +12,7 @@
     <result property="contents"    column="CONTENTS"/>
     <result property="createDt"    column="CREATE_DT"/>
     <result property="modifyDt"    column="MODIFY_DT"/>
+    <result property="attachCount" column="ATTACH_COUNT"/>
     <association property="user" javaType="UserDto">
       <id     property="userNo" column="USER_NO"/>
       <result property="email"  column="EMAIL"/>
@@ -30,8 +31,8 @@
       <id     property="userNo" column="USER_NO" />
       <result property="email"  column="EMAIL" />
     </association>
-  </resultMap>
-
+    </resultMap>
+    
   <select id="getBoardCount">
     SELECT COUNT(*)
       FROM BOARD_T
@@ -41,7 +42,7 @@
           parameterType="Map"
           resultMap="BoardMap">
     SELECT BOARD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT
-         , USER_NO, EMAIL
+         , USER_NO, EMAIL, ATTACH_COUNT
       FROM (SELECT ROW_NUMBER() OVER (ORDER BY BOARD_NO ${sort}) AS RN
                  , B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT
                  , USR.USER_NO, USR.EMAIL
@@ -172,4 +173,39 @@
              WHERE ${column} LIKE CONCAT(CONCAT('%', #{query}), '%'))
      WHERE RN BETWEEN #{begin} AND #{end}
   </select>
+  
+  
+  <!-- 순지선이 추가 -->
+  
+  <select id="getAttachList"
+          resultType="AttachDto">
+   SELECT ATTACH_NO
+    , UPLOAD_PATH
+    , FILESYSTEM_NAME
+    , ORIGINAL_FILENAME
+    , DOWNLOAD_COUNT
+    , HAS_THUMBNAIL
+    , BOARD_NO
+   FROM ATTACH_T
+   WHERE BOARD_NO = #{boardNo}
+  </select>
+  
+  <select id="getAttachByNo"
+          resultType="AttachDto">
+   SELECT  ATTACH_NO
+    , UPLOAD_PATH
+    , FILESYSTEM_NAME
+    , ORIGINAL_FILENAME
+    , DOWNLOAD_COUNT
+    , HAS_THUMBNAIL
+   FROM ATTACH_T
+   WHERE ATTACH_NO = #{attachNo}
+   </select>
+   
+   <update id="updateDownloadCount">
+  UPDATE ATTACH_T
+     SET DOWNLOAD_COUNT = DOWNLOAD_COUNT + 1
+   WHERE ATTACH_NO = #{attachNo}
+  </update>       
+  
 </mapper>
