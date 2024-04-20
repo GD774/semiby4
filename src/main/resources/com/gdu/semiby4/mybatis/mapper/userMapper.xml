@@ -5,21 +5,9 @@
 
 <mapper namespace="com.gdu.semiby4.mapper.UserMapper">
 
-  <resultMap type="UserDto" id="UserMap">
-    <id      property="userNo"       column="USER_NO" />
-    <result  property="role"         column="ROLE" />
-    <result  property="pw"           column="PW"/>
-    <result  property="email"        column="EMAIL" />
-    <result  property="name"         column="NAME" />
-    <result  property="gender"       column="GENDER"/>
-    <result  property="mobile"       column="MOBILE" />
-    <result  property="pwModifyDt"   column="PW_MODIFY_DT" />
-    <result  property="signupDt"     column="SIGNUP_DT" />
-  </resultMap>
-
   <select id="getUserByMap"
           parameterType="Map"
-          resultType="UserDto">
+          resultType="com.gdu.semiby4.dto.UserDto">
     SELECT USER_NO, ROLE, PW, EMAIL, NAME, GENDER, MOBILE, PW_MODIFY_DT, SIGNUP_DT
       FROM USER_T
     <where>
@@ -59,13 +47,5 @@
      WHERE USER_NO = #{userNo}
   </delete>
   
-  <select id="adminUserList"
-          resultMap="UserMap">
-    SELECT U.*, 
-          (SELECT COUNT(*) FROM BOARD_T WHERE USER_NO = U.USER_NO) AS BOARD_CNT,
-          (SELECT COUNT(*) FROM COMMENT_T WHERE USER_NO = U.USER_NO) AS COMMENT_CNT,      
-      FROM USER_T U 
-     ORDER BY USER_NO DESC
-  </select>
 
 </mapper>

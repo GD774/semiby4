@@ -37,6 +37,7 @@ public class UserServiceImpl implements UserService {
   public void signup(HttpServletRequest request, HttpServletResponse response) {
 
     // 전달된 파라미터
+		String employeeId = request.getParameter("employeeId");
     String pw = MySecurityUtils.getSha256(request.getParameter("pw"));
 		String email = request.getParameter("email");
     String name = MySecurityUtils.getPreventXss(request.getParameter("name"));
@@ -46,6 +47,7 @@ public class UserServiceImpl implements UserService {
     
     // Mapper 로 보낼 UserDto 객체 생성
     UserDto user = UserDto.builder()
+			                .employeeId(employeeId)
                       .email(email)
                       .pw(pw)
                       .name(name)
