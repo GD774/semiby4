@@ -415,7 +415,6 @@ public class BoardServiceImpl implements BoardService {
    String sort = optSort.orElse("DESC");
    
    String cateNo = model.getAttribute("cateNo").toString();
-   System.out.println("그럼 여기가 null?" + cateNo);
    
    Map<String, Object> map = Map.of("begin", myPageUtils.getBegin()
                                   , "end", myPageUtils.getEnd()

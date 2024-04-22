@@ -102,7 +102,6 @@ public class BoardController {
   public String detailList(@RequestParam(value="cateNo") String cateNo, HttpServletRequest request, Model model) {
     model.addAttribute("request", request);
     model.addAttribute("cateNo", cateNo);
-    System.out.println("혹시 이게 널인가?" + cateNo);
     boardService.boardDetailList(model);
     
     
