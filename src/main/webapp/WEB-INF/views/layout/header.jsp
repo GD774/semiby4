@@ -63,7 +63,7 @@
       </ul>
     </div>
       <c:if test="${sessionScope.user.role == 1}">
-            <a href="${contextPath}/board/admin.page">관리자 페이지</a>
+            <a href="${contextPath}/admin/admin.page">관리자 페이지</a>
       </c:if>
             <input type="hidden" id="adminLink" value="${contextPath}/board/admin.page">
   </div>

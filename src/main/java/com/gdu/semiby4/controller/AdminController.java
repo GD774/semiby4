@@ -16,7 +16,7 @@ import com.gdu.semiby4.service.AdminService;
 import com.gdu.semiby4.service.BoardService;
 import com.gdu.semiby4.service.UserService;
 
-@RequestMapping("/board")
+@RequestMapping("/admin")
 @Controller
 public class AdminController {
   
@@ -39,7 +39,7 @@ public class AdminController {
     System.out.println("메인 페이지로");
     //model.addAttribute("boardList", service.getAdminList());
     //model.addAttribute("userInfo",UserService.adminUserList());
-    return "board/admin";
+    return "admin/admin";
   }
   
   @PostMapping("/getuserInfo.do")

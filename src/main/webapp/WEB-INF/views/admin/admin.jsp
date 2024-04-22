@@ -8,7 +8,9 @@
 <jsp:include page="../layout/header.jsp"/>
 
 <style>
-
+  #searchForm  div {
+    float: left;
+  }
 </style>
 
 <h1 class="title">관리자 메인</h1>
@@ -17,11 +19,12 @@
   <div class="search-container">
     
     <div>
-    <label class="user-label">
+    <label class="search-user">
        <input autofocus id="searchList" maxlength="100" id="email" placeholder="유저아이디를 입력하세요." type="text">
     </label>
     </div>
-    <div class="search-button">유저 검색</div>
+    
+    <button type="button" class="search-user" id="search-button" >검색</button>
  
  </div>
  <div class="search-list">
@@ -39,7 +42,7 @@
       <tbody>
         <c:forEach var="vo" items="${UserDto}">    <!-- mapper의 resultMap값을 items에 넣음 -->
           <tr class="admin_board_content">
-            <td><a class="mypage user_id" value="${vo.id}">${vo.id}</a></td>
+            <td><a class="mypage user_id" value="${vo.id}" data-user-id="${vo.id}">${vo.id}</a></td>
             <td>${vo.name}</td>
             <td>${vo.signupDt}</td>
             <td><a href="#" class="boardList_admin" data-user-email="${vo.email}">${vo.boardCnt}</a></td>
@@ -57,13 +60,17 @@
 
 <script>
 
+
+
 const fnUserList = () => {
   $.ajax({
     type: 'POST',
-    url: '${contextPath}/board/getuserInfo.do',
-    data: 'json',
+    url: '${contextPath}/admin/getuserInfo.do',
+    data: 'id=' + $('.user_id').data('.userId'),
+    dataType: 'json',
     success: function(resData) {
-     console.log(resData); 
+      var resData = "user_id : " + res["user_id"]+", name : "+ res["name"]+", signupDt : "+ res["signupDt"]+", boardCnt : "+ res["boardCnt"]+", commentCnt : "+ res["commentCnt"];
+      $('.admin_board_content').innerHTML(resData);
     }, error: function() {
       console.log(1);
     }
