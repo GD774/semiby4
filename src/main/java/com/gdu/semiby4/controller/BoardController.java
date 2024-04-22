@@ -90,4 +90,25 @@ public class BoardController {
   //<<< 다운로드를 위해 순지선이 추가
   
   
+  // 순지선이 멀티리스트를 위해 추가
+  @GetMapping("/multilist.do")
+  public String multiList(Model model) {
+    boardService.boardMultiList(model);
+    return "board/multilist";
+  }
+  
+  // 순지선이 멀티리스트를 위해 추가
+  @GetMapping("detaillist.do")
+  public String detailList(@RequestParam(value="cateNo") String cateNo, HttpServletRequest request, Model model) {
+    model.addAttribute("request", request);
+    model.addAttribute("cateNo", cateNo);
+    System.out.println("혹시 이게 널인가?" + cateNo);
+    boardService.boardDetailList(model);
+    
+    
+    
+    return "board/detaillist";
+  }
+  
+  
 }

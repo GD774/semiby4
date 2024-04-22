@@ -237,7 +237,6 @@ public class BoardServiceImpl implements BoardService {
   
   
   // 순지선이 다운로드를 위해 추가
-  
    @Override
   public List<AttachDto> getAttachByBoard(int boardNo) {
      return boardMapper.getAttachList(boardNo);
@@ -371,5 +370,64 @@ public class BoardServiceImpl implements BoardService {
      return new ResponseEntity<Resource>(resource, responseHeader, HttpStatus.OK);
   }
 
+// 순지선이 멀티리스트를 위해 추가
+ @Override
+ public void boardMultiList(Model model) {
+   
+   // 혹시 화면에 노출되는 게시글의 수를 조절하고 싶다면 맵퍼에서 WHERE RN 조건 변경
+   // 3개의 게시판별로 최신 게시글 5개가 미리보기처럼 각각 노출됩니다.(페이징처리가 필요하지 않음)
+   
+       
+   String cateNo1 = "1";
+   String cateNo2 = "2";
+   String cateNo3 = "3";
+   
+   
+   Map<String, Object> map1 = Map.of("cateNo", cateNo1);
+  
+   Map<String, Object> map2 = Map.of("cateNo", cateNo2);
+  
+   Map<String, Object> map3 = Map.of("cateNo", cateNo3);
+   
+   model.addAttribute("boardMultiList1", boardMapper.getBoardMultiList(map1));
+   model.addAttribute("boardMultiList2", boardMapper.getBoardMultiList(map2));
+   model.addAttribute("boardMultiList3", boardMapper.getBoardMultiList(map3));
+   
+ }
+ 
+ // 순지선이 멀티리스트를 위해 추가
+ @Override
+ public void boardDetailList(Model model) {
+   Map<String, Object> modelMap = model.asMap();
+   HttpServletRequest request = (HttpServletRequest) modelMap.get("request");
+   
+   int total = boardMapper.getBoardCount();
+   
+   Optional<String> optDisplay = Optional.ofNullable(request.getParameter("display"));
+   int display = Integer.parseInt(optDisplay.orElse("10"));
+   
+   Optional<String> optPage = Optional.ofNullable(request.getParameter("page"));
+   int page = Integer.parseInt(optPage.orElse("1"));
+   
+   myPageUtils.setPaging(total, display, page);
+   
+   Optional<String> optSort = Optional.ofNullable(request.getParameter("sort"));
+   String sort = optSort.orElse("DESC");
+   
+   String cateNo = model.getAttribute("cateNo").toString();
+   System.out.println("그럼 여기가 null?" + cateNo);
+   
+   Map<String, Object> map = Map.of("begin", myPageUtils.getBegin()
+                                  , "end", myPageUtils.getEnd()
+                                  , "sort", sort
+                                  , "cateNo", cateNo);
+   
+   model.addAttribute("beginNo", total - (page - 1) * display);
+   model.addAttribute("boardDetailList", boardMapper.getBoardDetailList(map));
+   model.addAttribute("paging", myPageUtils.getPaging(request.getContextPath() + "/board/detaillist.do", sort, display));
+   model.addAttribute("display", display);
+   model.addAttribute("sort", sort);
+   model.addAttribute("page", page);
+ }
   
 }

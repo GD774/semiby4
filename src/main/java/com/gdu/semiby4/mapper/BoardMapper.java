@@ -27,6 +27,9 @@ public interface BoardMapper {
  // 순지선이 다운로드를 위해 추가한 맵퍼
   AttachDto getAttachByNo(int attachNo);
   int updateDownloadCount(int attachNo);
+ // 순지선이 멀티리스트를 위해 추가한 맵퍼
+ List<BoardDto> getBoardMultiList(Map<String, Object> map);
+ List<BoardDto> getBoardDetailList(Map<String, Object> map); 
   
   
 }

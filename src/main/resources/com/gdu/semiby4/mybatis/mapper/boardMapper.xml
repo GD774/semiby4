@@ -209,6 +209,43 @@
   UPDATE ATTACH_T
      SET DOWNLOAD_COUNT = DOWNLOAD_COUNT + 1
    WHERE ATTACH_NO = #{attachNo}
-  </update>       
+  </update>  
+  
+   <!-- 순지선이 멀티리스트를 위해 추가 -->
+    <select id="getBoardMultiList"
+          parameterType="Map"
+          resultMap="BoardMap">
+    SELECT BOARD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT
+         , USER_NO, EMAIL, CATE_NO, ATTACH_COUNT
+    FROM (SELECT ROW_NUMBER() OVER (ORDER BY BOARD_NO DESC) AS RN
+             , B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT
+             , USR.USER_NO, USR.EMAIL, CATE_NO
+             , (SELECT COUNT(*)
+                  FROM ATTACH_T ATC
+                 WHERE B.BOARD_NO = ATC.BOARD_NO) AS ATTACH_COUNT
+          FROM USER_T USR INNER JOIN BOARD_T B
+            ON USR.USER_NO = B.USER_NO
+            WHERE CATE_NO = #{cateNo})
+    WHERE RN BETWEEN 1 AND 5
+    
+  </select>
+  
+  <!-- 순지선이 멀티리스트를 위해 추가 -->
+    <select id="getBoardDetailList"
+          parameterType="Map"
+          resultMap="BoardMap">
+    SELECT BOARD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT
+         , USER_NO, EMAIL, CATE_NO, ATTACH_COUNT
+      FROM (SELECT ROW_NUMBER() OVER (ORDER BY BOARD_NO ${sort}) AS RN
+                 , B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT
+                 , USR.USER_NO, USR.EMAIL, CATE_NO
+                 , (SELECT COUNT(*)
+                      FROM ATTACH_T ATC
+                     WHERE B.BOARD_NO = ATC.BOARD_NO) AS ATTACH_COUNT
+              FROM USER_T USR INNER JOIN BOARD_T B
+                ON USR.USER_NO = B.USER_NO)
+      WHERE RN BETWEEN #{begin} AND #{end} AND CATE_NO = #{cateNo}
+    
+  </select>                   
   
 </mapper>

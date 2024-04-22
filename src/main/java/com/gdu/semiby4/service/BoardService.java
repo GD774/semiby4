@@ -30,4 +30,7 @@ public interface BoardService {
   ResponseEntity<Resource> downloadAll(HttpServletRequest request);
   List<AttachDto> getAttachByBoard(int boardNo); // List를 반환하는 getAttach가 필요해서 만듦
 
+  // 순지선이 멀티리스트를 위해 추가
+  void boardMultiList(Model model);
+  void boardDetailList(Model model);
 }

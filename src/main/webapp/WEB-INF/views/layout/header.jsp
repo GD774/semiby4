@@ -60,6 +60,13 @@
       <ul class="gnb">
         <li><a href="${contextPath}/board/list.do">게시판</a></li>
         <li><a href="${contextPath}/board/write.page">게시글 작성하기</a><li>
+        
+         <!-- 순지선이 멀티리스트를 위해 추가 -->
+        <li><a href="${contextPath}/board/multilist.do">다중게시판</a></li>
+        <span><a href="${contextPath}/board/detaillist.do?cateNo=1">취업정보</a></span>
+        <span><a href="${contextPath}/board/detaillist.do?cateNo=2">면접후기</a></span>
+        <span><a href="${contextPath}/board/detaillist.do?cateNo=3">이야기</a></span>
+    
       </ul>
     </div>
 
