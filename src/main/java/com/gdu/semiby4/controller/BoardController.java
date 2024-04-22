@@ -61,6 +61,7 @@ public class BoardController {
 	@GetMapping("/detail.do")
   public String detail(@RequestParam int boardNo, Model model) {
     model.addAttribute("board", boardService.getBoardByNo(boardNo));
+    boardService.updateHit(boardNo);
     return "board/detail";
   }
   
@@ -74,9 +75,8 @@ public class BoardController {
     return ResponseEntity.ok(boardService.getCommentList(request));
   }
   
-  @GetMapping("/updateHit.do")
-  public String updateHit(@RequestParam int boardNo) {
-    boardService.updateHit(boardNo);
-    return "redirect:/board/detail.do?boardNo=" + boardNo;
-  }
+//  @GetMapping("/updateHit.do")
+//  public String updateHit(@RequestParam int boardNo) {
+//    return "redirect:/board/detail.do?boardNo=" + boardNo;
+//  }
 }

@@ -44,16 +44,24 @@ public class BoardServiceImpl implements BoardService {
     
     int total = boardMapper.getBoardCount();
     
-    Optional<String> optDisplay = Optional.ofNullable(request.getParameter("display"));
-    int display = Integer.parseInt(optDisplay.orElse("10"));
+//    Optional<String> optDisplay = Optional.ofNullable(request.getParameter("display"));
+//    int display = Integer.parseInt(optDisplay.orElse("20"));
+    int display = 20;
     
     Optional<String> optPage = Optional.ofNullable(request.getParameter("page"));
     int page = Integer.parseInt(optPage.orElse("1"));
     
     myPageUtils.setPaging(total, display, page);
     
-    Optional<String> optSort = Optional.ofNullable(request.getParameter("sort"));
-    String sort = optSort.orElse("DESC");
+	/*
+	 * Optional<String> optSort = Optional.ofNullable(request.getParameter("sort"));
+	 * String sort = optSort.orElse("DESC");
+	 */
+    
+    String sort = request.getParameter("sort");
+    if (sort == null) {
+    	sort = "DESC";
+    }
     
     Map<String, Object> map = Map.of("begin", myPageUtils.getBegin()
                                    , "end", myPageUtils.getEnd()
@@ -83,24 +91,47 @@ public class BoardServiceImpl implements BoardService {
 	@Override
   public void loadboardSearchList(HttpServletRequest request, Model model) {
     
+	// 요청 파라미터
     String column = request.getParameter("column");
     String query = request.getParameter("query");
+    String sort = request.getParameter("sort");
     
-    // 검색 데이터 개수를 구할 때 사용할 Map
+    // 검색 데이터 개수를 구할 때 사용할 Map 생성
     Map<String, Object> map = new HashMap<String, Object>();
     map.put("column", column);
     map.put("query", query);
+    map.put("sort", sort);
     
+    // 검색 데이터 개수 구하기
     int total = boardMapper.getSearchCount(map);
     
+    // 한 페이지에 표시할 검색 데이터 개수
     int display = 20;
     
+    // 현재 페이지 번호
     Optional<String> opt = Optional.ofNullable(request.getParameter("page"));
     int page = Integer.parseInt(opt.orElse("1"));
     
+    // 페이징 처리에 필요한 처리
     myPageUtils.setPaging(total, display, page);
+    
+    // 검색 목록을 가져오기 위해서 기존 Map 에 begin 과 end 를 추가
+    map.put("begin", myPageUtils.getBegin());
+    map.put("end", myPageUtils.getEnd());
+    
+    // 검색 목록 가져오기
+    List<BoardDto> boardList = boardMapper.getSearchList(map);
+    
+    // 뷰로 전달할 데이터
+    model.addAttribute("beginNo", total - (page - 1) * display);
+    model.addAttribute("boardList", boardList);
+    model.addAttribute("sort", sort);
+    model.addAttribute("paging", myPageUtils.getPaging(request.getContextPath() + "/board/search.do"
+                                                     , ""
+                                                     , 20
+                                                     , "column=" + column + "&query=" + query));
   }
-
+	
 	@Override
   public boolean registerUpload(MultipartHttpServletRequest multipartRequest) {
     

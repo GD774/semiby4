@@ -37,22 +37,27 @@
       FROM BOARD_T
   </select>
   
-  <select id="getBoardList"
-          parameterType="Map"
-          resultMap="BoardMap">
-    SELECT BOARD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT
-         , USER_NO, EMAIL
-      FROM (SELECT ROW_NUMBER() OVER (ORDER BY BOARD_NO ${sort}) AS RN
-                 , B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT
-                 , USR.USER_NO, USR.EMAIL
-                 , (SELECT COUNT(*)
-                      FROM ATTACH_T ATC
-                     WHERE B.BOARD_NO = ATC.BOARD_NO) AS ATTACH_COUNT
-              FROM USER_T USR INNER JOIN BOARD_T B
-                ON USR.USER_NO = B.USER_NO)
-     WHERE RN BETWEEN #{begin} AND #{end}
-  </select>
-  
+<select id="getBoardList"
+        parameterType="Map"
+        resultMap="BoardMap">
+    SELECT BOARD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT, USER_NO, EMAIL, HIT
+    FROM (
+        SELECT ROW_NUMBER() OVER (
+            ORDER BY
+                CASE WHEN #{sort} = 'ASC' THEN BOARD_NO END ASC,
+                CASE WHEN #{sort} = 'DESC' THEN BOARD_NO END DESC,
+                CASE WHEN #{sort} = 'VIEW_COUNT_DESC' THEN HIT END DESC
+        ) AS RN,
+        B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT, B.HIT,
+        U.USER_NO, U.EMAIL
+        FROM BOARD_T B
+        INNER JOIN USER_T U ON B.USER_NO = U.USER_NO
+    )
+    WHERE RN BETWEEN #{begin} AND #{end}
+</select>
+
+
+   
   <update id="updateHit">
     UPDATE BOARD_T
        SET HIT = HIT + 1
@@ -168,14 +173,35 @@
         WHERE ${column} LIKE '%' || #{query} || '%'
   </select>
   
-  <select id="getSearchList"
-          parameterType="Map"
-          resultMap="BoardMap">          
-    SELECT BOARD_NO, USER_NO, TITLE, CONTENTS, HIT, CREATE_DT, MODIFY_DT
-      FROM (SELECT ROW_NUMBER() OVER(ORDER BY BOARD_NO DESC, USER_NO ASC) AS RN, B.BOARD_NO, B.CONTENTS, U.USER_NO, U.EMAIL, B.CREATE_DT, B.HIT, B.TITLE
-              FROM USER_T U INNER JOIN BOARD_T B
-                ON U.USER_NO = B.USER_NO
-             WHERE ${column} LIKE CONCAT(CONCAT('%', #{query}), '%'))
-     WHERE RN BETWEEN #{begin} AND #{end}
-  </select>
+<select id="getSearchList" parameterType="Map" resultMap="BoardMap">
+   SELECT BOARD_NO, USER_NO, TITLE, CONTENTS, HIT, CREATE_DT, MODIFY_DT, EMAIL
+    FROM (
+        SELECT ROW_NUMBER() OVER(ORDER BY B.BOARD_NO DESC, U.USER_NO ASC) AS RN,
+               B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT, B.HIT,
+               U.USER_NO, U.EMAIL
+        FROM USER_T U
+        INNER JOIN BOARD_T B ON U.USER_NO = B.USER_NO
+        WHERE 
+            <choose>
+                <when test="column == 'B.TITLE'">
+                    B.TITLE LIKE '%' || #{query} || '%'
+                </when>
+                <when test="column == 'U.EMAIL'">
+                    U.USER_EMAIL LIKE '%' || #{query} || '%'
+                </when>
+                <when test="column == 'B.CONTENTS'">
+                    B.CONTENTS LIKE '%' || #{query} || '%'
+                </when>
+                <otherwise>
+                    1=1
+                </otherwise>
+            </choose>
+    )
+   WHERE RN BETWEEN #{begin} AND #{end}
+</select>
+
+
+
+
+
 </mapper>

@@ -16,30 +16,62 @@
     cursor: pointer;
     font-weight: bold;
   }
+
+  .title {
+    text-align:center;  
+  }
+  
+  #write {
+    float: right;
+  }
+
 </style>
 
 
 <h1 class="title">게시판 목록</h1>
 
-<a href="${contextPath}/board/write.page">게시물 작성</a>
+<a href="${contextPath}/board/write.page" id="write" class="btn btn-secondary">게시물 작성</a>
 
 <div>
-  <div>
-    <input type="radio" name="sort" value="DESC" id="descending" checked>
+  <form method="GET"
+        action="${contextPath}/board/search.do">
+    <div display:inline-block;>
+      <select name="column">
+        <option value="U.USER_NO">작성자</option>
+        <option value="B.TITLE">제목</option>
+        <option value="B.CONTENTS">내용</option>
+      </select>
+       <!-- <img src="${contextPath}/resources/images/searchicon.png" width="20"> -->
+        <input type="text" name="query" placeholder="검색어 입력">
+        <input type="hidden" name="sort" value="${sort}">
+        <button type="submit" id="search">검색</button>      
+    </div>
+  </form>
+</div>
+
+
+<div>
+    <!-- <input type="radio" name="sort" value="DESC" id="descending" checked>
     <label for="descending">내림차순</label>
     <input type="radio" name="sort" value="ASC" id="ascending">
     <label for="ascending">오름차순</label>
     <input type="radio" name="sort" value="VIEW_COUNT_DESC" id="viewDescending">
-  <label for="viewDescending">조회수순</label>
+  	<label for="viewDescending">조회수순</label> -->
+<select id="sort" name="sort">
+    <option value="DESC" ${sort == 'DESC' ? 'selected' : ''}>내림차순</option>
+    <option value="ASC" ${sort == 'ASC' ? 'selected' : ''}>오름차순</option>
+    <option value="VIEW_COUNT_DESC" ${sort == 'VIEW_COUNT_DESC' ? 'selected' : ''}>조회수순</option>
+</select>
+
 </div>
-  </div>
-  <div>
+  
+  <!-- <div>
     <select id="display" name="display">
       <option>20</option>
       <option>30</option>
       <option>40</option>
     </select>
-  </div>
+  </div> -->
   <table class="table align-middle">
     <thead>
       <tr>
@@ -71,41 +103,42 @@
 
 <script>
   
-const fnDisplay = () => {
+/* const fnDisplay = () => {
   document.getElementById('display').value = '${display}';
   document.getElementById('display').addEventListener('change', (evt) => {
     location.href = '${contextPath}/board/list.do?page=1&sort=${sort}&display=' + evt.target.value;
   })
+} */
+
+
+const fnSearchSort = () => {
+	document.getElementById('search').addEventListener('click', (evt) => {
+		const sort = '${sort}'; // 일반적으로 서버에서 템플릿 엔진을 통해 이 변수를 렌더링합니다.
+	    $('#sort').val(sort);
+	})
 }
 
-const fnSort = () => {
-    $(':radio[value=${sort}]').prop('checked', true);
-    $(':radio').on('click', (evt) => {
-      let sortValue = evt.target.value;
-      let displayValue = document.getElementById('display').value;
-      let url = '${contextPath}/board/list.do?page=1&sort=' + sortValue + '&display=' + displayValue;
-      location.href = url;
+$(document).ready(function() {
+    const sort = '${sort}';
+    if (sort && sort !== '') {
+        $('#sort').val(sort); // 정렬 값 설정
+    } else {
+        console.error('Sort parameter is missing or empty.');
+    }
+
+    $('#sort').on('change', function() {
+        const sortValue = this.value;
+        const contextPath = '${contextPath}';
+        const url = `${contextPath}/board/list.do?page=1&sort=` + sortValue;
+        location.href = url;
     });
-};
-
-const fnUpdateHit = () => {
-	  
-	  $(document).on('click', '.board', (evt) => {
-
-	    if('${sessionScope.user.userNo}' ===  evt.target.dataset.userNo) {
-	      location.href = '${contextPath}/board/detail.do?boardNo=' + evt.target.dataset.boardNo;
-	    } else {
-	      location.href = '${contextPath}/board/updateHit.do?boardNo=' + evt.target.dataset.boardNo;
-	    }
-	  })
-}
+});
 
 
 
 
-fnDisplay();
-fnSort();
-fnUpdateHit();
+
+/* fnDisplay(); */
 
 </script>
 
