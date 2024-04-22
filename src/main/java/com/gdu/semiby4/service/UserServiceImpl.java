@@ -239,4 +239,10 @@ public class UserServiceImpl implements UserService {
     }
     
   }
+  
+  @Override
+  public UserDto getuserInfo(String id) {
+    return userMapper.getuserInfo(id);
+  }
+  
 }

@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <c:set var="contextPath" value="<%=request.getContextPath()%>"/>
 <c:set var="dt" value="<%=System.currentTimeMillis()%>"/>
-
+ <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <jsp:include page="../layout/header.jsp"/>
 
 <style>
@@ -39,7 +39,7 @@
       <tbody>
         <c:forEach var="vo" items="${UserDto}">    <!-- mapper의 resultMap값을 items에 넣음 -->
           <tr class="admin_board_content">
-            <td><a class="mypage user_id" value="${vo.email}">${vo.email}</a></td>
+            <td><a class="mypage user_id" value="${vo.id}">${vo.id}</a></td>
             <td>${vo.name}</td>
             <td>${vo.signupDt}</td>
             <td><a href="#" class="boardList_admin" data-user-email="${vo.email}">${vo.boardCnt}</a></td>
@@ -57,37 +57,22 @@
 
 <script>
 
-const fnMemberList = () => {
+const fnUserList = () => {
   $.ajax({
     type: 'POST',
-    url: '${contextPath}/board/getuserInfo',
+    url: '${contextPath}/board/getuserInfo.do',
     data: 'json',
-    success: (resData) => {
-      console.log(resData.email);
+    success: function(resData) {
+     console.log(resData); 
+    }, error: function() {
+      console.log(1);
     }
-  })
+  });
 }
 
-  //const fnSearchEmail = () => {
-   // $.ajax({
-  //    type: 'GET',
-     // url: '${contextPath}/users',
-   //   data: 'json',
-    //  success: (resData) => {
-    //    totalEmail = resData.totalEmail;
-       // $.each(resData.emailList, (i, email) => {
-         // let str = '<div class="adminPage" data-user-no="' + admin.user.userNo + '" data-email="' + user.email + '">';
-         // str += '<span>' + admin.user.email + '</span>';
-          //str += '<span>' + moment(blog.createDt).format('YYYY.MM.DD.') + '</span>';
-         // str += '</div>';
-         // $('#eamil-list').append(str);
-  //      console.log(totalEmail);
-   //    });
-    
-//  }
+
   
-  
-fnMemberList();
+fnUserList();
 
   
 </script>

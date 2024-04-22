@@ -18,5 +18,7 @@ public interface UserService {
   // 로그인 및 로그아웃
   String getRedirectURLAfterSignin(HttpServletRequest request);  
   void signin(HttpServletRequest request, HttpServletResponse response);
-  void signout(HttpServletRequest request, HttpServletResponse response);  
+  void signout(HttpServletRequest request, HttpServletResponse response);
+  
+  UserDto getuserInfo(String id);
 }

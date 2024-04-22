@@ -23,6 +23,14 @@ public class AdminController {
   @Autowired
   private BoardService boardService;
   
+  @Autowired
+  private final UserService userService;
+  
+  public AdminController(UserService userService) {
+    super();
+    this.userService = userService;
+  }
+
 //  @Autowired
   private AdminService adminService;
   
@@ -34,11 +42,11 @@ public class AdminController {
     return "board/admin";
   }
   
-  @ResponseBody
-  @PostMapping("/getuserInfo")
+  @PostMapping("/getuserInfo.do")
   public UserDto getuserInfo(String id) {
     System.out.println("유저 인포");
-    UserDto user = UserService.
+    UserDto user = userService.getuserInfo(id);
+    return user;
   }
   
   /*
