@@ -36,6 +36,18 @@
   <span>${board.contents}</span>
 </div>
 
+    <div>
+    <button type=button class="btn btn-secondary" id="btn-modify">수정</button>
+    </div>
+    <div>
+     <button type=button class="btn btn-warning" id="btn-remove" data-board-no="${board.boardNo}">삭제</button>
+    </div>
+
+<c:if test="${not empty sessionScope.user}">  
+    <c:if test="${sessionScope.user.userNo == board.user.userNo}">
+   </c:if>
+ </c:if>
+
 <!-- 첨부 목록 공간입니다.>>>>> ---------------------------------------------------------------------->
 <h3>첨부 파일 다운로드</h3>
 <div>
@@ -94,25 +106,6 @@ const fnCheckSignin = () => {
   }
 }
 
-//----------------------------------------------- 다운로드 ------------------------------------------------------->>>
-const fnDownload = () => {
-    $('.attach').on('click', (evt) => {
-      if(confirm('해당 첨부 파일을 다운로드 할까요?')) {
-        location.href = '${contextPath}/board/download.do?attachNo=' + evt.currentTarget.dataset.attachNo;
-      }
-    })
-  }
-
-const fnDownloadAll = () => {
-    document.getElementById('download-all').addEventListener('click', (evt) => {
-      if(!confirm('모두 다운로드 할까요?')) {         // yes 를 누를시 작성된 downloadAll 맵핑으로 연결됩니다.
-        evt.preventDefault();
-         return;
-      }
-    })
-  }
-
-//<<<<----------------------------------------------- 다운로드 -------------------------------------------------------
 
 const fnRegisterComment = () => {    
   $('#btn-comment-register').on('click', (evt) => {
@@ -215,8 +208,50 @@ const fnPaging = (p) => {
   fnCommentList();
 }
 
+//------------------------------------ 삭제 구현---------------------------------->>
+
+  const fnRemoveBoard = () => {
+    document.getElementById('btn-remove').addEventListener('click', (evt) => {
+    	if(confirm('게시글을 삭제하시겠습니까?')){
+    	location.href = '${contextPath}/board/remove.do?boardNo=' + evt.target.dataset.boardNo; 
+    	}    	
+    })
+  }
+
+
+
+//<<------------------------------------------------------------------------------
+
+//----------------------------------------------- 다운로드 ------------------------------------------------------->>>
+const fnDownload = () => {
+    $('.attach').on('click', (evt) => {
+      if(confirm('해당 첨부 파일을 다운로드 할까요?')) {
+        location.href = '${contextPath}/board/download.do?attachNo=' + evt.currentTarget.dataset.attachNo;
+      }
+    })
+  }
+
+const fnDownloadAll = () => {
+    const downloadAllButton = document.getElementById('download-all');
+    if (downloadAllButton) {
+        downloadAllButton.addEventListener('click', (evt) => {
+            if (!confirm('모두 다운로드 할까요?')) {
+                evt.preventDefault();
+                return;
+            }
+        });
+    }
+}
+
+	
+if (document.getElementById('download-all')) {
+    fnDownloadAll();
+}
+
+//<<<<----------------------------------------------- 다운로드 -------------------------------------------------------
 
 $('#contents').on('click', fnCheckSignin);
+fnRemoveBoard();
 fnRegisterComment();
 fnCommentList();
 fnDownload();
