@@ -246,6 +246,19 @@
                 ON USR.USER_NO = B.USER_NO)
       WHERE RN BETWEEN #{begin} AND #{end} AND CATE_NO = #{cateNo}
     
-  </select>                   
+  </select>
+  
+  <!-- 삭제를 위해 추가 -->
+  <delete id="deleteAttach">
+    DELETE
+      FROM ATTACH_T
+     WHERE ATTACH_NO = #{attachNo}
+  </delete>
+  
+  <delete id="deleteBoard">
+    DELETE
+      FROM BOARD_T
+     WHERE BOARD_NO = #{boardNo}
+  </delete>                   
   
 </mapper>

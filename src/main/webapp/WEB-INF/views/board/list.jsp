@@ -69,7 +69,10 @@
   </table>
 </div>
 
+<input type="hidden" id="removeResult" value="${removeResult}">
+
 <script>
+
   
 const fnDisplay = () => {
   document.getElementById('display').value = '${display}';
@@ -88,7 +91,21 @@ const fnSort = () => {
     });
 };
 
+const fnResponse = () => {
+	const removeResult = document.getElementById('removeResult').value;
+	if(removeResult === '1') {
+	    alert("게시글이 삭제되었습니다");
+	}
+}
 
+
+
+
+
+
+
+
+fnResponse();
 fnDisplay();
 fnSort();
 

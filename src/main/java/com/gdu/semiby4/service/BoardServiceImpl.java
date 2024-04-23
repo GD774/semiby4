@@ -194,7 +194,7 @@ public class BoardServiceImpl implements BoardService {
   }
 
 	
-	// 다운로드(attachList 를 위해 순지선이 건드리는 중)
+	// 다운로드
 	@Override
   public BoardDto getBoardByNo(int boardNo) {
 	  
@@ -236,7 +236,7 @@ public class BoardServiceImpl implements BoardService {
   }
   
   
-  // 순지선이 다운로드를 위해 추가
+  // 다운로드를 위해 추가
    @Override
   public List<AttachDto> getAttachByBoard(int boardNo) {
      return boardMapper.getAttachList(boardNo);
@@ -370,7 +370,7 @@ public class BoardServiceImpl implements BoardService {
      return new ResponseEntity<Resource>(resource, responseHeader, HttpStatus.OK);
   }
 
-// 순지선이 멀티리스트를 위해 추가
+// 멀티리스트를 위해 추가
  @Override
  public void boardMultiList(Model model) {
    
@@ -395,7 +395,7 @@ public class BoardServiceImpl implements BoardService {
    
  }
  
- // 순지선이 멀티리스트를 위해 추가
+ // 멀티리스트를 위해 추가
  @Override
  public void boardDetailList(Model model) {
    Map<String, Object> modelMap = model.asMap();
@@ -429,4 +429,31 @@ public class BoardServiceImpl implements BoardService {
    model.addAttribute("page", page);
  }
   
+ // 삭제 구현
+ @Override
+ public int removeBoard(int boardNo) {
+   
+   // 파일 삭제
+   List<AttachDto> attachList = boardMapper.getAttachList(boardNo);
+   for(AttachDto attach : attachList) {
+     
+     File file = new File(attach.getUploadPath(), attach.getFilesystemName());
+     if(file.exists()) {
+       file.delete();
+     }
+     
+     if(attach.getHasThumbnail() == 1) {
+       File thumbnail = new File(attach.getUploadPath(), "s_" + attach.getFilesystemName());
+       if(thumbnail.exists()) {
+         thumbnail.delete();
+       }
+     }
+     
+   }
+   
+   // UPLOAD_T 삭제
+   return boardMapper.deleteBoard(boardNo);
+   
+ }
+ 
 }

@@ -25,12 +25,16 @@ public interface BoardService {
   int registerComment(HttpServletRequest request);
   Map<String, Object> getCommentList(HttpServletRequest request);
   
-  // 순지선이 다운로드를 위해 추가
+  // 다운로드를 위해 추가
   ResponseEntity<Resource> download(HttpServletRequest request);
   ResponseEntity<Resource> downloadAll(HttpServletRequest request);
   List<AttachDto> getAttachByBoard(int boardNo); // List를 반환하는 getAttach가 필요해서 만듦
 
-  // 순지선이 멀티리스트를 위해 추가
+  // 멀티리스트를 위해 추가
   void boardMultiList(Model model);
   void boardDetailList(Model model);
+  
+  // 삭제를 위해 추가
+  int removeBoard(int boardNo);
+  
 }

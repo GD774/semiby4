@@ -77,7 +77,7 @@ public class BoardController {
   }
   
   
-  //>>> 다운로드를 위해 순지선이 추가
+  //>>> 다운로드를 위해 추가
   @GetMapping("/download.do") //json 인데 produces를 쓰지 않은 이유는 service에서 이미 작성했기 때문임. 헤더에 applictation/octet-stream을 작성해줬음. 강사님 깃은 controller에는 하나 적어준 버전
   public ResponseEntity<Resource> download(HttpServletRequest request) {
     return boardService.download(request);
@@ -87,17 +87,17 @@ public class BoardController {
   public ResponseEntity<Resource> downloadAll(HttpServletRequest request) {
     return boardService.downloadAll(request);
   }
-  //<<< 다운로드를 위해 순지선이 추가
+  //<<< 다운로드를 위해 추가
   
   
-  // 순지선이 멀티리스트를 위해 추가
+  // 멀티리스트를 위해 추가
   @GetMapping("/multilist.do")
   public String multiList(Model model) {
     boardService.boardMultiList(model);
     return "board/multilist";
   }
   
-  // 순지선이 멀티리스트를 위해 추가
+  // 멀티리스트를 위해 추가
   @GetMapping("detaillist.do")
   public String detailList(@RequestParam(value="cateNo") String cateNo, HttpServletRequest request, Model model) {
     model.addAttribute("request", request);
@@ -109,5 +109,13 @@ public class BoardController {
     return "board/detaillist";
   }
   
+  // 삭제를 위해 추가
+  @PostMapping("/removeBoard.do")
+  public String removeBoard(@RequestParam(value="boardNo", required=false, defaultValue="0") int boardNo
+                           , RedirectAttributes redirectAttributes) {
+    int removeCount = boardService.removeBoard(boardNo);
+    redirectAttributes.addFlashAttribute("removeResult", removeCount == 1 ? '1' : '0');
+    return "redirect:/board/list.do";
+  }
   
 }

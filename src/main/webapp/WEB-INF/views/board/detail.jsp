@@ -36,15 +36,16 @@
   <span>${board.contents}</span>
 </div>
 
-    <div>
-    <button type=button class="btn btn-secondary" id="btn-modify">수정</button>
-    </div>
-    <div>
-     <button type=button class="btn btn-warning" id="btn-remove" data-board-no="${board.boardNo}">삭제</button>
-    </div>
 
 <c:if test="${not empty sessionScope.user}">  
     <c:if test="${sessionScope.user.userNo == board.user.userNo}">
+    <div>   
+    <form id="frm-btn" method="POST">  
+        <input type="hidden" name="boardNo" value="${board.boardNo}">
+        <button type="button" id="btn-edit" class="btn btn-warning btn-sm">편집</button>
+        <button type="button" id="btn-remove" class="btn btn-danger btn-sm">삭제</button>
+    </form>
+    </div>
    </c:if>
  </c:if>
 
@@ -96,6 +97,8 @@
 <div id="paging"></div>
 
 <script>
+var page = 1;
+var frmBtn = document.getElementById('frm-btn');
 
 
 const fnCheckSignin = () => {
@@ -135,7 +138,7 @@ const fnRegisterComment = () => {
 }
 
 
-var page = 1;
+
 
 const fnCommentList = () => {       
   $.ajax({
@@ -210,15 +213,18 @@ const fnPaging = (p) => {
 
 //------------------------------------ 삭제 구현---------------------------------->>
 
-  const fnRemoveBoard = () => {
-    document.getElementById('btn-remove').addEventListener('click', (evt) => {
-    	if(confirm('게시글을 삭제하시겠습니까?')){
-    	location.href = '${contextPath}/board/remove.do?boardNo=' + evt.target.dataset.boardNo; 
-    	}    	
-    })
-  }
+const fnRemoveBoard = () => {
+  document.getElementById('btn-remove').addEventListener('click', (evt) => {
+    if(confirm('해당 게시글을 삭제할까요?')){
+      frmBtn.action = '${contextPath}/board/removeBoard.do';
+      frmBtn.submit();
+    }
+  })
+}
 
-
+// 삭제시 DB에서 ATTACH_T 데이터 삭제되는 것 확인
+// 삭제시 로컬디스크 상에 업로드된 파일들 삭제되는 것 확인
+// 썸네일 삭제되는 것 확인
 
 //<<------------------------------------------------------------------------------
 
@@ -230,7 +236,7 @@ const fnDownload = () => {
       }
     })
   }
-
+  
 const fnDownloadAll = () => {
     const downloadAllButton = document.getElementById('download-all');
     if (downloadAllButton) {
@@ -242,7 +248,6 @@ const fnDownloadAll = () => {
         });
     }
 }
-
 	
 if (document.getElementById('download-all')) {
     fnDownloadAll();
@@ -255,7 +260,6 @@ fnRemoveBoard();
 fnRegisterComment();
 fnCommentList();
 fnDownload();
-fnDownloadAll();
 
 
 </script>
