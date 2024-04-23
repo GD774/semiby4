@@ -75,7 +75,7 @@
 
      
  <div id="main-wrap">
- <div id="title">
+ <div id="title-div">
  <h1 class="title">글작성</h1>
  <hr>
  </div>
