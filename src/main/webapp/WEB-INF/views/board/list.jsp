@@ -25,6 +25,9 @@
 
 <div>
   <div>
+    <c:if test="${sessionScope.user != null}">
+    <input type="checkbox" name="deleteUser" value="deleteUser" id="deleteUser">
+    </c:if>
     <input type="radio" name="sort" value="DESC" id="descending" checked>
     <label for="descending">내림차순</label>
     <input type="radio" name="sort" value="ASC" id="ascending">

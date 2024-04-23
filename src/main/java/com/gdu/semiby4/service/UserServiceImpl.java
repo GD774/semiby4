@@ -7,6 +7,7 @@ import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.SecureRandom;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -172,8 +174,7 @@ public class UserServiceImpl implements UserService {
 			String userId = request.getParameter("userId");
       
       // 입력한 아이디
-      Optional<String> opt = Optional.ofNullable(request.getParameter("email"));
-			String email = opt.orElse("foo@bar.baz");
+      String email = request.getParameter("email");
       
       // 입력한 비밀번호 + SHA-256 방식의 암호화
       String pw = MySecurityUtils.getSha256(request.getParameter("pw"));
@@ -183,26 +184,26 @@ public class UserServiceImpl implements UserService {
       
       // 접속 수단 (요청 헤더의 User-Agent 값)
       String userAgent = request.getHeader("User-Agent");
-
+ 
       // DB로 보낼 정보 (email/pw: USER_T , email/ip/userAgent/sessionId: ACCESS_HISTORY_T) 
       Map<String, Object> params = Map.of("userId", userId
 																				, "email", email
                                         , "pw", pw
                                         , "ip", ip
-                                        , "userAgent", userAgent
-                                        , "sessionId", request.getSession().getId()
-																				);
+                                        , "userAgent", userAgent);
       
       // email/pw 가 일치하는 회원 정보 가져오기
       UserDto user = userMapper.getUserByMap(params);
-
+      
       // 일치하는 회원 있음 (Sign In 성공)
       if(user != null) {
+
         
         // 회원 정보를 세션(브라우저 닫기 전까지 정보가 유지되는 공간, 기본 30분 정보 유지)에 보관하기
         HttpSession session = request.getSession();
+        
         session.setAttribute("user", user);
-        session.setMaxInactiveInterval(60 * 10);  // 세션 유지 시간 1800초(30분) 설정
+        session.setMaxInactiveInterval(10);
         
         // Sign In 후 페이지 이동
         response.sendRedirect(request.getParameter("url"));
@@ -211,9 +212,23 @@ public class UserServiceImpl implements UserService {
       } else {
         response.setContentType("text/html; charset=UTF-8");
         PrintWriter out = response.getWriter();
+        /*
+          if(disabledUser != null && disabledUser.getRole() == 2) {
+            out.println("<script>");
+            out.println("alert('일치하는 회원 정보가 없습니다.')");
+            out.println("location.href='" + request.getContextPath() + "/main.page'");
+            out.println("</script>");
+        } else {
+            out.println("<script>");
+            out.println("alert('아이디 또는 비밀번호가 일치하지 않습니다.')");
+            out.println("location.href='" + request.getContextPath() + "/main.page'");
+            out.println("</script>");
+        }
+         */
+        
         out.println("<script>");
-        out.println("alert('일치하는 회원 정보가 없습니다.');");
-        out.println("location.href='" + request.getContextPath() + "/main.page';");
+        out.println("alert('일치하는 회원 정보가 없습니다.')");
+        out.println("location.href='" + request.getContextPath() + "/main.page'");
         out.println("</script>");
         out.flush();
         out.close();
@@ -245,4 +260,5 @@ public class UserServiceImpl implements UserService {
     }
     
   }
+ 
 }

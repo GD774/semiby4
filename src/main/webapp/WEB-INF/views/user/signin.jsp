@@ -16,7 +16,7 @@
         action="${contextPath}/user/signin.do">
     <div>
       <label for="userId">아이디</label>
-      <input type="text" id="userId" name="userId" placeholder="example@naver.com">
+      <input type="text" id="userId" name="userId" placeholder="example_id">
     </div>
     <div>
       <label for="pw">비밀번호</label>
