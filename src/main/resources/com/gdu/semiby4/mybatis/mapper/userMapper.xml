@@ -8,10 +8,10 @@
   <select id="getUserByMap"
           parameterType="Map"
           resultType="UserDto">
-    SELECT USER_NO, EMPLOYEE_ID, PW, EMAIL, NAME, GENDER, MOBILE, PW_MODIFY_DT, SIGNUP_DT
+    SELECT USER_NO, USER_ID, PW, EMAIL, NAME, GENDER, MOBILE, PW_MODIFY_DT, SIGNUP_DT
       FROM USER_T
     <where>
-      <if test="employeeId!=null">EMPLOYEE_ID = #{employeeId}</if>
+      <if test="userId!=null">USER_ID = #{userId}</if>
       <if test="pw!=null">AND PW = #{pw}</if>
     </where>
   </select>
@@ -20,7 +20,7 @@
           parameterType="UserDto">
     INSERT INTO USER_T (
 	    USER_NO
-	  , EMPLOYEE_ID
+	  , USER_ID
 	  , PW
 	  , EMAIL
 	  , NAME
@@ -30,7 +30,7 @@
 	  , SIGNUP_DT
     ) VALUES (
         USER_SEQ.NEXTVAL
-      , #{employeeId}
+      , #{userId}
       , #{pw}
 	  , #{email}
       , #{name}

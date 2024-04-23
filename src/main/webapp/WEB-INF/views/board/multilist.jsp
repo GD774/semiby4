@@ -83,13 +83,7 @@
           <td class="contents">
             <a id="bold" href="${contextPath}/board/detail.do?boardNo=${board.boardNo}">${board.title}</a>
           </td>
-          <td>
-           <script>
-            var email = "${board.user.email}";
-            var username = email.split("@")[0];
-            document.write(username);
-          </script>
-          </td>
+          <td>${board.user.userId}</td>
           <td>${board.hit}</td>
         </tr>
       </c:forEach>
@@ -119,13 +113,7 @@
           <td class="contents">
             <a id="bold" href="${contextPath}/board/detail.do?boardNo=${board.boardNo}">${board.title}</a>
           </td>
-          <td>
-           <script>
-            var email = "${board.user.email}";
-            var username = email.split("@")[0];
-            document.write(username);
-          </script>
-          </td>
+          <td>${board.user.userId}</td>
           <td>${board.hit}</td>
         </tr>
       </c:forEach>
@@ -154,13 +142,7 @@
           <td class="contents">
             <a id="bold" href="${contextPath}/board/detail.do?boardNo=${board.boardNo}">${board.title}</a>
           </td>
-          <td>
-           <script>
-            var email = "${board.user.email}";
-            var username = email.split("@")[0];
-            document.write(username);
-          </script>
-          </td>
+          <td>${board.user.userId}</td>
           <td>${board.hit}</td>
         </tr>
       </c:forEach>

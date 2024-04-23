@@ -5,21 +5,9 @@
 <c:set var="contextPath" value="<%=request.getContextPath() %>" />
 <c:set var="dt" value="<%=System.currentTimeMillis() %>" />
 
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
+<jsp:include page="../layout/header.jsp"/>
 
-  <!-- include libraries(jquery, bootstrap) -->
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 
-  <!-- include moment.js -->
-  <script src="${contextPath}/resources/moment/moment-with-locales.min.js"></script>
-
-  <title>상세화면</title>
-</head>
-<body>
 
 <div>
   <span>작성자</span>
@@ -36,13 +24,26 @@
   <span>${board.contents}</span>
 </div>
 
+<div>
+  <span>작성일자</span>
+  <span>
+    <fmt:formatDate value="${board.createDt}" pattern="yyyy-MM-dd HH:mm" />
+  </span>
+</div>
+
+<div>
+  <span>최종수정일</span>
+  <span>
+    <fmt:formatDate value="${board.modifyDt}" pattern="yyyy-MM-dd HH:mm" />
+  </span>
+</div>
 
 <c:if test="${not empty sessionScope.user}">  
     <c:if test="${sessionScope.user.userNo == board.user.userNo}">
     <div>   
-    <form id="frm-btn" method="POST">  
+    <form id="frm-btn" method="POST">
         <input type="hidden" name="boardNo" value="${board.boardNo}">
-        <button type="button" id="btn-edit" class="btn btn-warning btn-sm">편집</button>
+        
         <button type="button" id="btn-remove" class="btn btn-danger btn-sm">삭제</button>
     </form>
     </div>

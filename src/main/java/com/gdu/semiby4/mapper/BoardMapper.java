@@ -15,7 +15,7 @@ public interface BoardMapper {
   int getBoardCount();
   List<BoardDto> getBoardList(Map<String, Object> map);
   BoardDto getBoardByNo(int boardNo);
-  List<AttachDto> getAttachList(int uploadNo);
+  List<AttachDto> getAttachList(int boardNo);
 	int insertBoard(BoardDto board);
   int insertAttach(AttachDto attach);
 	int insertComment(CommentDto comment);

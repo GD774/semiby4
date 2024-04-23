@@ -16,6 +16,7 @@
     <result property="cateNo" column="CATE_NO"/>
     <association property="user" javaType="UserDto">
       <id     property="userNo" column="USER_NO"/>
+      <result property="userId"  column="USER_ID" />
       <result property="email"  column="EMAIL"/>
     </association>
   </resultMap>
@@ -30,6 +31,7 @@
     <result property="createDt"  column="CREATE_DT" />
     <association property="user" javaType="UserDto">
       <id     property="userNo" column="USER_NO" />
+      <result property="userId"  column="USER_ID" />
       <result property="email"  column="EMAIL" />
     </association>
     </resultMap>
@@ -216,10 +218,10 @@
           parameterType="Map"
           resultMap="BoardMap">
     SELECT BOARD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT
-         , USER_NO, EMAIL, CATE_NO, ATTACH_COUNT
+         , USER_NO, USER_ID, EMAIL, CATE_NO, ATTACH_COUNT
     FROM (SELECT ROW_NUMBER() OVER (ORDER BY BOARD_NO DESC) AS RN
              , B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT
-             , USR.USER_NO, USR.EMAIL, CATE_NO
+             , USR.USER_NO, USR.USER_ID, USR.EMAIL, CATE_NO
              , (SELECT COUNT(*)
                   FROM ATTACH_T ATC
                  WHERE B.BOARD_NO = ATC.BOARD_NO) AS ATTACH_COUNT
@@ -235,10 +237,10 @@
           parameterType="Map"
           resultMap="BoardMap">
     SELECT BOARD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT
-         , USER_NO, EMAIL, CATE_NO, ATTACH_COUNT
+         , USER_NO, USER_ID, EMAIL, CATE_NO, ATTACH_COUNT
       FROM (SELECT ROW_NUMBER() OVER (ORDER BY BOARD_NO ${sort}) AS RN
                  , B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT
-                 , USR.USER_NO, USR.EMAIL, CATE_NO
+                 , USR.USER_NO, USR.USER_ID, USR.EMAIL, CATE_NO
                  , (SELECT COUNT(*)
                       FROM ATTACH_T ATC
                      WHERE B.BOARD_NO = ATC.BOARD_NO) AS ATTACH_COUNT

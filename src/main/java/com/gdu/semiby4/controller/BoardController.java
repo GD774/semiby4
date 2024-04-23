@@ -29,6 +29,7 @@ public class BoardController {
   
   private final BoardService boardService;
   
+  
   @GetMapping("/list.do")
   public String list(HttpServletRequest request, Model model) {
     model.addAttribute("request", request);

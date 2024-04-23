@@ -16,16 +16,29 @@
     cursor: pointer;
     font-weight: bold;
   }
+  
+  .boardicon {
+  width: 70px;
+  height:70px;
+  text-align:center;
+  margin-left:auto;
+  margin-right:auto;
+  display: block;
+}
+  .title {
+  text-align: center;
+  }
+
 </style>
 
 <c:if test="${param.cateNo eq '1'}">
-    <h1>취업정보 게시판</h1>
+    <h1 class="title"><img class="boardicon" src="${contextPath}/resources/images/boardicon.png"> 취업정보 게시판 </h1>
 </c:if>
 <c:if test="${param.cateNo eq '2'}">
-    <h1>면접후기 게시판</h1>
+    <h1 class="title"><img class="boardicon" src="${contextPath}/resources/images/boardicon.png"> 면접후기 게시판</h1>
 </c:if>
 <c:if test="${param.cateNo eq '3'}">
-    <h1>이야기 나눠요</h1>
+    <h1 class="title"><img class="boardicon" src="${contextPath}/resources/images/boardicon.png"> 이야기 나눠요</h1>
 </c:if>
 
 

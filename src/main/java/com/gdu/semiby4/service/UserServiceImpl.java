@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
   public void signup(HttpServletRequest request, HttpServletResponse response) {
 
     // 전달된 파라미터
-		String employeeId = request.getParameter("employeeId");
+		String userId = request.getParameter("userId");
     String pw = MySecurityUtils.getSha256(request.getParameter("pw"));
 		String email = request.getParameter("email");
     String name = MySecurityUtils.getPreventXss(request.getParameter("name"));
@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
     
     // Mapper 로 보낼 UserDto 객체 생성
     UserDto user = UserDto.builder()
-			                .employeeId(employeeId)
+			                .userId(userId)
                       .email(email)
                       .pw(pw)
                       .name(name)
@@ -169,7 +169,7 @@ public class UserServiceImpl implements UserService {
   public void signin(HttpServletRequest request, HttpServletResponse response) {
     try {
 
-			String employeeId = request.getParameter("employeeId");
+			String userId = request.getParameter("userId");
       
       // 입력한 아이디
       Optional<String> opt = Optional.ofNullable(request.getParameter("email"));
@@ -185,7 +185,7 @@ public class UserServiceImpl implements UserService {
       String userAgent = request.getHeader("User-Agent");
 
       // DB로 보낼 정보 (email/pw: USER_T , email/ip/userAgent/sessionId: ACCESS_HISTORY_T) 
-      Map<String, Object> params = Map.of("employeeId", employeeId
+      Map<String, Object> params = Map.of("userId", userId
 																				, "email", email
                                         , "pw", pw
                                         , "ip", ip
