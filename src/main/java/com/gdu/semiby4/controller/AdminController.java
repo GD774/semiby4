@@ -1,15 +1,21 @@
 package com.gdu.semiby4.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.gdu.semiby4.dto.UserDto;
 import com.gdu.semiby4.service.AdminService;
@@ -42,11 +48,18 @@ public class AdminController {
     return "admin/admin";
   }
   
-  @PostMapping("/getuserInfo.do")
-  public UserDto getuserInfo(String id) {
-    System.out.println("유저 인포");
-    UserDto user = userService.getuserInfo(id);
-    return user;
+  @GetMapping("/getuserInfo.do")
+  public ResponseEntity<Map<String, Object>> userInfo(HttpServletRequest request, Model model) {
+    System.out.println("유저 인포, 컨트롤러");
+    
+    Map<String, Object> params = new HashMap<String, Object>();
+    
+    String userId = request.getParameter("userId");
+    if(userId != null) {
+      params.put("userId", userId);
+      model.addAttribute("userId", userId);
+    }
+    return userService.getuserInfo(params);
   }
   
   /*

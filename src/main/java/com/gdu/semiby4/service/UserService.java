@@ -6,7 +6,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 import com.gdu.semiby4.dto.UserDto;
 
 public interface UserService {
@@ -20,5 +22,5 @@ public interface UserService {
   void signin(HttpServletRequest request, HttpServletResponse response);
   void signout(HttpServletRequest request, HttpServletResponse response);
   
-  UserDto getuserInfo(String id);
+  ResponseEntity<Map<String, Object>> getuserInfo(Map<String, Object> params);
 }

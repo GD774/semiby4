@@ -241,8 +241,14 @@ public class UserServiceImpl implements UserService {
   }
   
   @Override
-  public UserDto getuserInfo(String id) {
-    return userMapper.getuserInfo(id);
+  public ResponseEntity<Map<String, Object>> getuserInfo(Map<String, Object> params) {
+    Map<String, Object> userInfo = userMapper.getuserInfo(params);
+    
+    if(userInfo != null && !userInfo.isEmpty()) {
+      return new ResponseEntity<>(userInfo, HttpStatus.OK);
+    } else {
+      return new ResponseEntity<>(userInfo, HttpStatus.NOT_FOUND); 
+    }
   }
   
 }
