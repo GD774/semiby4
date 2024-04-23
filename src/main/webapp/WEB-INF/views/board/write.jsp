@@ -173,8 +173,19 @@ const fnAttachCheck = () => {
   })
 }
 
+const fnRegisterCate = () => {
+
+	  document.getElementById('frm-board-register').addEventListener('submit', (evt) => {
+		  if (document.getElementById('select-box').selectedIndex === 0) {
+	            alert('카테고리를 선택해주세요');
+	            evt.preventDefault();
+	     }
+	  })
+	}
+
 fnAttachCheck();
 fnRegisterBoard();
+fnRegisterCate();
 </script>
  
 
