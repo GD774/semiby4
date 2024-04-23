@@ -6,36 +6,21 @@
 <c:set var="dt" value="<%=System.currentTimeMillis()%>"/>
 
 <jsp:include page="../layout/header.jsp"/>
+<link rel="stylesheet" href="${contextPath}/resources/css/boardlist.css?dt=${dt}">
 
-<style>
-  .board {
-    width: 500px;
-  }
-  
-  #bold:hover {
-    cursor: pointer;
-    font-weight: bold;
-  }
+<br>
 
-  .title {
-    text-align:center;  
-  }
-  
-  #write {
-    float: right;
-  }
-
-</style>
-
-
+<img class="boardicon" src="${contextPath}/resources/images/boardicon.png">
 <h1 class="title">게시판 목록</h1>
+<br>
+
 
 <a href="${contextPath}/board/write.page" id="write" class="btn btn-secondary">게시물 작성</a>
 
 <div>
   <form method="GET"
         action="${contextPath}/board/search.do">
-    <div display:inline-block;>
+    <div class="searchspace">
       <select name="column">
         <option value="U.USER_NO">작성자</option>
         <option value="B.TITLE">제목</option>
@@ -72,10 +57,11 @@
       <option>40</option>
     </select>
   </div> -->
+ <div>
   <table class="table align-middle">
     <thead>
       <tr>
-        <td>순번</td>
+        <td>게시글번호</td>
         <td>제목</td>
         <td>작성자</td>
         <td>조회수</td>
@@ -84,7 +70,7 @@
     <tbody>
       <c:forEach items="${boardList}" var="board" varStatus="vs">
         <tr>
-          <td>${beginNo - vs.index}</td>
+          <td>${board.boardNo}</td>
           <td class="board" data-board-no="${board.boardNo}">
             <a id="bold" href="${contextPath}/board/detail.do?boardNo=${board.boardNo}">${board.title}</a>
           </td>
@@ -95,7 +81,11 @@
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="4">${paging}</td>
+        <td colspan="4">
+          <div class="paging-container">
+            ${paging}
+          </div>
+        </td>
       </tr>
     </tfoot>
   </table>

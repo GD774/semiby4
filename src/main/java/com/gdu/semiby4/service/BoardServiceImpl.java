@@ -10,6 +10,7 @@ import java.nio.file.Files;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
@@ -252,6 +253,38 @@ public class BoardServiceImpl implements BoardService {
   @Override
   public int updateHit(int boardNo) {
     return boardMapper.updateHit(boardNo);
+  }
+  
+  // 게시글 수정 (지희)
+  @Override
+  public int modifyBoard(BoardDto board) {
+    return boardMapper.updateBoard(board);
+  }
+  
+  // 수정화면에서 첨부파일 삭제 (지희)
+  @Override
+  public ResponseEntity<Map<String, Object>> removeAttach(int attachNo) {
+    // 삭제할 첨부 파일 정보를 DB에서 가져오기
+    AttachDto attach = boardMapper.getAttachByNo(attachNo);
+    
+    // 파일 삭제
+    File file = new File(attach.getUploadPath(), attach.getFilesystemName());
+    if(file.exists()) {
+      file.delete();
+    }
+    
+    // 썸네일 삭제
+    if(attach.getHasThumbnail() == 1) {
+      File thumbnail = new File(attach.getUploadPath(), "s_" + attach.getFilesystemName()); 
+      if(thumbnail.exists()) {
+        thumbnail.delete();
+      }      
+    }
+    
+    // DB 삭제
+    int deleteCount = boardMapper.deleteAttach(attachNo);
+    
+    return ResponseEntity.ok(Map.of("deleteCount", deleteCount));
   }
   
 }

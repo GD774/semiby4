@@ -22,5 +22,7 @@ public interface BoardService {
   int registerComment(HttpServletRequest request);
   Map<String, Object> getCommentList(HttpServletRequest request);
   int updateHit(int boardNo);
+  int modifyBoard(BoardDto board);  // 게시글 수정 (지희)
+  ResponseEntity<Map<String, Object>> removeAttach(int attachNo);
 
 }

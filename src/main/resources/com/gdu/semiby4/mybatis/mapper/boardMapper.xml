@@ -10,8 +10,8 @@
     <result property="hit"       column="HIT"/>
     <result property="title"       column="TITLE"/>
     <result property="contents"    column="CONTENTS"/>
-    <result property="createDt"    column="CREATE_DT"/>
-    <result property="modifyDt"    column="MODIFY_DT"/>
+    <result property="createDt" column="CREATE_DT"/>
+    <result property="modifyDt" column="MODIFY_DT"/>
     <association property="user" javaType="UserDto">
       <id     property="userNo" column="USER_NO"/>
       <result property="email"  column="EMAIL"/>
@@ -32,7 +32,8 @@
     </association>
   </resultMap>
 
-  <select id="getBoardCount">
+  <select id="getBoardCount"
+          resultType="int">
     SELECT COUNT(*)
       FROM BOARD_T
   </select>
@@ -187,7 +188,7 @@
                     B.TITLE LIKE '%' || #{query} || '%'
                 </when>
                 <when test="column == 'U.EMAIL'">
-                    U.USER_EMAIL LIKE '%' || #{query} || '%'
+                    U.EMAIL LIKE '%' || #{query} || '%'
                 </when>
                 <when test="column == 'B.CONTENTS'">
                     B.CONTENTS LIKE '%' || #{query} || '%'
@@ -200,6 +201,36 @@
    WHERE RN BETWEEN #{begin} AND #{end}
 </select>
 
+<!-- 게시글 수정(지희) -->
+<update id="updateBoard"
+        parameterType="BoardDto">
+  UPDATE BOARD_T
+     SET TITLE = #{title}
+       , CONTENTS = #{contents}
+       , MODIFY_DT = SYSTIMESTAMP
+   WHERE BOARD_NO = #{boardNo}
+</update>
+
+<!-- 첨부파일목록 (지희) -->
+<select id="getAttachList"
+        resultType="AttachDto">
+  SELECT ATTACH_NO, UPLOAD_PATH, FILESYSTEM_NAME, ORIGINAL_FILENAME, DOWNLOAD_COUNT, HAS_THUMBNAIL
+    FROM ATTACH_T
+   WHERE BOARD_NO = #{boardNo}
+</select>
+
+<select id="getAttachByNo"
+        resultType="AttachDto">
+  SELECT ATTACH_NO, UPLOAD_PATH, FILESYSTEM_NAME, ORIGINAL_FILENAME, DOWNLOAD_COUNT, HAS_THUMBNAIL
+    FROM ATTACH_T
+   WHERE ATTACH_NO = #{attachNo}
+</select>
+
+<delete id="deleteAttach">
+  DELETE
+    FROM ATTACH_T
+   WHERE ATTACH_NO = #{attachNo}
+</delete>
 
 
 
