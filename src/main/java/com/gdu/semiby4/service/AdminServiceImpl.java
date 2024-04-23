@@ -16,20 +16,54 @@ public class AdminServiceImpl implements AdminService {
     super();
     this.userMapper = userMapper;
   }
+  
+  @Override
+  public void dropUser(UserDto user) {
+    try {
+      // 사용자 정보 생성
+      UserDto dropUser = new UserDto();
 
+      dropUser.setUserId(user.getUserId());
+      // 비활성화를 위한 ROLE 값을 2로 설정
+      dropUser.setRole(2);
+      
+      System.out.println("dropUser 메서드 호출 확인: " + user.getUserId());
+      userMapper.dropUser(dropUser);  // 사용자 비활성화 업데이트
+      
+      System.out.println("사용자 ROLE 업데이트 완료: " + user.getUserId());
+      // 이 부분이 출력이 안 됨. 받아오지 못하는 부분이 있어 role 값이 변하지 않음.
+  } catch (Exception e) {
+      throw new RuntimeException("사용자 권한 업데이트 실패", e);
+    }
+  }
+
+
+  
+//  @Override
+//  public void dropUser(String userId) {
+//    userMapper.dropUser(userId);
+//  }
+/*
+@Override
+public ResponseEntity<Map<String, Object>> getuserInfo(Map<String, Object> params) {
+  Map<String, Object> userInfo = userMapper.getuserInfo(params);
+  
+  if(userInfo != null && !userInfo.isEmpty()) {
+    return new ResponseEntity<>(userInfo, HttpStatus.OK);
+  } else {
+    return new ResponseEntity<>(userInfo, HttpStatus.NOT_FOUND); 
+  }
+}
+*/
   @Override
   public List<UserDto> adminUserList() {
     return userMapper.adminUserList();
   }
 
   @Override
-  public List<UserDto> adminUserList2() {
-    return userMapper.adminUserList2();
-  }
-
-  @Override
-  public void dropUser(String email) {
-    userMapper.dropUser(email);
-  }
-
+  public List<UserDto> getuserInfo(String userId) {
+      return userMapper.getuserInfo(userId);
+  }  
+  
+  
 }

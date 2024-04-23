@@ -1,5 +1,6 @@
 package com.gdu.semiby4.service;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +22,5 @@ public interface UserService {
   String getRedirectURLAfterSignin(HttpServletRequest request);  
   void signin(HttpServletRequest request, HttpServletResponse response);
   void signout(HttpServletRequest request, HttpServletResponse response);
-  
-  ResponseEntity<Map<String, Object>> getuserInfo(Map<String, Object> params);
+
 }

@@ -62,22 +62,53 @@
      WHERE USER_NO = #{userNo}
   </delete>
   
-  <select id="adminUserList2"
-          resultMap="UserMap">
-    SELECT U.*, 
-          (SELECT COUNT(*) FROM BOARD_T WHERE USER_NO = U.USER_NO) AS BOARD_CNT,
-          (SELECT COUNT(*) FROM COMMENT_T WHERE USER_NO = U.USER_NO) AS COMMENT_CNT,      
-      FROM USER_T U 
-     ORDER BY USER_NO DESC
-  </select>
 
-  <select id="getuserInfo"
-          resultMap="UserMap">
-    SELECT * FROM USER_T
-     WHERE USER_ID = #{userId}
-  </select>
+<select id="adminUserList"
+         resultMap="UserMap">
+    SELECT U.USER_NO, U.USER_ID, U.NAME, U.EMAIL, U.SIGNUP_DT,
+    <!-- board_cnt, comment_cnt 로 추가 작업 혹은 삭제 예정 -->
+           COUNT(DISTINCT B.BOARD_NO) AS BOARD_CNT,     
+           COUNT(DISTINCT C.COMMENT_NO) AS COMMENT_CNT
+      FROM USER_T U
+ LEFT JOIN BOARD_T B ON U.USER_NO = B.USER_NO
+ LEFT JOIN COMMENT_T C ON U.USER_NO = C.USER_NO
+     GROUP BY U.USER_NO, U.USER_ID, U.NAME, U.EMAIL, U.SIGNUP_DT
+     ORDER BY U.SIGNUP_DT DESC
+</select>
 
-  <select id="adminUserList" resultMap="UserMap">
+<select id="getuserInfo" 
+        resultType="UserDto">
+ SELECT U.USER_NO, U.USER_ID, U.NAME, U.EMAIL, U.SIGNUP_DT,
+           COUNT(DISTINCT B.BOARD_NO) AS BOARD_CNT,     
+           COUNT(DISTINCT C.COMMENT_NO) AS COMMENT_CNT
+      FROM USER_T U
+ LEFT JOIN BOARD_T B ON U.USER_NO = B.USER_NO
+ LEFT JOIN COMMENT_T C ON U.USER_NO = C.USER_NO
+     WHERE U.USER_ID = #{userId, jdbcType=VARCHAR}
+     GROUP BY U.USER_NO, U.USER_ID, U.NAME, U.EMAIL, U.SIGNUP_DT
+     ORDER BY U.SIGNUP_DT DESC
+</select>
+
+<update id="dropUser">
+  UPDATE USER_T
+     SET ROLE = 2 
+   WHERE USER_ID = #{userId}
+</update>
+
+<!-- 
+<select id="getDisabledUser">
+  SELECT * 
+    FROM USER_T 
+   WHERE EMAIL = #{email} AND ROLE = 2
+</select>
+ -->
+
+<!-- 
+
+
+
+
+<select id="adminUserList" resultMap="UserMap">
     SELECT * 
       FROM (SELECT * 
               FROM USER_T 
@@ -87,10 +118,17 @@
       ]]>
   </select>
   
-  <update id="dropUser">
-    UPDATE USER_T
-       SET ROLE = 2 
-     WHERE USER_ID = #{userId}
-  </update>
+
+  
+  
+    <select id="adminUserList2"
+          resultMap="UserMap">
+  
+     SELECT * FROM USER_T
+     WHERE USER_ID = #{userId, jdbcType=VARCHAR}
+  </select>
+  
+  
+   -->
   
 </mapper>

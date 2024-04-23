@@ -7,6 +7,7 @@ import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.SecureRandom;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -205,6 +207,20 @@ public class UserServiceImpl implements UserService {
       } else {
         response.setContentType("text/html; charset=UTF-8");
         PrintWriter out = response.getWriter();
+        /*
+          if(disabledUser != null && disabledUser.getRole() == 2) {
+            out.println("<script>");
+            out.println("alert('일치하는 회원 정보가 없습니다.')");
+            out.println("location.href='" + request.getContextPath() + "/main.page'");
+            out.println("</script>");
+        } else {
+            out.println("<script>");
+            out.println("alert('아이디 또는 비밀번호가 일치하지 않습니다.')");
+            out.println("location.href='" + request.getContextPath() + "/main.page'");
+            out.println("</script>");
+        }
+         */
+        
         out.println("<script>");
         out.println("alert('일치하는 회원 정보가 없습니다.')");
         out.println("location.href='" + request.getContextPath() + "/main.page'");
@@ -239,16 +255,5 @@ public class UserServiceImpl implements UserService {
     }
     
   }
-  
-  @Override
-  public ResponseEntity<Map<String, Object>> getuserInfo(Map<String, Object> params) {
-    Map<String, Object> userInfo = userMapper.getuserInfo(params);
-    
-    if(userInfo != null && !userInfo.isEmpty()) {
-      return new ResponseEntity<>(userInfo, HttpStatus.OK);
-    } else {
-      return new ResponseEntity<>(userInfo, HttpStatus.NOT_FOUND); 
-    }
-  }
-  
+ 
 }

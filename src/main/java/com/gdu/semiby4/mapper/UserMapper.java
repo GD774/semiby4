@@ -12,9 +12,10 @@ public interface UserMapper {
   UserDto getUserByMap(Map<String, Object> map);
   int insertUser(UserDto user);
   int deleteUser(int userNo);
-  Map<String, Object> getuserInfo(Map<String, Object> params);
+  List<UserDto> getuserInfo(String userId);
   List<UserDto> adminUserList();
-  List<UserDto> adminUserList2();
-  void dropUser(String email);
-  
+  //void dropUser(String userId);
+  void dropUser(UserDto user);
+  //UserDto getDisabledUser(String email);
 }
+  
