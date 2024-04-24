@@ -36,5 +36,9 @@ public interface BoardService {
   
   // 삭제를 위해 추가
   int removeBoard(int boardNo);
-  
+
+  int updateHit(int boardNo);
+  int modifyBoard(BoardDto board);  // 게시글 수정 (지희)
+  ResponseEntity<Map<String, Object>> removeAttach(int attachNo);
+
 }

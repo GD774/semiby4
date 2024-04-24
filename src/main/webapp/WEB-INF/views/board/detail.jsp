@@ -7,8 +7,6 @@
 
 <jsp:include page="../layout/header.jsp"/>
 
-
-
 <div>
   <span>작성자</span>
   <span>${board.user.email}</span>
@@ -23,6 +21,8 @@
   <span>내용</span>
   <span>${board.contents}</span>
 </div>
+
+<!-- 수정이 추가되었으니 작성일자와 최종수정일도 추가합니다 (지희) -->
 
 <div>
   <span>작성일자</span>
@@ -39,46 +39,54 @@
 </div>
 
 <c:if test="${not empty sessionScope.user}">  
-    <c:if test="${sessionScope.user.userNo == board.user.userNo}">
+  <c:if test="${sessionScope.user.userNo == board.user.userNo}">
     <div>   
-    <form id="frm-btn" method="POST">
+      <form id="frm-btn" method="POST">
         <input type="hidden" name="boardNo" value="${board.boardNo}">
-        
         <button type="button" id="btn-remove" class="btn btn-danger btn-sm">삭제</button>
-    </form>
+      </form>
     </div>
-   </c:if>
- </c:if>
+  </c:if>
+</c:if>
 
 <!-- 첨부 목록 공간입니다.>>>>> ---------------------------------------------------------------------->
 <h3>첨부 파일 다운로드</h3>
 <div>
   <c:if test="${empty attachList}">
-  <div>첨부 없음</div>
+	<div>첨부 없음</div>
   </c:if>
   <c:if test="${not empty attachList}">
-  <c:forEach items="${attachList}" var="attach">
-  
-  <div class="attach" data-attach-no="${attach.attachNo}">
-  <c:if test="${attach.hasThumbnail == 1}">
-  <img src="${contextPath}${attach.uploadPath}/s_${attach.filesystemName}">
-  </c:if>
-  <c:if test="${attach.hasThumbnail == 0}">
-  <img src="${contextPath}/resources/images/attach.png" width="96px">
-  </c:if>
-  <a>${attach.originalFilename}</a>
-  </div>
-  </c:forEach>
-  <div> 
-  
-    <a id="download-all" href="${contextPath}/board/downloadAll.do?boardNo=${board.boardNo}">모두 다운로드</a>
-    
-  </div>
+	<c:forEach items="${attachList}" var="attach">
+	  <div class="attach" data-attach-no="${attach.attachNo}">
+		<c:if test="${attach.hasThumbnail == 1}">
+		  <img src="${contextPath}${attach.uploadPath}/s_${attach.filesystemName}">
+		</c:if>
+		<c:if test="${attach.hasThumbnail == 0}">
+		  <img src="${contextPath}/resources/images/attach.png" width="96px">
+		</c:if>
+		<a>${attach.originalFilename}</a>
+	  </div>
+	</c:forEach>
+	<div>
+      <a id="download-all" href="${contextPath}/board/downloadAll.do?boardNo=${board.boardNo}">모두 다운로드</a>
+	</div>
   </c:if>
 </div>
 
+<!-- 수정버튼 삽입을 위해 추가(지희) -->
+<div>
+  <c:if test="${not empty sessionScope.user}">  
+    <c:if test="${sessionScope.user.userNo == board.user.userNo}">
+      <form id="frm-btn" method="POST">  
+        <input type="hidden" name="boardNo" value="${board.boardNo}">
+        <button type="button" id="btn-edit" class="btn btn-warning btn-sm">수정</button>
+      </form>
+    </c:if>
+  </c:if>
+</div>
 
 <!-- <<<<< 첨부 목록 공간입니다. ---------------------------------------------------------------------->
+
 <hr>
 
 <form id="frm-comment">
@@ -256,14 +264,23 @@ if (document.getElementById('download-all')) {
 
 //<<<<----------------------------------------------- 다운로드 -------------------------------------------------------
 
+// 수정 화면으로 넘어가기 위해 추가
+var frmBtn = document.getElementById('frm-btn');
+
+const fnEditBoard = () => {
+  document.getElementById('btn-edit').addEventListener('click', (evt) => {
+    frmBtn.action = '${contextPath}/board/edit.do';
+    frmBtn.submit();
+  })
+}
+
 $('#contents').on('click', fnCheckSignin);
 fnRemoveBoard();
 fnRegisterComment();
 fnCommentList();
 fnDownload();
-
+fnEditBoard();
 
 </script>
 
-</body>
-</html>
+<jsp:include page="../layout/footer.jsp"/>
