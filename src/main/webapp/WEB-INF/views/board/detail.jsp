@@ -189,33 +189,30 @@ const fnCheckSignin = () => {
   }
 }
 
-
-const fnRegisterComment = () => {    
-  $('#btn-comment-register').on('click', (evt) => {
-    fnCheckSignin();
-    $.ajax({
-      // 요청
-      type: 'POST',
-      url: '${contextPath}/board/registerComment.do',
-      data: $('#frm-comment').serialize(),  // <form> 내부의 모든 입력을 파라미터 형식으로 보낼 때 사용, 입력 요소들은 name 속성을 가지고 있어야 함
-      // 응답
-      dataType: 'json',
-      success: (resData) => {  // resData = {"insertCount": 1}
-        if(resData.insertCount === 1) {
-          alert('댓글이 등록되었습니다.');
-          $('#contents').val('');
-          fnCommentList();
-        } else {
-          alert('댓글 등록이 실패했습니다.');
-        }
-      },
-      error: (jqXHR) => {
-        alert(jqXHR.statusText + '(' + jqXHR.status + ')');
-      }
-    })
-    
-  })
-}
+	const fnRegisterComment = () => {    
+	  $('#btn-comment-register').on('click', (evt) => {
+	    fnCheckSignin();
+	    $.ajax({
+	      // 요청
+	      type: 'POST',
+	      url: '${contextPath}/board/registerComment.do',
+	      data: $('#frm-comment').serialize(),  
+	      dataType: 'json',
+	      success: (resData) => {  
+	        if(resData.insertCount === 1) {
+	          alert('댓글이 등록되었습니다.');
+	          $('#comment-contents').val('');
+	          fnCommentList();
+	        } else {
+	          alert('댓글 등록이 실패했습니다.');
+	        }
+	      },
+	      error: (jqXHR) => {
+	        alert(jqXHR.statusText + '(' + jqXHR.status + ')');
+	      }
+	    });
+	  });
+	};
 
 
 
@@ -294,22 +291,7 @@ const fnPaging = (p) => {
   fnCommentList();
 }
 
-//------------------------------------ 삭제 구현---------------------------------->>
 
-const fnRemoveBoard = () => {
-  document.getElementById('btn-remove').addEventListener('click', (evt) => {
-    if(confirm('해당 게시글을 삭제할까요?')){
-      frmBtn.action = '${contextPath}/board/removeBoard.do';
-      frmBtn.submit();
-    }
-  })
-}
-
-// 삭제시 DB에서 ATTACH_T 데이터 삭제되는 것 확인
-// 삭제시 로컬디스크 상에 업로드된 파일들 삭제되는 것 확인
-// 썸네일 삭제되는 것 확인
-
-//<<------------------------------------------------------------------------------
 
 //----------------------------------------------- 다운로드 ------------------------------------------------------->>>
 const fnDownload = () => {
@@ -338,12 +320,32 @@ if (document.getElementById('download-all')) {
 
 //<<<<----------------------------------------------- 다운로드 -------------------------------------------------------
 
-$('#contents').on('click', fnCheckSignin);
-fnRemoveBoard();
+
+
+//------------------------------------ 삭제 구현---------------------------------->>
+
+
+const fnRemoveBoard = () => {
+  document.getElementById('btn-remove').addEventListener('click', (evt) => {
+    if(confirm('해당 게시글을 삭제할까요?')){
+      frmBtn.action = '${contextPath}/board/removeBoard.do';
+      frmBtn.submit();
+    }
+  })
+}
+
+// 삭제시 DB에서 ATTACH_T 데이터 삭제되는 것 확인
+// 삭제시 로컬디스크 상에 업로드된 파일들 삭제되는 것 확인
+// 썸네일 삭제되는 것 확인
+
+//<<------------------------------------------------------------------------------
+
+
+$('#comment-contents').on('click', fnCheckSignin);
 fnRegisterComment();
 fnCommentList();
 fnDownload();
-
+fnRemoveBoard();
 
 </script>
 
