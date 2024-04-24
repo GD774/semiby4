@@ -15,8 +15,8 @@
   <form method="POST"
         action="${contextPath}/user/signin.do">
     <div>
-      <label for="employeeId">아이디</label>
-      <input type="text" id="employeeId" name="employeeId" placeholder="example@naver.com">
+      <label for="userId">아이디</label>
+      <input type="text" id="userId" name="userId" placeholder="example@naver.com">
     </div>
     <div>
       <label for="pw">비밀번호</label>

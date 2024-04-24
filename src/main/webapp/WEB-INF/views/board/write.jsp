@@ -1,36 +1,19 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core"  prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<c:set var="contextPath" value="${pageContext.request.contextPath}"/>
+<c:set var="contextPath" value="<%=request.getContextPath()%>"/>
 <c:set var="dt" value="<%=System.currentTimeMillis()%>"/>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
 
-<title>
-게시글 작성화면
-</title>
-
-
-<!-- include libraries(jquery, bootstrap) -->
-<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-
-<!-- cdn 변경 -->
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
-</head>
-<body>
+<jsp:include page="../layout/header.jsp"/>
 
   <style>
-  #main-wrap{
+  
+  #write-wrap{
   display: flex;
   flex-direction: column;
   align-items: center;
+  align-items: flex-start;
   }
   
   
@@ -80,18 +63,21 @@
     margin-left : 30px;
   }
   
+  #select-div{
+    margin-botton : 10px;
+    width: 300px; 
+  }
+  
+  #select-box{
+   margin-left: 30px;
+  }
+  
   </style>
   
 
-
-
- <div class="gnb-wrap">
- 
- <a href="${contextPath}/main.page"> 메인으로 돌아가기 </a>
- </div>
      
- <div id="main-wrap">
- <div id="title">
+ <div id="write-wrap">
+ <div id="title-div">
  <h1 class="title">글작성</h1>
  <hr>
  </div>
@@ -107,10 +93,22 @@
   <input type="text" class="form-control" id="writer" value="${sessionScope.user.email}" readonly>
  </div>
  
+  <div id="select-div"> 
+  <label for="selectBox">카테고리</label>
+  <select name="cateNo" id="select-box" class="form-control">
+    <option disabled selected hidden> 카테고리를 선택하세요</option>
+    <option value="1">취업정보공유</option>
+    <option value="2">면접후기공유</option>
+    <option value="3">이야기나눠요</option>
+  </select>
+ </div>
+ 
  <div>
   <label for="title">제목</label>
   <input type="text" class="form-control" name="title" id="title" placeholder="제목을 입력하세요">
- </div>      
+ </div> 
+ 
+ 
  
  <div>
   <textarea id="contents" class="form-control" name="contents" placeholder="내용을 입력하세요"></textarea>
@@ -177,8 +175,19 @@ const fnAttachCheck = () => {
   })
 }
 
+const fnRegisterCate = () => {
+
+	  document.getElementById('frm-board-register').addEventListener('submit', (evt) => {
+		  if (document.getElementById('select-box').selectedIndex === 0) {
+	            alert('카테고리를 선택해주세요');
+	            evt.preventDefault();
+	     }
+	  })
+	}
+
 fnAttachCheck();
 fnRegisterBoard();
+fnRegisterCate();
 </script>
  
 

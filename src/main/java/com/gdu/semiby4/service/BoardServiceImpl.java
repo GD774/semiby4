@@ -4,12 +4,22 @@ import java.util.Map;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Optional;
-
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.net.URLEncoder;
 import java.nio.file.Files;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
@@ -67,6 +77,7 @@ public class BoardServiceImpl implements BoardService {
     model.addAttribute("page", page);
   }
 
+
   @Override
   public void boardListByNo(int boardNo, Model model) {
     
@@ -74,6 +85,8 @@ public class BoardServiceImpl implements BoardService {
     model.addAttribute("attachList", boardMapper.getAttachList(boardNo));
     
   }
+  
+ 
   
   @Override
   public Map<String, Object> getAttachList(int boardNo) {
@@ -107,6 +120,7 @@ public class BoardServiceImpl implements BoardService {
     // Upload_T 테이블에 추가하기(ATTACH_T 삽입을 위해 이걸 가장 먼저 처리해줌)
     String title = multipartRequest.getParameter("title");
     String contents = multipartRequest.getParameter("contents");
+    String cateNo = multipartRequest.getParameter("cateNo");
     int userNo = Integer.parseInt(multipartRequest.getParameter("userNo"));
     
     UserDto user = new UserDto();
@@ -114,6 +128,7 @@ public class BoardServiceImpl implements BoardService {
     
     BoardDto board = BoardDto.builder()
                           .title(title)
+                          .cateNo(cateNo)
                           .contents(contents)
                           .user(user)
                         .build();
@@ -178,8 +193,11 @@ public class BoardServiceImpl implements BoardService {
     // 첨부파일이 없으면 사이즈가 = 1. 그래서 초기화값도 1
   }
 
+	
+	// 다운로드
 	@Override
   public BoardDto getBoardByNo(int boardNo) {
+	  
     return boardMapper.getBoardByNo(boardNo);
   }
 
@@ -216,4 +234,226 @@ public class BoardServiceImpl implements BoardService {
     return Map.of("commentList", boardMapper.getCommentList(map)
                 , "paging", myPageUtils.getAsyncPaging());
   }
+  
+  
+  // 다운로드를 위해 추가
+   @Override
+  public List<AttachDto> getAttachByBoard(int boardNo) {
+     return boardMapper.getAttachList(boardNo);
+  }
+  
+  
+  @Override
+  public ResponseEntity<Resource> download(HttpServletRequest request) {
+    // 첨부 파일 정보를 DB 에서 가져오기
+    int attachNo = Integer.parseInt(request.getParameter("attachNo"));
+    AttachDto attach = boardMapper.getAttachByNo(attachNo);
+    
+    // 첨부 파일 정보를 File 객체로 만든 뒤 Resource 객체로 변환
+    File file = new File(attach.getUploadPath(), attach.getFilesystemName()); 
+    Resource resource = new FileSystemResource(file);
+    
+    // 첨부 파일 없으면 다운로드 취소
+    if(!resource.exists()) {
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    
+    // DOWNLOAD_COUNT 증가
+    boardMapper.updateDownloadCount(attachNo);
+    
+    // 사용자가 다운로드 받을 파일명 결정
+    String originalFilename = attach.getOriginalFilename();
+    String userAgent = request.getHeader("User-Agent");  
+    try { 
+      
+      // IE
+      if(userAgent.contains("Trident")){
+        originalFilename = URLEncoder.encode(originalFilename, "UTF-8").replace("+", ""); //
+      }
+      // Edge
+      else if(userAgent.contains("Edg")){ 
+        originalFilename = URLEncoder.encode(originalFilename, "UTF-8");
+      }
+
+      else {
+       originalFilename = new String(originalFilename.getBytes(""), "ISO-8859-1");
+      }
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    
+    // 다운로드용 응답 헤더 설정
+    HttpHeaders responseHeader = new HttpHeaders();
+    responseHeader.add("Content-Type", "application/octet-stream");
+    responseHeader.add("Content-Disposition", "attachment; filename=" + originalFilename);
+    responseHeader.add("Content-Length", file.length() + ""); //file.length()가 long 이라서 "" 더해서 String 으로 만들어줌
+    
+    
+    // 다운로드 진행
+    return new ResponseEntity<Resource>(resource, responseHeader, HttpStatus.OK);
+  
+  }
+  
+  @Override
+  public ResponseEntity<Resource> downloadAll(HttpServletRequest request) {
+
+    // 다운로드할 모든 첨부 파일들의 정보를 DB 에서 가져오기
+    
+    int boardNo = Integer.parseInt(request.getParameter("boardNo"));
+    List<AttachDto> attachList = boardMapper.getAttachList(boardNo);
+    
+    // 첨부 파일이 없으면 종료
+    if(attachList.isEmpty()) {
+      return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
+    }
+    
+    // 임시 zip 파일 저장할 경로
+    File tempDir = new File(myFileUtils.getTempPath());
+    if (!tempDir.exists()) {
+     tempDir.mkdirs(); 
+    }
+    
+    // 임시 zip 파일 이름
+    String tempFilename = myFileUtils.getTempFilename() + ".zip";
+    
+    // 임시 zip 파일 File 객체
+    File tempfile = new File(tempDir, tempFilename);
+    
+    // 첨부 파일들을 하나씩 zip 파일로 모으기
+    try {
+      
+      // ZipOutputStream 객체 생성
+      ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(tempfile));
+      
+      for (AttachDto attach : attachList) {
+        
+        // zip 파일에 포함할 ZipEntry 객체 생성
+        ZipEntry zipEntry = new ZipEntry(attach.getOriginalFilename()); // zip 파일에 들어갈 개별 파일의 이름
+        
+        // zip 파일에 ZipEntry 객체 명단 추가 (파일의 이름만 등록한 상황)
+        zout.putNextEntry(zipEntry);
+        
+        // 실제 첨부 파일을 zip 파일에 등록 (첨부 파일을 읽어서 zip 파일로 보냄. 읽어들이는 건 InputStream) 
+        BufferedInputStream in = new BufferedInputStream(new FileInputStream(new File(attach.getUploadPath(), attach.getFilesystemName())));
+        zout.write(in.readAllBytes());  // 싹 다 읽어오는 메소드
+        
+        // 사용한 자원 정리
+        in.close();
+        zout.closeEntry();
+        
+        // DOWNLOAD_COUNT 증가
+        boardMapper.updateDownloadCount(attach.getAttachNo());
+        
+      } // for문 종료
+      
+      // zout 자원 반납
+      zout.close();
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    
+    // 다운로드 할 zip File 객체 -> Resource 객체
+     Resource resource = new FileSystemResource(tempfile);
+    
+     // 임시파일의 이름이 숫자(TIMPESTAMP)로 되어있기 때문에 인코딩을 할 필요가 없다.
+     
+     // 다운로드용 응답 헤더 설정 (HTTP 참조)
+     HttpHeaders responseHeader = new HttpHeaders();
+     responseHeader.add("Content-Type", "application/octet-stream");
+     responseHeader.add("Content-Disposition", "attachment; filename=" + tempFilename);
+     responseHeader.add("Content-Length", tempfile.length() + ""); //file.length()가 long 이라서 "" 더해서 String 으로 만들어줌
+     
+     
+     // 다운로드 진행
+     return new ResponseEntity<Resource>(resource, responseHeader, HttpStatus.OK);
+  }
+
+// 멀티리스트를 위해 추가
+ @Override
+ public void boardMultiList(Model model) {
+   
+   // 혹시 화면에 노출되는 게시글의 수를 조절하고 싶다면 맵퍼에서 WHERE RN 조건 변경
+   // 3개의 게시판별로 최신 게시글 5개가 미리보기처럼 각각 노출됩니다.(페이징처리가 필요하지 않음)
+   
+       
+   String cateNo1 = "1";
+   String cateNo2 = "2";
+   String cateNo3 = "3";
+   
+   
+   Map<String, Object> map1 = Map.of("cateNo", cateNo1);
+  
+   Map<String, Object> map2 = Map.of("cateNo", cateNo2);
+  
+   Map<String, Object> map3 = Map.of("cateNo", cateNo3);
+   
+   model.addAttribute("boardMultiList1", boardMapper.getBoardMultiList(map1));
+   model.addAttribute("boardMultiList2", boardMapper.getBoardMultiList(map2));
+   model.addAttribute("boardMultiList3", boardMapper.getBoardMultiList(map3));
+   
+ }
+ 
+ // 멀티리스트를 위해 추가
+ @Override
+ public void boardDetailList(Model model) {
+   Map<String, Object> modelMap = model.asMap();
+   HttpServletRequest request = (HttpServletRequest) modelMap.get("request");
+   
+   int total = boardMapper.getBoardCount();
+   
+   Optional<String> optDisplay = Optional.ofNullable(request.getParameter("display"));
+   int display = Integer.parseInt(optDisplay.orElse("10"));
+   
+   Optional<String> optPage = Optional.ofNullable(request.getParameter("page"));
+   int page = Integer.parseInt(optPage.orElse("1"));
+   
+   myPageUtils.setPaging(total, display, page);
+   
+   Optional<String> optSort = Optional.ofNullable(request.getParameter("sort"));
+   String sort = optSort.orElse("DESC");
+   
+   String cateNo = model.getAttribute("cateNo").toString();
+   
+   Map<String, Object> map = Map.of("begin", myPageUtils.getBegin()
+                                  , "end", myPageUtils.getEnd()
+                                  , "sort", sort
+                                  , "cateNo", cateNo);
+   
+   model.addAttribute("beginNo", total - (page - 1) * display);
+   model.addAttribute("boardDetailList", boardMapper.getBoardDetailList(map));
+   model.addAttribute("paging", myPageUtils.getPaging(request.getContextPath() + "/board/detaillist.do", sort, display));
+   model.addAttribute("display", display);
+   model.addAttribute("sort", sort);
+   model.addAttribute("page", page);
+ }
+  
+ // 삭제 구현
+ @Override
+ public int removeBoard(int boardNo) {
+   
+   // 파일 삭제
+   List<AttachDto> attachList = boardMapper.getAttachList(boardNo);
+   for(AttachDto attach : attachList) {
+     
+     File file = new File(attach.getUploadPath(), attach.getFilesystemName());
+     if(file.exists()) {
+       file.delete();
+     }
+     
+     if(attach.getHasThumbnail() == 1) {
+       File thumbnail = new File(attach.getUploadPath(), "s_" + attach.getFilesystemName());
+       if(thumbnail.exists()) {
+         thumbnail.delete();
+       }
+     }
+     
+   }
+   
+   // UPLOAD_T 삭제
+   return boardMapper.deleteBoard(boardNo);
+   
+ }
+ 
 }

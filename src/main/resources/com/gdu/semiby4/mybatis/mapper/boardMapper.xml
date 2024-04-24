@@ -12,8 +12,11 @@
     <result property="contents"    column="CONTENTS"/>
     <result property="createDt"    column="CREATE_DT"/>
     <result property="modifyDt"    column="MODIFY_DT"/>
+    <result property="attachCount" column="ATTACH_COUNT"/>
+    <result property="cateNo" column="CATE_NO"/>
     <association property="user" javaType="UserDto">
       <id     property="userNo" column="USER_NO"/>
+      <result property="userId"  column="USER_ID" />
       <result property="email"  column="EMAIL"/>
     </association>
   </resultMap>
@@ -28,10 +31,11 @@
     <result property="createDt"  column="CREATE_DT" />
     <association property="user" javaType="UserDto">
       <id     property="userNo" column="USER_NO" />
+      <result property="userId"  column="USER_ID" />
       <result property="email"  column="EMAIL" />
     </association>
-  </resultMap>
-
+    </resultMap>
+    
   <select id="getBoardCount">
     SELECT COUNT(*)
       FROM BOARD_T
@@ -41,7 +45,7 @@
           parameterType="Map"
           resultMap="BoardMap">
     SELECT BOARD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT
-         , USER_NO, EMAIL
+         , USER_NO, EMAIL, ATTACH_COUNT
       FROM (SELECT ROW_NUMBER() OVER (ORDER BY BOARD_NO ${sort}) AS RN
                  , B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT
                  , USR.USER_NO, USR.EMAIL
@@ -72,6 +76,7 @@
           BOARD_NO
         , TITLE
         , CONTENTS
+        , CATE_NO
         , CREATE_DT
         , MODIFY_DT
         , USER_NO  
@@ -79,6 +84,7 @@
           #{boardNo}
         , #{title}
         , #{contents}
+        , #{cateNo}
         , SYSTIMESTAMP
         , SYSTIMESTAMP 
         , #{user.userNo}
@@ -172,4 +178,89 @@
              WHERE ${column} LIKE CONCAT(CONCAT('%', #{query}), '%'))
      WHERE RN BETWEEN #{begin} AND #{end}
   </select>
+  
+  
+  <!-- 순지선이 추가 -->
+  
+  <select id="getAttachList"
+          resultType="AttachDto">
+   SELECT ATTACH_NO
+    , UPLOAD_PATH
+    , FILESYSTEM_NAME
+    , ORIGINAL_FILENAME
+    , DOWNLOAD_COUNT
+    , HAS_THUMBNAIL
+    , BOARD_NO
+   FROM ATTACH_T
+   WHERE BOARD_NO = #{boardNo}
+  </select>
+  
+  <select id="getAttachByNo"
+          resultType="AttachDto">
+   SELECT  ATTACH_NO
+    , UPLOAD_PATH
+    , FILESYSTEM_NAME
+    , ORIGINAL_FILENAME
+    , DOWNLOAD_COUNT
+    , HAS_THUMBNAIL
+   FROM ATTACH_T
+   WHERE ATTACH_NO = #{attachNo}
+   </select>
+   
+   <update id="updateDownloadCount">
+  UPDATE ATTACH_T
+     SET DOWNLOAD_COUNT = DOWNLOAD_COUNT + 1
+   WHERE ATTACH_NO = #{attachNo}
+  </update>  
+  
+   <!-- 순지선이 멀티리스트를 위해 추가 -->
+    <select id="getBoardMultiList"
+          parameterType="Map"
+          resultMap="BoardMap">
+    SELECT BOARD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT
+         , USER_NO, USER_ID, EMAIL, CATE_NO, ATTACH_COUNT
+    FROM (SELECT ROW_NUMBER() OVER (ORDER BY BOARD_NO DESC) AS RN
+             , B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT
+             , USR.USER_NO, USR.USER_ID, USR.EMAIL, CATE_NO
+             , (SELECT COUNT(*)
+                  FROM ATTACH_T ATC
+                 WHERE B.BOARD_NO = ATC.BOARD_NO) AS ATTACH_COUNT
+          FROM USER_T USR INNER JOIN BOARD_T B
+            ON USR.USER_NO = B.USER_NO
+            WHERE CATE_NO = #{cateNo})
+    WHERE RN BETWEEN 1 AND 5
+    
+  </select>
+  
+  <!-- 순지선이 멀티리스트를 위해 추가 -->
+    <select id="getBoardDetailList"
+          parameterType="Map"
+          resultMap="BoardMap">
+    SELECT BOARD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT
+         , USER_NO, USER_ID, EMAIL, CATE_NO, ATTACH_COUNT
+      FROM (SELECT ROW_NUMBER() OVER (ORDER BY BOARD_NO ${sort}) AS RN
+                 , B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT
+                 , USR.USER_NO, USR.USER_ID, USR.EMAIL, CATE_NO
+                 , (SELECT COUNT(*)
+                      FROM ATTACH_T ATC
+                     WHERE B.BOARD_NO = ATC.BOARD_NO) AS ATTACH_COUNT
+              FROM USER_T USR INNER JOIN BOARD_T B
+                ON USR.USER_NO = B.USER_NO)
+      WHERE RN BETWEEN #{begin} AND #{end} AND CATE_NO = #{cateNo}
+    
+  </select>
+  
+  <!-- 삭제를 위해 추가 -->
+  <delete id="deleteAttach">
+    DELETE
+      FROM ATTACH_T
+     WHERE ATTACH_NO = #{attachNo}
+  </delete>
+  
+  <delete id="deleteBoard">
+    DELETE
+      FROM BOARD_T
+     WHERE BOARD_NO = #{boardNo}
+  </delete>                   
+  
 </mapper>

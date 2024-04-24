@@ -16,10 +16,32 @@
     cursor: pointer;
     font-weight: bold;
   }
+  
+  .boardicon {
+  width: 70px;
+  height:70px;
+  text-align:center;
+  margin-left:auto;
+  margin-right:auto;
+  display: block;
+}
+  .title {
+  text-align: center;
+  }
+
 </style>
 
+<c:if test="${param.cateNo eq '1'}">
+    <h1 class="title"><img class="boardicon" src="${contextPath}/resources/images/boardicon.png"> 취업정보 게시판 </h1>
+</c:if>
+<c:if test="${param.cateNo eq '2'}">
+    <h1 class="title"><img class="boardicon" src="${contextPath}/resources/images/boardicon.png"> 면접후기 게시판</h1>
+</c:if>
+<c:if test="${param.cateNo eq '3'}">
+    <h1 class="title"><img class="boardicon" src="${contextPath}/resources/images/boardicon.png"> 이야기 나눠요</h1>
+</c:if>
 
-<h1 class="title">게시판 목록</h1>
+
 
 <a href="${contextPath}/board/write.page">게시물 작성</a>
 
@@ -50,7 +72,7 @@
       </tr>
     </thead>
     <tbody>
-      <c:forEach items="${boardList}" var="board" varStatus="vs">
+      <c:forEach items="${boardDetailList}" var="board" varStatus="vs">
         <tr>
           <td>${beginNo - vs.index}</td>
           <td class="contents">
@@ -69,10 +91,7 @@
   </table>
 </div>
 
-<input type="hidden" id="removeResult" value="${removeResult}">
-
 <script>
-
   
 const fnDisplay = () => {
   document.getElementById('display').value = '${display}';
@@ -91,21 +110,7 @@ const fnSort = () => {
     });
 };
 
-const fnResponse = () => {
-	const removeResult = document.getElementById('removeResult').value;
-	if(removeResult === '1') {
-	    alert("게시글이 삭제되었습니다");
-	}
-}
 
-
-
-
-
-
-
-
-fnResponse();
 fnDisplay();
 fnSort();
 
