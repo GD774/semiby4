@@ -4,7 +4,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,9 +37,8 @@ public class BoardController {
   }
   
   @GetMapping(value="/attachList.do", produces="application/json")
-  public ResponseEntity<Map<String, Object>> attachList(@RequestParam int boardNo)  {
-    Map<String, Object> attachList = boardService.getAttachList(boardNo);
-    return new ResponseEntity<>(attachList, HttpStatus.OK);
+  public ResponseEntity<Map<String, Object>> attachList(@RequestParam int boardNo) {
+    return boardService.getAttachList(boardNo);
   }
 
 	@GetMapping("/search.do")
@@ -82,22 +80,27 @@ public class BoardController {
     return "redirect:/board/detail.do?boardNo=" + boardNo;
   }
   
-  // 게시글 수정 (지희)
   @PostMapping("/edit.do")
   public String edit(@RequestParam int boardNo, Model model) {
     model.addAttribute("board", boardService.getBoardByNo(boardNo));
     return "board/edit";
   }
   
-  // 게시글 수정 (지희)
   @PostMapping("/modify.do")
   public String modify(BoardDto board, RedirectAttributes redirectAttributes) {
-    redirectAttributes.addFlashAttribute("updateCount", boardService.modifyBoard(board));
- // return "redirect:/board/list.do";
-    return "redirect:/board/detail.do?boardNo=" + board.getBoardNo();
+    redirectAttributes
+      .addAttribute("boardNo", board.getBoardNo())
+      .addFlashAttribute("modifyResult", boardService.modifyBoard(board) == 1 ? "수정되었습니다." : "수정을 하지 못했습니다.");
+    return "redirect:/board/detail.do?boardNo={boardNo}";
   }
   
-  @PostMapping(value="/removeAttach.do", produces="application/json" )
+  
+  @PostMapping(value="/addAttach.do", produces="application/json")
+  public ResponseEntity<Map<String, Object>> addAttach(MultipartHttpServletRequest multipartRequest) throws Exception {
+    return boardService.addAttach(multipartRequest);
+  }
+  
+  @PostMapping(value="/removeAttach.do", produces="application/json")
   public ResponseEntity<Map<String, Object>> removeAttach(@RequestBody AttachDto attach) {
     return boardService.removeAttach(attach.getAttachNo());
   }

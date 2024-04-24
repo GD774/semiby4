@@ -211,6 +211,7 @@
    WHERE BOARD_NO = #{boardNo}
 </update>
 
+
 <!-- 첨부파일목록 (지희) -->
 <select id="getAttachList"
         resultType="AttachDto">
