@@ -145,7 +145,6 @@
 </form>
 
 
-
 <div id="comment-list"></div>
 <div id="paging"></div>
 
@@ -189,9 +188,19 @@ const fnCheckSignin = () => {
   }
 }
 
-	const fnRegisterComment = () => {    
+
+	const fnRegisterComment = () => {  
+		
 	  $('#btn-comment-register').on('click', (evt) => {
+		  
+	        const commentContents = $('#comment-contents').val();
+	        if (commentContents === '') {
+	            alert('댓글 내용을 입력해주세요.');
+	            return;
+	        }
+	        
 	    fnCheckSignin();
+	    
 	    $.ajax({
 	      // 요청
 	      type: 'POST',
@@ -208,7 +217,7 @@ const fnCheckSignin = () => {
 	        }
 	      },
 	      error: (jqXHR) => {
-	        alert(jqXHR.statusText + '(' + jqXHR.status + ')');
+	    	  alert(jqXHR.statusText + '(' + jqXHR.status + ')');
 	      }
 	    });
 	  });
