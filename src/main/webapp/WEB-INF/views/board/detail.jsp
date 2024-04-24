@@ -7,56 +7,108 @@
 
 <jsp:include page="../layout/header.jsp"/>
 
+<style>
 
+  #detail-wrap{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-items: flex-start;
+
+  }
+
+ #title{
+  width: 990px;
+  margin-bottom: 10px;
+  margin-left : 30px;
+  }
+  
+  #contents{
+  width: 990px;
+  height: 400px;
+  margin-left : 30px;
+  }
+  
+  #writer{
+  width: 300px;
+  margin-left : 30px;
+  }
+  
+   #createDt{
+  width: 300px;
+  margin-left : 30px;
+  margin-top : 15px;
+  }
+  
+   #modifyDt{
+  width: 300px;
+  margin-left : 30px;
+  margin-bottom : 40px;
+  }
+  
+  #comment-contents{
+  width: 990px;
+  margin-bottom: 10px;
+  margin-top: 20px;
+  }
+  
+  #btn-remove{
+  margin-left: 950px;
+  }
+  
+  hr {
+  border: 2px solid black;
+  }
+  
+  label {
+    padding-left: 25px;
+    margin-top: 20px;
+  }
+
+</style>
+
+ <div id="detail-wrap">
+
+ <div id="title-div">
+ <h1 class="title">상세보기</h1>
+ <hr>
+ </div>
 
 <div>
-  <span>작성자</span>
-  <span>${board.user.email}</span>
+  <label for="writer" >작성자</label>
+  <input type="text" class="form-control" id="writer" name="writer" value="${board.user.email}" readonly>
 </div>
 
 <div>
-  <span>제목</span>
-  <span>${board.hit}</span>
+  <label for="title" >제목</label>
+  <input type="text" class="form-control" id="title" name="title" value="${board.title}" readonly>
 </div>
 
 <div>
-  <span>내용</span>
-  <span>${board.contents}</span>
-</div>
+  <input type="text" id="contents" class="form-control" name="contents" value="${board.contents}" readonly>
+ </div>
 
-<div>
+
+<div id="createDt">
   <span>작성일자</span>
-  <span>
-    <fmt:formatDate value="${board.createDt}" pattern="yyyy-MM-dd HH:mm" />
-  </span>
+  <input type="text" value="<fmt:formatDate value="${board.createDt}" pattern="yyyy-MM-dd HH:mm" />" class="form-control">
 </div>
 
-<div>
+<div id="modifyDt">
   <span>최종수정일</span>
-  <span>
-    <fmt:formatDate value="${board.modifyDt}" pattern="yyyy-MM-dd HH:mm" />
-  </span>
+  <input type="text"  value=" <fmt:formatDate value="${board.modifyDt}" pattern="yyyy-MM-dd HH:mm" />" class="form-control">
 </div>
 
-<c:if test="${not empty sessionScope.user}">  
-    <c:if test="${sessionScope.user.userNo == board.user.userNo}">
-    <div>   
-    <form id="frm-btn" method="POST">
-        <input type="hidden" name="boardNo" value="${board.boardNo}">
-        
-        <button type="button" id="btn-remove" class="btn btn-danger btn-sm">삭제</button>
-    </form>
-    </div>
-   </c:if>
- </c:if>
+
 
 <!-- 첨부 목록 공간입니다.>>>>> ---------------------------------------------------------------------->
-<h3>첨부 파일 다운로드</h3>
+<span>첨부 파일 다운로드</span>
 <div>
   <c:if test="${empty attachList}">
-  <div>첨부 없음</div>
+  <div>첨부된 파일이 없습니다.</div>
   </c:if>
   <c:if test="${not empty attachList}">
+  <div>첨부파일 목록</div>
   <c:forEach items="${attachList}" var="attach">
   
   <div class="attach" data-attach-no="${attach.attachNo}">
@@ -78,11 +130,13 @@
 </div>
 
 
+
+
+
 <!-- <<<<< 첨부 목록 공간입니다. ---------------------------------------------------------------------->
-<hr>
 
 <form id="frm-comment">
-  <textarea id="contents" name="contents"></textarea>
+  <textarea id="comment-contents" name="contents" class="form-control" placeholder="인터넷은 여러분이 만들어가는 소중한 공간입니다."></textarea>
   <input type="hidden" name="boardNo" value="${board.boardNo}">
   <c:if test="${not empty sessionScope.user}">  
     <input type="hidden" name="userNo" value="${sessionScope.user.userNo}">
@@ -92,10 +146,35 @@
 
 
 
-<hr>
-
 <div id="comment-list"></div>
 <div id="paging"></div>
+
+
+<c:if test="${not empty sessionScope.user}">  
+    <c:if test="${sessionScope.user.userNo == board.user.userNo}">
+    <div>   
+    <form id="frm-btn" method="POST">
+        <input type="hidden" name="boardNo" value="${board.boardNo}">
+        <button type="button" id="btn-remove" class="btn btn-danger btn-sm">게시글 삭제</button>
+    </form>
+    </div>
+   </c:if>
+ </c:if>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
 
 <script>
 var page = 1;
@@ -154,7 +233,7 @@ const fnCommentList = () => {
       commentList.empty();
       paging.empty();
       if(resData.commentList.length === 0) {
-        commentList.append('<div>첫 번째 댓글의 주인공이 되어 보세요</div>');
+        commentList.append('<div>아직 등록된 댓글이 없습니다.</div>');
         paging.empty();
         return;
       }
@@ -173,16 +252,18 @@ const fnCommentList = () => {
         str += '</span>';
         str += '<div>' + comment.contents + '</div>';
 
-        if(comment.depth === 0) {
+        /*if(comment.depth === 0) {
           str += '<button type="button" class="btn btn-success btn-reply" >답글</button>';
         }
+        */
 
+       
          if(Number('${sessionScope.user.userNo}') === comment.user.userNo) {
            str += '<button type="button" class="btn btn-danger btn-remove" data=comment-no="' + comment.commentNo + '">삭제</button>';
          }
          
          /************************* 답글 입력 화면 *************************/
-         if(comment.depth === 0) { 
+         /*if(comment.depth === 0) { 
            str += '<div>';
            str +=   '<form class="frm-reply">';
            str +=     '<input type="hidden" name="groupNo" value="' + comment.groupNo + '">';
@@ -194,7 +275,8 @@ const fnCommentList = () => {
            str += '</div>'; 
          }
          /******************************************************************/  
-        str += '</div>';
+      
+         str += '</div>';
 
         commentList.append(str);
       })

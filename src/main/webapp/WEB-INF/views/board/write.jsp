@@ -8,10 +8,12 @@
 <jsp:include page="../layout/header.jsp"/>
 
   <style>
-  #main-wrap{
+  
+  #write-wrap{
   display: flex;
   flex-direction: column;
   align-items: center;
+  align-items: flex-start;
   }
   
   
@@ -74,7 +76,7 @@
   
 
      
- <div id="main-wrap">
+ <div id="write-wrap">
  <div id="title-div">
  <h1 class="title">글작성</h1>
  <hr>
