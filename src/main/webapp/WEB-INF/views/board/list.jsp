@@ -143,7 +143,7 @@ const fnResponse = () => {
 }
 
 fnResponse();
-fnDisplay();
+// fnDisplay();
 fnSort();
 
 </script>

@@ -116,10 +116,10 @@
   <label for="files">첨부</label>
   <input class="form-control" type="file" name="files" id="files" multiple>
  </div>
- 
+
  <label for="attach-list">첨부파일목록</label>
  <div id="attach-list"></div>
- 
+
  <div id="buttons">
  <input type="hidden" name="userNo" value="${sessionScope.user.userNo}">
  <button type="submit">작성완료</button>
