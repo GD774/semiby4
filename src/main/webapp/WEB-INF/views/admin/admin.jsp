@@ -11,6 +11,9 @@
   .search-form {
     float: left;
   }
+  .selected {
+  background-color: #e0e0e0;  // 선택된 행의 배경색
+  }
 </style>
 
 <h1 class="title">관리자 메인</h1>
@@ -28,15 +31,14 @@
             <th>이름</th>
             <th>이메일</th>
             <th>가입날짜</th>
-            <th>게시글 수</th>
-            <th>댓글 수</th>
+            <th></th>
         </tr>
     </thead>
     <tbody id="userTableBody">
        <c:forEach items="${userList}" var="user">
       <tr>
           <td>${user.userNo}</td>
-          <td id="userLink" class="userLink">${user.userId}</td>
+          <td class="userLink">${user.userId}</td>
           <td>${user.name}</td>
           <td>${user.email}</td>
           <td>${user.signupDt}</td>
@@ -81,6 +83,7 @@ fngetuserInfo('');
 */
 
 $(document).ready(function() {
+  var selectedRow = null;
   // 페이지 로드 시 사용자 정보를 가져옵니다.
   loadUserInfo();
 
@@ -91,23 +94,44 @@ $(document).ready(function() {
   });
   
   // 각 사용자 아이디 클릭 이벤트
+  /*
   $("#userTableBody").on("click", ".userLink", function() {
       var userId = $(this).data("userid");  // 데이터 속성 값 가져오기
       window.location.href = "mypage.jsp?userId=" + userId;
   });
+  */
   
-  $("#deleteBtn").click(function() {
-    console.log("deleteBtn 클릭 확인");  // 클릭 이벤트 확인 로그
-    var userId = $("#searchId").val();  // 입력된 userId 값 가져오기
-    dropUserById(userId);  // userId 기준으로 사용자 비활성화 함수 호출
+  //각 사용자 아이디 클릭 이벤트
+  $("#userTableBody").on("click", "tr", function() {
+    // 이전에 선택된 행의 스타일을 제거
+    if (selectedRow) {
+      selectedRow.removeClass("selected");
+    }
+    // 선택한 행의 스타일을 변경하고 선택된 행을 저장
+    $(this).addClass("selected");
+    selectedRow = $(this);
+    /*
+    수정 전 테이블 클릭 시, 바로 삭제 확인.
+    var userId = $(this).find("td:eq(1)").text();  // 클릭된 td의 텍스트(아이디) 가져오기
+    dropUserById(userId);  // userId 기준으로 사용자 삭제 함수 호출
+    */
   });
   
+  $("#deleteBtn").click(function() {
+    if (selectedRow) {
+      var userId = selectedRow.find("td:eq(1)").text();  // 선택된 행에서 아이디 가져오기
+      dropUserById(userId);
+      //var userId = $("#searchId").val();  // 입력된 userId 값 가져오기
+      // 선택 상태 해제
+      selectedRow.removeClass("selected");
+      selectedRow = null;
+    } else {
+      alert("삭제할 사용자를 선택해주세요.");
+    }
+  });
 });
 
-$(document).ready(function() {
-  // 페이지 로드 시 사용자 정보를 가져옵니다.
-  loadUserInfo();
-});
+
 
 function loadUserInfo() {
   $.ajax({
@@ -162,7 +186,8 @@ function displayUserInfo(userList) {
       tableBody.append(row);
   });
 }
-
+/*
+// userId 비활성화 
 function dropUserById(userId) {
   console.log("dropUserById 함수 호출 확인: " + userId); 
   $.ajax({
@@ -182,6 +207,37 @@ function dropUserById(userId) {
           console.error("사용자 비활성 문제 생김", error);
       }
   });
+}
+*/
+
+function dropUserById(userId) {
+  // 사용자에게 삭제 여부를 확인하는 메시지 표시
+  if (confirm("사용자를 삭제하시겠습니까?")) {
+    console.log("dropUserById 함수 호출 확인:" + userId);
+    $.ajax({
+       url: "${contextPath}/admin/dropId",
+       data: {
+         userId: userId,
+       },
+       // dataType: "json",
+       type: "POST",
+       success: function(resData) {
+         console.log("성공");
+         loadUserInfo();
+       },
+       error: function(errmsg) {
+         console.log("실패" + errmsg + ", " + errmsg.status + ", " + errmsg.statusText);
+       }
+    }); 
+  } else {
+    console.log("사용자 삭제 취소");
+  }
+}
+
+const fnMypage = () => {
+  $(document).on('click', '.userLink', (evt) => {
+      location.href = '${contextPath}/mypage/mypage.page';
+  })
 }
 
 </script>

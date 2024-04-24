@@ -38,7 +38,7 @@ public class AdminController {
     super();
     this.adminService = adminService;
   }
-
+  
   @GetMapping("/admin.page")
   public String adminPage(Model model) {
     System.out.println("메인 페이지로");
@@ -61,13 +61,23 @@ public class AdminController {
       }
       return new ResponseEntity<>(userList, HttpStatus.OK);
   }
-  
-//  @PostMapping("/dropId.do")
-//  public ResponseEntity<String> dropID(@RequestParam String id) {
-//    adminService.dropUser(id);
-//    return new ResponseEntity<>("유저를 차단하였습니다.", HttpStatus.OK);
-//  }
-  
+ 
+/*
+ // 기존 식
+  @GetMapping("/adminUserList.do")      // 기존 controller는 Ajax에서 data 요청 보낸 것을 받을 때 문제가 있었음.
+  public ResponseEntity<Map<String, Object>> userList(HttpServletRequest request, Model model) {
+    System.out.println("유저 인포, 컨트롤러");
+    Map<String, Object> params = new HashMap<String, Object>();
+    String userId = request.getParameter("userId");
+    if(userId != null) {
+      params.put("userId", userId);
+      model.addAttribute("userId", userId);
+    }
+    return adminService.adminuserList(params);
+  }
+*/
+  //기존 사용자 비활성화 식 : 미완성
+  /*
   @DeleteMapping("/{userId}")
   public ResponseEntity<Map<String, Object>> dropUser(@PathVariable String userId) {
       try {
@@ -80,48 +90,16 @@ public class AdminController {
                   .body(Map.of("success", false, "message", "사용자 비활성 실패: " + e.getMessage()));
       }
   }
-  
-/*
-  @GetMapping("/adminUserList.do")      // 기존 controller는 Ajax에서 data 요청 보낸 것을 받을 때 문제가 있었음.
-  public ResponseEntity<Map<String, Object>> userList(HttpServletRequest request, Model model) {
-    System.out.println("유저 인포, 컨트롤러");
-    Map<String, Object> params = new HashMap<String, Object>();
-    String userId = request.getParameter("userId");
-    if(userId != null) {
-      params.put("userId", userId);
-      model.addAttribute("userId", userId);
-    }
-    return adminService.adminuserList(params);
-  }
-*/  
-  /*
-   
-
-  
-  @ResponseBody
-  @PostMapping("/getUserBoardList")
-  public List<BoardVO> getUserBoardList(String board_writer) {
-    System.out.println("open! user boardList ajax!");
-    System.out.println("조회할 회원 아이디 : " + board_writer);
-    List<BoardVO> list = service.getUserBoardList(board_writer);
-    
-    return list;
-  }
-
-  @ResponseBody
-  @PostMapping("/successId")
-  public void successId(String id) {
-    System.out.println(id);
-    System.out.println("open! user sign success Id ajax!");
-    UserService.successId(id);
-  }
-  
-  @ResponseBody
+  */
   @PostMapping("/dropId")
-  public void dropID(String id) {
-    UserService.dropUser(id);
+  @ResponseBody
+  public String dropID(String userId) {
+    System.out.println("새롭고 새롭게 최대한 알아볼 수 있는 무언어넉ㄱ사" + userId);
+    adminService.dropUser(userId);
+    System.out.println("최대한 알아볼 수 없음");
+    return "arbitrary message";
   }
-   */
   
+
   
 }

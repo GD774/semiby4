@@ -17,6 +17,7 @@ public class AdminServiceImpl implements AdminService {
     this.userMapper = userMapper;
   }
   
+  /*
   @Override
   public void dropUser(UserDto user) {
     try {
@@ -36,13 +37,10 @@ public class AdminServiceImpl implements AdminService {
       throw new RuntimeException("사용자 권한 업데이트 실패", e);
     }
   }
-
+  */
 
   
-//  @Override
-//  public void dropUser(String userId) {
-//    userMapper.dropUser(userId);
-//  }
+
 /*
 @Override
 public ResponseEntity<Map<String, Object>> getuserInfo(Map<String, Object> params) {
@@ -65,5 +63,10 @@ public ResponseEntity<Map<String, Object>> getuserInfo(Map<String, Object> param
       return userMapper.getuserInfo(userId);
   }  
   
+  @Override
+  public void dropUser(String userId) {
+    System.out.println("userId 메서드 호출 확인: " + userId);
+    userMapper.dropUser(userId);
+  }
   
 }

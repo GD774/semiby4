@@ -14,8 +14,6 @@ public interface UserMapper {
   int deleteUser(int userNo);
   List<UserDto> getuserInfo(String userId);
   List<UserDto> adminUserList();
-  //void dropUser(String userId);
-  void dropUser(UserDto user);
-  //UserDto getDisabledUser(String email);
+  void dropUser(String userId);
 }
   

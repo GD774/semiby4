@@ -14,5 +14,5 @@ import lombok.NoArgsConstructor;
 public class UserDto {
   private int userNo, role;
   private String userId, pw, email, name, gender, mobile;
-  private Date pwModifyDt, signupDt;
+  private Date pwModifyDt, signupDt, deletedDt;
 }

@@ -22,5 +22,5 @@ public interface UserService {
   String getRedirectURLAfterSignin(HttpServletRequest request);  
   void signin(HttpServletRequest request, HttpServletResponse response);
   void signout(HttpServletRequest request, HttpServletResponse response);
-
+ 
 }

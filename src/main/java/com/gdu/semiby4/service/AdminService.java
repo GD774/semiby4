@@ -10,6 +10,6 @@ public interface AdminService {
   //dropUser
   List<UserDto> adminUserList();
   List<UserDto> getuserInfo(String userId);
-  //void dropUser(String id);
-  void dropUser(UserDto user);
+  void dropUser(String userId);
+  //void dropUser(UserDto user);
 }

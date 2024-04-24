@@ -16,6 +16,7 @@
     <result  property="mobile"       column="MOBILE" />
     <result  property="pwModifyDt"   column="PW_MODIFY_DT" />
     <result  property="signupDt"     column="SIGNUP_DT" />
+    <result  property="deletedDt"    column="DELETED_DT" />
   </resultMap>
 
   <select id="getUserByMap"
@@ -42,6 +43,7 @@
     , MOBILE
     , PW_MODIFY_DT
     , SIGNUP_DT
+    , DELETED_DT
     ) VALUES (
         USER_SEQ.NEXTVAL
       , 0
@@ -53,6 +55,7 @@
       , #{mobile}
       , CURRENT_DATE
       , CURRENT_DATE
+      , NULL
     )
   </insert>
 
@@ -65,46 +68,53 @@
 
 <select id="adminUserList"
          resultMap="UserMap">
-    SELECT U.USER_NO, U.USER_ID, U.NAME, U.EMAIL, U.SIGNUP_DT,
+    SELECT U.USER_NO, U.USER_ID, U.NAME, U.EMAIL, U.SIGNUP_DT, U.DELETED_DT,
     <!-- board_cnt, comment_cnt 로 추가 작업 혹은 삭제 예정 -->
            COUNT(DISTINCT B.BOARD_NO) AS BOARD_CNT,     
            COUNT(DISTINCT C.COMMENT_NO) AS COMMENT_CNT
       FROM USER_T U
  LEFT JOIN BOARD_T B ON U.USER_NO = B.USER_NO
  LEFT JOIN COMMENT_T C ON U.USER_NO = C.USER_NO
-     GROUP BY U.USER_NO, U.USER_ID, U.NAME, U.EMAIL, U.SIGNUP_DT
+     GROUP BY U.USER_NO, U.USER_ID, U.NAME, U.EMAIL, U.SIGNUP_DT, U.DELETED_DT
      ORDER BY U.SIGNUP_DT DESC
 </select>
 
 <select id="getuserInfo" 
         resultType="UserDto">
- SELECT U.USER_NO, U.USER_ID, U.NAME, U.EMAIL, U.SIGNUP_DT,
+ SELECT U.USER_NO, U.USER_ID, U.NAME, U.EMAIL, U.SIGNUP_DT, U.DELETED_DT,
            COUNT(DISTINCT B.BOARD_NO) AS BOARD_CNT,     
            COUNT(DISTINCT C.COMMENT_NO) AS COMMENT_CNT
       FROM USER_T U
  LEFT JOIN BOARD_T B ON U.USER_NO = B.USER_NO
  LEFT JOIN COMMENT_T C ON U.USER_NO = C.USER_NO
      WHERE U.USER_ID = #{userId, jdbcType=VARCHAR}
-     GROUP BY U.USER_NO, U.USER_ID, U.NAME, U.EMAIL, U.SIGNUP_DT
+     GROUP BY U.USER_NO, U.USER_ID, U.NAME, U.EMAIL, U.SIGNUP_DT, DELETED_DT
      ORDER BY U.SIGNUP_DT DESC
 </select>
 
 <update id="dropUser">
   UPDATE USER_T
-     SET ROLE = 2 
-   WHERE USER_ID = #{userId}
+     SET DELETED_DT = CURRENT_DATE
+   WHERE USER_ID = #{userId} AND DELETED_DT IS NULL
 </update>
 
-<!-- 
-<select id="getDisabledUser">
+<select id="getDroppedUser"
+        resultType="UserDto">
   SELECT * 
     FROM USER_T 
-   WHERE EMAIL = #{email} AND ROLE = 2
+   WHERE USER_ID = #{userId} AND DELETED_DT IS NOT NULL
 </select>
+
+
+<!-- 
  -->
 
 <!-- 
-
+<update id="dropUser">
+  UPDATE USER_T
+     SET ROLE = 2 
+   WHERE USER_ID = #{userId}
+</update>
 
 
 
