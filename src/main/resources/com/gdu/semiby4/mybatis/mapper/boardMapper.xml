@@ -10,8 +10,8 @@
     <result property="hit"       column="HIT"/>
     <result property="title"       column="TITLE"/>
     <result property="contents"    column="CONTENTS"/>
-    <result property="createDt"    column="CREATE_DT"/>
-    <result property="modifyDt"    column="MODIFY_DT"/>
+    <result property="createDt" column="CREATE_DT"/>
+    <result property="modifyDt" column="MODIFY_DT"/>
     <association property="user" javaType="UserDto">
       <id     property="userNo" column="USER_NO"/>
       <result property="email"  column="EMAIL"/>
@@ -32,26 +32,38 @@
     </association>
   </resultMap>
 
-  <select id="getBoardCount">
+  <select id="getBoardCount"
+          resultType="int">
     SELECT COUNT(*)
       FROM BOARD_T
   </select>
   
-  <select id="getBoardList"
-          parameterType="Map"
-          resultMap="BoardMap">
-    SELECT BOARD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT
-         , USER_NO, EMAIL
-      FROM (SELECT ROW_NUMBER() OVER (ORDER BY BOARD_NO ${sort}) AS RN
-                 , B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT
-                 , USR.USER_NO, USR.EMAIL
-                 , (SELECT COUNT(*)
-                      FROM ATTACH_T ATC
-                     WHERE B.BOARD_NO = ATC.BOARD_NO) AS ATTACH_COUNT
-              FROM USER_T USR INNER JOIN BOARD_T B
-                ON USR.USER_NO = B.USER_NO)
-     WHERE RN BETWEEN #{begin} AND #{end}
-  </select>
+<select id="getBoardList"
+        parameterType="Map"
+        resultMap="BoardMap">
+    SELECT BOARD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT, USER_NO, EMAIL, HIT
+    FROM (
+        SELECT ROW_NUMBER() OVER (
+            ORDER BY
+                CASE WHEN #{sort} = 'ASC' THEN BOARD_NO END ASC,
+                CASE WHEN #{sort} = 'DESC' THEN BOARD_NO END DESC,
+                CASE WHEN #{sort} = 'VIEW_COUNT_DESC' THEN HIT END DESC
+        ) AS RN,
+        B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT, B.HIT,
+        U.USER_NO, U.EMAIL
+        FROM BOARD_T B
+        INNER JOIN USER_T U ON B.USER_NO = U.USER_NO
+    )
+    WHERE RN BETWEEN #{begin} AND #{end}
+</select>
+
+
+   
+  <update id="updateHit">
+    UPDATE BOARD_T
+       SET HIT = HIT + 1
+     WHERE BOARD_NO = #{boardNo}
+  </update>
   
   <select id="getBoardByNo"
           resultMap="BoardMap">
@@ -162,14 +174,65 @@
         WHERE ${column} LIKE '%' || #{query} || '%'
   </select>
   
-  <select id="getSearchList"
-          parameterType="Map"
-          resultMap="BoardMap">          
-    SELECT BOARD_NO, USER_NO, TITLE, CONTENTS, HIT, CREATE_DT, MODIFY_DT
-      FROM (SELECT ROW_NUMBER() OVER(ORDER BY BOARD_NO DESC, USER_NO ASC) AS RN, B.BOARD_NO, B.CONTENTS, U.USER_NO, U.EMAIL, B.CREATE_DT, B.HIT, B.TITLE
-              FROM USER_T U INNER JOIN BOARD_T B
-                ON U.USER_NO = B.USER_NO
-             WHERE ${column} LIKE CONCAT(CONCAT('%', #{query}), '%'))
-     WHERE RN BETWEEN #{begin} AND #{end}
-  </select>
+<select id="getSearchList" parameterType="Map" resultMap="BoardMap">
+   SELECT BOARD_NO, USER_NO, TITLE, CONTENTS, HIT, CREATE_DT, MODIFY_DT, EMAIL
+    FROM (
+        SELECT ROW_NUMBER() OVER(ORDER BY B.BOARD_NO DESC, U.USER_NO ASC) AS RN,
+               B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT, B.HIT,
+               U.USER_NO, U.EMAIL
+        FROM USER_T U
+        INNER JOIN BOARD_T B ON U.USER_NO = B.USER_NO
+        WHERE 
+            <choose>
+                <when test="column == 'B.TITLE'">
+                    B.TITLE LIKE '%' || #{query} || '%'
+                </when>
+                <when test="column == 'U.EMAIL'">
+                    U.EMAIL LIKE '%' || #{query} || '%'
+                </when>
+                <when test="column == 'B.CONTENTS'">
+                    B.CONTENTS LIKE '%' || #{query} || '%'
+                </when>
+                <otherwise>
+                    1=1
+                </otherwise>
+            </choose>
+    )
+   WHERE RN BETWEEN #{begin} AND #{end}
+</select>
+
+<!-- 게시글 수정(지희) -->
+<update id="updateBoard"
+        parameterType="BoardDto">
+  UPDATE BOARD_T
+     SET TITLE = #{title}
+       , CONTENTS = #{contents}
+       , MODIFY_DT = SYSTIMESTAMP
+   WHERE BOARD_NO = #{boardNo}
+</update>
+
+<!-- 첨부파일목록 (지희) -->
+<select id="getAttachList"
+        resultType="AttachDto">
+  SELECT ATTACH_NO, UPLOAD_PATH, FILESYSTEM_NAME, ORIGINAL_FILENAME, DOWNLOAD_COUNT, HAS_THUMBNAIL
+    FROM ATTACH_T
+   WHERE BOARD_NO = #{boardNo}
+</select>
+
+<select id="getAttachByNo"
+        resultType="AttachDto">
+  SELECT ATTACH_NO, UPLOAD_PATH, FILESYSTEM_NAME, ORIGINAL_FILENAME, DOWNLOAD_COUNT, HAS_THUMBNAIL
+    FROM ATTACH_T
+   WHERE ATTACH_NO = #{attachNo}
+</select>
+
+<delete id="deleteAttach">
+  DELETE
+    FROM ATTACH_T
+   WHERE ATTACH_NO = #{attachNo}
+</delete>
+
+
+
+
 </mapper>

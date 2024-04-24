@@ -5,6 +5,8 @@
 <c:set var="contextPath" value="<%=request.getContextPath() %>" />
 <c:set var="dt" value="<%=System.currentTimeMillis() %>" />
 
+<jsp:include page="../layout/header.jsp"/>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -35,6 +37,35 @@
   <span>내용</span>
   <span>${board.contents}</span>
 </div>
+
+<!-- 수정이 추가되었으니 작성일자와 최종수정일도 추가합니다 (지희) -->
+<div>
+  <span>작성일자</span>
+  <span>
+    <fmt:formatDate value="${board.createDt}" pattern="yyyy-MM-dd HH:mm" />
+  </span>
+</div>
+
+<div>
+  <span>최종수정일</span>
+  <span>
+    <fmt:formatDate value="${board.modifyDt}" pattern="yyyy-MM-dd HH:mm" />
+  </span>
+</div>
+
+
+<!-- 수정버튼 삽입을 위해 추가(지희) -->
+<div>
+  <c:if test="${not empty sessionScope.user}">  
+    <c:if test="${sessionScope.user.userNo == board.user.userNo}">
+      <form id="frm-btn" method="POST">  
+        <input type="hidden" name="boardNo" value="${board.boardNo}">
+        <button type="button" id="btn-edit" class="btn btn-warning btn-sm">수정</button>
+      </form>
+    </c:if>
+  </c:if>
+</div>
+
 
 <hr>
 
@@ -164,10 +195,21 @@ const fnPaging = (p) => {
   fnCommentList();
 }
 
+// 수정 화면으로 넘어가기 위해 추가
+var frmBtn = document.getElementById('frm-btn');
+
+const fnEditBoard = () => {
+  document.getElementById('btn-edit').addEventListener('click', (evt) => {
+    frmBtn.action = '${contextPath}/board/edit.do';
+    frmBtn.submit();
+  })
+}
+
 
 $('#contents').on('click', fnCheckSignin);
 fnRegisterComment();
 fnCommentList();
+fnEditBoard();
 
 
 </script>
