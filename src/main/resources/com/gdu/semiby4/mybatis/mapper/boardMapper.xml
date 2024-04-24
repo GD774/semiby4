@@ -12,8 +12,11 @@
     <result property="contents"    column="CONTENTS"/>
     <result property="createDt"    column="CREATE_DT"/>
     <result property="modifyDt"    column="MODIFY_DT"/>
+    <result property="attachCount" column="ATTACH_COUNT"/>
+    <result property="cateNo" column="CATE_NO"/>
     <association property="user" javaType="UserDto">
       <id     property="userNo" column="USER_NO"/>
+      <result property="userId"  column="USER_ID" />
       <result property="email"  column="EMAIL"/>
     </association>
   </resultMap>
@@ -28,30 +31,45 @@
     <result property="createDt"  column="CREATE_DT" />
     <association property="user" javaType="UserDto">
       <id     property="userNo" column="USER_NO" />
+      <result property="userId"  column="USER_ID" />
       <result property="email"  column="EMAIL" />
     </association>
+
   </resultMap>
 
-  <select id="getBoardCount">
+  <select id="getBoardCount"
+          resultType="int">
     SELECT COUNT(*)
       FROM BOARD_T
   </select>
-  
-  <select id="getBoardList"
-          parameterType="Map"
-          resultMap="BoardMap">
-    SELECT BOARD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT
-         , USER_NO, EMAIL
-      FROM (SELECT ROW_NUMBER() OVER (ORDER BY BOARD_NO ${sort}) AS RN
-                 , B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT
-                 , USR.USER_NO, USR.EMAIL
-                 , (SELECT COUNT(*)
-                      FROM ATTACH_T ATC
-                     WHERE B.BOARD_NO = ATC.BOARD_NO) AS ATTACH_COUNT
-              FROM USER_T USR INNER JOIN BOARD_T B
-                ON USR.USER_NO = B.USER_NO)
-     WHERE RN BETWEEN #{begin} AND #{end}
-  </select>
+
+<select id="getBoardList"
+        parameterType="Map"
+        resultMap="BoardMap">
+    SELECT BOARD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT, USER_NO, EMAIL, HIT, ATTACH_COUNT
+    FROM (
+        SELECT ROW_NUMBER() OVER (
+            ORDER BY
+                CASE WHEN #{sort} = 'ASC' THEN BOARD_NO END ASC,
+                CASE WHEN #{sort} = 'DESC' THEN BOARD_NO END DESC,
+                CASE WHEN #{sort} = 'VIEW_COUNT_DESC' THEN HIT END DESC
+        ) AS RN,
+        B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT, B.HIT,
+        U.USER_NO, U.EMAIL
+		, (SELECT COUNT(*)
+             FROM ATTACH_T ATC
+            WHERE B.BOARD_NO = ATC.BOARD_NO) AS ATTACH_COUNT
+		from user_t u inner join board_t b
+		  on u.user_no = b.user_no
+	)
+    WHERE RN BETWEEN #{begin} AND #{end}
+</select>
+
+  <update id="updateHit">
+    UPDATE BOARD_T
+       SET HIT = HIT + 1
+     WHERE BOARD_NO = #{boardNo}
+  </update>
   
   <select id="getBoardByNo"
           resultMap="BoardMap">
@@ -72,6 +90,7 @@
           BOARD_NO
         , TITLE
         , CONTENTS
+        , CATE_NO
         , CREATE_DT
         , MODIFY_DT
         , USER_NO  
@@ -79,6 +98,7 @@
           #{boardNo}
         , #{title}
         , #{contents}
+        , #{cateNo}
         , SYSTIMESTAMP
         , SYSTIMESTAMP 
         , #{user.userNo}
@@ -162,14 +182,124 @@
         WHERE ${column} LIKE '%' || #{query} || '%'
   </select>
   
-  <select id="getSearchList"
-          parameterType="Map"
-          resultMap="BoardMap">          
-    SELECT BOARD_NO, USER_NO, TITLE, CONTENTS, HIT, CREATE_DT, MODIFY_DT
-      FROM (SELECT ROW_NUMBER() OVER(ORDER BY BOARD_NO DESC, USER_NO ASC) AS RN, B.BOARD_NO, B.CONTENTS, U.USER_NO, U.EMAIL, B.CREATE_DT, B.HIT, B.TITLE
-              FROM USER_T U INNER JOIN BOARD_T B
-                ON U.USER_NO = B.USER_NO
-             WHERE ${column} LIKE CONCAT(CONCAT('%', #{query}), '%'))
-     WHERE RN BETWEEN #{begin} AND #{end}
+  <!-- 순지선이 추가 -->
+  
+  <select id="getAttachList"
+          resultType="AttachDto">
+   SELECT ATTACH_NO
+    , UPLOAD_PATH
+    , FILESYSTEM_NAME
+    , ORIGINAL_FILENAME
+    , DOWNLOAD_COUNT
+    , HAS_THUMBNAIL
+    , BOARD_NO
+   FROM ATTACH_T
+   WHERE BOARD_NO = #{boardNo}
   </select>
+  
+  <select id="getAttachByNo"
+          resultType="AttachDto">
+   SELECT  ATTACH_NO
+    , UPLOAD_PATH
+    , FILESYSTEM_NAME
+    , ORIGINAL_FILENAME
+    , DOWNLOAD_COUNT
+    , HAS_THUMBNAIL
+   FROM ATTACH_T
+   WHERE ATTACH_NO = #{attachNo}
+   </select>
+   
+   <update id="updateDownloadCount">
+  UPDATE ATTACH_T
+     SET DOWNLOAD_COUNT = DOWNLOAD_COUNT + 1
+   WHERE ATTACH_NO = #{attachNo}
+  </update>  
+  
+   <!-- 순지선이 멀티리스트를 위해 추가 -->
+    <select id="getBoardMultiList"
+          parameterType="Map"
+          resultMap="BoardMap">
+    SELECT BOARD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT
+         , USER_NO, USER_ID, EMAIL, CATE_NO, ATTACH_COUNT
+    FROM (SELECT ROW_NUMBER() OVER (ORDER BY BOARD_NO DESC) AS RN
+             , B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT
+             , USR.USER_NO, USR.USER_ID, USR.EMAIL, CATE_NO
+             , (SELECT COUNT(*)
+                  FROM ATTACH_T ATC
+                 WHERE B.BOARD_NO = ATC.BOARD_NO) AS ATTACH_COUNT
+          FROM USER_T USR INNER JOIN BOARD_T B
+            ON USR.USER_NO = B.USER_NO
+            WHERE CATE_NO = #{cateNo})
+    WHERE RN BETWEEN 1 AND 5
+    
+  </select>
+  
+  <!-- 순지선이 멀티리스트를 위해 추가 -->
+    <select id="getBoardDetailList"
+          parameterType="Map"
+          resultMap="BoardMap">
+    SELECT BOARD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT
+         , USER_NO, USER_ID, EMAIL, CATE_NO, ATTACH_COUNT
+      FROM (SELECT ROW_NUMBER() OVER (ORDER BY BOARD_NO ${sort}) AS RN
+                 , B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT
+                 , USR.USER_NO, USR.USER_ID, USR.EMAIL, CATE_NO
+                 , (SELECT COUNT(*)
+                      FROM ATTACH_T ATC
+                     WHERE B.BOARD_NO = ATC.BOARD_NO) AS ATTACH_COUNT
+              FROM USER_T USR INNER JOIN BOARD_T B
+                ON USR.USER_NO = B.USER_NO)
+      WHERE RN BETWEEN #{begin} AND #{end} AND CATE_NO = #{cateNo}
+    
+  </select>
+  
+  <!-- 삭제를 위해 추가 -->
+  <delete id="deleteAttach">
+    DELETE
+      FROM ATTACH_T
+     WHERE ATTACH_NO = #{attachNo}
+  </delete>
+  
+  <delete id="deleteBoard">
+    DELETE
+      FROM BOARD_T
+     WHERE BOARD_NO = #{boardNo}
+  </delete>                   
+
+<select id="getSearchList" parameterType="Map" resultMap="BoardMap">
+   SELECT BOARD_NO, USER_NO, TITLE, CONTENTS, HIT, CREATE_DT, MODIFY_DT, EMAIL
+    FROM (
+        SELECT ROW_NUMBER() OVER(ORDER BY B.BOARD_NO DESC, U.USER_NO ASC) AS RN,
+               B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT, B.HIT,
+               U.USER_NO, U.EMAIL
+        FROM USER_T U
+        INNER JOIN BOARD_T B ON U.USER_NO = B.USER_NO
+        WHERE 
+            <choose>
+                <when test="column == 'B.TITLE'">
+                    B.TITLE LIKE '%' || #{query} || '%'
+                </when>
+                <when test="column == 'U.EMAIL'">
+                    U.EMAIL LIKE '%' || #{query} || '%'
+                </when>
+                <when test="column == 'B.CONTENTS'">
+                    B.CONTENTS LIKE '%' || #{query} || '%'
+                </when>
+                <otherwise>
+                    1=1
+                </otherwise>
+            </choose>
+    )
+   WHERE RN BETWEEN #{begin} AND #{end}
+</select>
+
+<!-- 게시글 수정(지희) -->
+<update id="updateBoard"
+        parameterType="BoardDto">
+  UPDATE BOARD_T
+     SET TITLE = #{title}
+       , CONTENTS = #{contents}
+       , MODIFY_DT = SYSTIMESTAMP
+   WHERE BOARD_NO = #{boardNo}
+</update>
+
 </mapper>

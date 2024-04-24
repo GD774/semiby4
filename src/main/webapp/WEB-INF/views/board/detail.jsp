@@ -5,21 +5,7 @@
 <c:set var="contextPath" value="<%=request.getContextPath() %>" />
 <c:set var="dt" value="<%=System.currentTimeMillis() %>" />
 
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-
-  <!-- include libraries(jquery, bootstrap) -->
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-
-  <!-- include moment.js -->
-  <script src="${contextPath}/resources/moment/moment-with-locales.min.js"></script>
-
-  <title>상세화면</title>
-</head>
-<body>
+<jsp:include page="../layout/header.jsp"/>
 
 <div>
   <span>작성자</span>
@@ -36,6 +22,71 @@
   <span>${board.contents}</span>
 </div>
 
+<!-- 수정이 추가되었으니 작성일자와 최종수정일도 추가합니다 (지희) -->
+
+<div>
+  <span>작성일자</span>
+  <span>
+    <fmt:formatDate value="${board.createDt}" pattern="yyyy-MM-dd HH:mm" />
+  </span>
+</div>
+
+<div>
+  <span>최종수정일</span>
+  <span>
+    <fmt:formatDate value="${board.modifyDt}" pattern="yyyy-MM-dd HH:mm" />
+  </span>
+</div>
+
+<c:if test="${not empty sessionScope.user}">  
+  <c:if test="${sessionScope.user.userNo == board.user.userNo}">
+    <div>   
+      <form id="frm-btn" method="POST">
+        <input type="hidden" name="boardNo" value="${board.boardNo}">
+        <button type="button" id="btn-remove" class="btn btn-danger btn-sm">삭제</button>
+      </form>
+    </div>
+  </c:if>
+</c:if>
+
+<!-- 첨부 목록 공간입니다.>>>>> ---------------------------------------------------------------------->
+<h3>첨부 파일 다운로드</h3>
+<div>
+  <c:if test="${empty attachList}">
+	<div>첨부 없음</div>
+  </c:if>
+  <c:if test="${not empty attachList}">
+	<c:forEach items="${attachList}" var="attach">
+	  <div class="attach" data-attach-no="${attach.attachNo}">
+		<c:if test="${attach.hasThumbnail == 1}">
+		  <img src="${contextPath}${attach.uploadPath}/s_${attach.filesystemName}">
+		</c:if>
+		<c:if test="${attach.hasThumbnail == 0}">
+		  <img src="${contextPath}/resources/images/attach.png" width="96px">
+		</c:if>
+		<a>${attach.originalFilename}</a>
+	  </div>
+	</c:forEach>
+	<div>
+      <a id="download-all" href="${contextPath}/board/downloadAll.do?boardNo=${board.boardNo}">모두 다운로드</a>
+	</div>
+  </c:if>
+</div>
+
+<!-- 수정버튼 삽입을 위해 추가(지희) -->
+<div>
+  <c:if test="${not empty sessionScope.user}">  
+    <c:if test="${sessionScope.user.userNo == board.user.userNo}">
+      <form id="frm-btn" method="POST">  
+        <input type="hidden" name="boardNo" value="${board.boardNo}">
+        <button type="button" id="btn-edit" class="btn btn-warning btn-sm">수정</button>
+      </form>
+    </c:if>
+  </c:if>
+</div>
+
+<!-- <<<<< 첨부 목록 공간입니다. ---------------------------------------------------------------------->
+
 <hr>
 
 <form id="frm-comment">
@@ -47,12 +98,16 @@
   <button type="button" id="btn-comment-register">댓글등록</button>
 </form>
 
+
+
 <hr>
 
 <div id="comment-list"></div>
 <div id="paging"></div>
 
 <script>
+var page = 1;
+var frmBtn = document.getElementById('frm-btn');
 
 
 const fnCheckSignin = () => {
@@ -62,6 +117,7 @@ const fnCheckSignin = () => {
     }
   }
 }
+
 
 const fnRegisterComment = () => {    
   $('#btn-comment-register').on('click', (evt) => {
@@ -91,7 +147,7 @@ const fnRegisterComment = () => {
 }
 
 
-var page = 1;
+
 
 const fnCommentList = () => {       
   $.ajax({
@@ -134,11 +190,11 @@ const fnCommentList = () => {
          }
          
          /************************* 답글 입력 화면 *************************/
-         if(comment.depth === 0) {    // 첫번째 댓글 후 대댓글을 달 수 없도록 조건을 주는 if 문: depth로 결정한다.
+         if(comment.depth === 0) { 
            str += '<div>';
            str +=   '<form class="frm-reply">';
            str +=     '<input type="hidden" name="groupNo" value="' + comment.groupNo + '">';
-           str +=     '<input type="hidden" name="boardNo" value="${board.boardNo}">';  // 상세보기 blogNo
+           str +=     '<input type="hidden" name="boardNo" value="${board.boardNo}">'; 
            str +=     '<input type="hidden" name="userNo" value ="${sessionScope.user.userNo}">'; 
            str +=     '<textarea name="contents" placeholder="답글 입력"></textarea>';
            str +=     '<button type="button" class="btn btn-warning btn-register-reply">작성완료</button>';
@@ -164,13 +220,67 @@ const fnPaging = (p) => {
   fnCommentList();
 }
 
+//------------------------------------ 삭제 구현---------------------------------->>
+
+const fnRemoveBoard = () => {
+  document.getElementById('btn-remove').addEventListener('click', (evt) => {
+    if(confirm('해당 게시글을 삭제할까요?')){
+      frmBtn.action = '${contextPath}/board/removeBoard.do';
+      frmBtn.submit();
+    }
+  })
+}
+
+// 삭제시 DB에서 ATTACH_T 데이터 삭제되는 것 확인
+// 삭제시 로컬디스크 상에 업로드된 파일들 삭제되는 것 확인
+// 썸네일 삭제되는 것 확인
+
+//<<------------------------------------------------------------------------------
+
+//----------------------------------------------- 다운로드 ------------------------------------------------------->>>
+const fnDownload = () => {
+    $('.attach').on('click', (evt) => {
+      if(confirm('해당 첨부 파일을 다운로드 할까요?')) {
+        location.href = '${contextPath}/board/download.do?attachNo=' + evt.currentTarget.dataset.attachNo;
+      }
+    })
+  }
+  
+const fnDownloadAll = () => {
+    const downloadAllButton = document.getElementById('download-all');
+    if (downloadAllButton) {
+        downloadAllButton.addEventListener('click', (evt) => {
+            if (!confirm('모두 다운로드 할까요?')) {
+                evt.preventDefault();
+                return;
+            }
+        });
+    }
+}
+	
+if (document.getElementById('download-all')) {
+    fnDownloadAll();
+}
+
+//<<<<----------------------------------------------- 다운로드 -------------------------------------------------------
+
+// 수정 화면으로 넘어가기 위해 추가
+var frmBtn = document.getElementById('frm-btn');
+
+const fnEditBoard = () => {
+  document.getElementById('btn-edit').addEventListener('click', (evt) => {
+    frmBtn.action = '${contextPath}/board/edit.do';
+    frmBtn.submit();
+  })
+}
 
 $('#contents').on('click', fnCheckSignin);
+fnRemoveBoard();
 fnRegisterComment();
 fnCommentList();
-
+fnDownload();
+fnEditBoard();
 
 </script>
 
-</body>
-</html>
+<jsp:include page="../layout/footer.jsp"/>

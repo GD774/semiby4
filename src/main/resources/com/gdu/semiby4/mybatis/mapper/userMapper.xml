@@ -46,8 +46,8 @@
     , DELETED_DT
     ) VALUES (
         USER_SEQ.NEXTVAL
-      , 0
-      , #{userId}
+	  , #{userId}
+	  , 0
       , #{pw}
       , #{email}
       , #{name}
