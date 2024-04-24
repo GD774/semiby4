@@ -8,7 +8,7 @@
 <jsp:include page="../layout/header.jsp"/>
 
 <style>
-  .search-form {
+  .searchForm1 {
     float: left;
   }
   .selected {
@@ -18,12 +18,12 @@
 
 <h1 class="title">관리자 메인</h1>
  
-<form class="search-form" id="searchForm">
+<form class="searchForm1" id="search-form1">
   <div>
-  <input type="text" id="searchId" placeholder="유저아이디를 입력하세요.">
-  <button type="button" id="searchBtn">검색</button>
-  <button type="button" id="deleteBtn">삭제</button>
-  <table border="1" id="userTable">
+  <input type="text" id="search-id1" placeholder="유저아이디를 입력하세요.">
+  <button type="button" id="search-btn">검색</button>
+  <button type="button" id="deleteBtn1">삭제</button>
+  <table border="1" id="userTable1">
     <thead>
         <tr>
             <th>순번</th>
@@ -31,19 +31,48 @@
             <th>이름</th>
             <th>이메일</th>
             <th>가입날짜</th>
-            <th></th>
         </tr>
     </thead>
-    <tbody id="userTableBody">
+    <tbody id="userTableBody1">
        <c:forEach items="${userList}" var="user">
       <tr>
           <td>${user.userNo}</td>
-          <td class="userLink">${user.userId}</td>
+          <td class="userLink1">${user.userId}</td>
           <td>${user.name}</td>
           <td>${user.email}</td>
           <td>${user.signupDt}</td>
           <td>${user.boardCnt}</td>
-          <td>${user.commentCnt}</td>
+      </tr>
+     </c:forEach>
+    </tbody>
+</table>
+  
+  </div>  
+            
+</form>
+<form class="search-form2" id="searchForm2">
+  <div>
+  <input type="text" id="search-id2" placeholder="유저아이디를 입력하세요.">
+  <button type="button" id="search-btn2">검색</button>
+  <table border="1" id="userTable2">
+    <thead>
+        <tr>
+            <th>순번</th>
+            <th>아이디</th>
+            <th>이름</th>
+            <th>이메일</th>
+            <th>가입날짜</th>
+        </tr>
+    </thead>
+    <tbody id="userTableBody2">
+       <c:forEach items="${userList}" var="user">
+      <tr>
+          <td>${user.userNo}</td>
+          <td class="userLink2">${user.userId}</td>
+          <td>${user.name}</td>
+          <td>${user.email}</td>
+          <td>${user.signupDt}</td>
+          <td>${user.boardCnt}</td>
       </tr>
      </c:forEach>
     </tbody>
@@ -88,8 +117,8 @@ $(document).ready(function() {
   loadUserInfo();
 
   // 검색 버튼 클릭 이벤트
-  $("#searchBtn").click(function() {
-      var searchId = $("#searchId").val();  // 입력된 userId 값 가져오기
+  $("#search-btn").click(function() {
+      var searchId = $("#searchId1").val();  // 입력된 userId 값 가져오기
       searchUserById(searchId);  // userId 기준으로 검색 함수 호출
   });
   
@@ -102,7 +131,7 @@ $(document).ready(function() {
   */
   
   //각 사용자 아이디 클릭 이벤트
-  $("#userTableBody").on("click", "tr", function() {
+  $("#userTableBody1").on("click", "tr", function() {
     // 이전에 선택된 행의 스타일을 제거
     if (selectedRow) {
       selectedRow.removeClass("selected");
@@ -117,7 +146,7 @@ $(document).ready(function() {
     */
   });
   
-  $("#deleteBtn").click(function() {
+  $("#deleteBtn1").click(function() {
     if (selectedRow) {
       var userId = selectedRow.find("td:eq(1)").text();  // 선택된 행에서 아이디 가져오기
       dropUserById(userId);
@@ -139,7 +168,9 @@ function loadUserInfo() {
       type: "GET",
       dataType: "json",
       success: function(data) {
-          displayUserInfo(data);
+          users = parseUser(data);
+          displayUserInfo(users[0], "#userTableBody1");
+          displayUserInfo(users[1], "#userTableBody2");
       },
       error: function(error) {
           console.error("이런 문제 생김", error);
@@ -156,7 +187,10 @@ function searchUserById(userId) {
           userId: userId  // 검색할 userId 전달
       },
       success: function(data) {
-          displayUserInfo(data);
+        console.log('what is search data' + data.length);
+          users = parseUser(data);
+          displayUserInfo(users[0], "#userTableBody1");
+          displayUserInfo(users[1], "#userTableBody2");
       },
       error: function(error) {
           console.error("검색 문제 생김", error);
@@ -164,28 +198,43 @@ function searchUserById(userId) {
   });
 }
 
-function displayUserInfo(userList) {
-  var tableBody = $("#userTableBody");
+function parseUser(data) {
+  var active = [];
+  var banned = [];
+  for (var i = 0; i < data.length; i++) {
+    user = data[i];
+    if (! user.deletedDt) {
+      active.push(user)
+    } else {
+      banned.push(user)
+    }
+  }
+  return [active, banned];
+}
+
+function displayUserInfo(userList, tableBodyTagId) {
+  var tableBody = $(tableBodyTagId);
   tableBody.empty();  // 기존 테이블 내용 삭제
 
   $.each(userList, function(index, user) {
-      var row = $("<tr>");
-      row.append($("<td>").text(user.userNo));
-      row.append($("<td>").text(user.userId));
-      row.append($("<td>").text(user.name));
-      row.append($("<td>").text(user.email));
+      var row1 = $("<tr>");
+      row1.append($("<td>").text(user.userNo));
+      row1.append($("<td>").text(user.userId));
+      row1.append($("<td>").text(user.name));
+      row1.append($("<td>").text(user.email));
       
-      var date = new Date(user.signupDt);
-      var formattedDate = date.getFullYear().toString().substr(-2) + "-" + ("0" + (date.getMonth() + 1)).slice(-2) + "-" + ("0" + date.getDate()).slice(-2);
-      row.append($("<td>").text(formattedDate));
+      var date1 = new Date(user.signupDt);
+      var formattedDate1 = date1.getFullYear().toString().substr(-2) + "-" + ("0" + (date1.getMonth() + 1)).slice(-2) + "-" + ("0" + date1.getDate()).slice(-2);
+      row1.append($("<td>").text(formattedDate1));
       
       //row.append($("<td>").text(user.signupDt));  // signupDt가 TimeStamp형식으로 나와 위와 같이 날짜 작업 함.
-      row.append($("<td>").text(user.boardCnt));
-      row.append($("<td>").text(user.commentCnt));
-
-      tableBody.append(row);
+      row1.append($("<td>").text(user.boardCnt));
+      row1.append($("<td>").text(user.commentCnt));
+      
+      tableBody.append(row1);
   });
 }
+
 /*
 // userId 비활성화 
 function dropUserById(userId) {
@@ -235,7 +284,7 @@ function dropUserById(userId) {
 }
 
 const fnMypage = () => {
-  $(document).on('click', '.userLink', (evt) => {
+  $(document).on('click', '.userLink1', (evt) => {
       location.href = '${contextPath}/mypage/mypage.page';
   })
 }
