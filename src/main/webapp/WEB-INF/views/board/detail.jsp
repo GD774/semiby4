@@ -43,11 +43,11 @@
    #modifyDt{
   width: 300px;
   margin-left : 30px;
-  margin-bottom : 40px;
+  margin-bottom : 20px;
   }
   
   #comment-contents{
-  width: 990px;
+  width: 1050px;
   margin-bottom: 10px;
   margin-top: 20px;
   }
@@ -63,6 +63,11 @@
   label {
     padding-left: 25px;
     margin-top: 20px;
+  }
+  
+  #attach-box {
+    width: 85px;
+    margin-bottom: 10px;
   }
 
 </style>
@@ -91,26 +96,27 @@
 
 <div id="createDt">
   <span>작성일자</span>
-  <input type="text" value="<fmt:formatDate value="${board.createDt}" pattern="yyyy-MM-dd HH:mm" />" class="form-control">
+  <input type="text" value="<fmt:formatDate value="${board.createDt}" pattern="yyyy-MM-dd HH:mm"  />" class="form-control" readonly>
 </div>
 
 <div id="modifyDt">
   <span>최종수정일</span>
-  <input type="text"  value=" <fmt:formatDate value="${board.modifyDt}" pattern="yyyy-MM-dd HH:mm" />" class="form-control">
+  <input type="text"  value=" <fmt:formatDate value="${board.modifyDt}" pattern="yyyy-MM-dd HH:mm" />" class="form-control" readonly>
 </div>
 
 
 
 <!-- 첨부 목록 공간입니다.>>>>> ---------------------------------------------------------------------->
-<span>첨부 파일 다운로드</span>
+
 <div>
   <c:if test="${empty attachList}">
-  <div>첨부된 파일이 없습니다.</div>
+  <div></div>
   </c:if>
   <c:if test="${not empty attachList}">
-  <div>첨부파일 목록</div>
+  <div>
+ <input type="text" id="attach-box" class="form-control" value="첨부파일" readonly>
+  </div>
   <c:forEach items="${attachList}" var="attach">
-  
   <div class="attach" data-attach-no="${attach.attachNo}">
   <c:if test="${attach.hasThumbnail == 1}">
   <img src="${contextPath}${attach.uploadPath}/s_${attach.filesystemName}">
@@ -118,12 +124,12 @@
   <c:if test="${attach.hasThumbnail == 0}">
   <img src="${contextPath}/resources/images/attach.png" width="96px">
   </c:if>
-  <a>${attach.originalFilename}</a>
+  <a><input type="text" class="form-control" value="${attach.originalFilename}" width="100px"></a>
   </div>
   </c:forEach>
   <div> 
   
-    <a id="download-all" href="${contextPath}/board/downloadAll.do?boardNo=${board.boardNo}">모두 다운로드</a>
+    <a id="download-all" href="${contextPath}/board/downloadAll.do?boardNo=${board.boardNo}"><button  class="btn btn-dark" style="margin-top: 10px;" >모두 다운로드</button></a>
     
   </div>
   </c:if>
@@ -141,7 +147,7 @@
   <c:if test="${not empty sessionScope.user}">  
     <input type="hidden" name="userNo" value="${sessionScope.user.userNo}">
   </c:if>
-  <button type="button" id="btn-comment-register">댓글등록</button>
+  <button type="button"  class="btn btn-light" id="btn-comment-register" style="margin-left:900px;" >댓글등록</button>
 </form>
 
 
@@ -150,7 +156,7 @@
 
 
 <c:if test="${not empty sessionScope.user}">  
-    <c:if test="${sessionScope.user.userNo == board.user.userNo}">
+    <c:if test="${sessionScope.user.userNo == board.user.userNo || sessionScope.user.userNo == '1'}">
     <div>   
     <form id="frm-btn" method="POST">
         <input type="hidden" name="boardNo" value="${board.boardNo}">
@@ -175,7 +181,7 @@
 
 
 
-<script>
+<script defer>
 var page = 1;
 var frmBtn = document.getElementById('frm-btn');
 
@@ -251,12 +257,12 @@ const fnCommentList = () => {
         } else {
           str += '<div style="padding-left: 32px;">'
         }
-
-        str += '<span>';
-        str += comment.user.email;
-        str += '(' + moment(comment.createDt).format('YYYY.MM.DD.') + ')';
-        str += '</span>';
+        str += '<div style="background-color: #dcdcdc; padding: 5px; margin-top: 5px;">';
+        str += '<span  style="font-size: 16px; font-weight: bold; ">' + comment.user.email + '</span>';
+        str += '<span  style="font-size: 12px; margin-left: 40px;">' + moment(comment.createDt).format('YYYY.MM.DD.') + '</span>';
         str += '<div>' + comment.contents + '</div>';
+        str += '</div>';
+
 
         /*if(comment.depth === 0) {
           str += '<button type="button" class="btn btn-success btn-reply" >답글</button>';
@@ -264,9 +270,9 @@ const fnCommentList = () => {
         */
 
        
-         if(Number('${sessionScope.user.userNo}') === comment.user.userNo) {
+         /*if(Number('${sessionScope.user.userNo}') === comment.user.userNo) {
            str += '<button type="button" class="btn btn-danger btn-remove" data=comment-no="' + comment.commentNo + '">삭제</button>';
-         }
+         }*/
          
          /************************* 답글 입력 화면 *************************/
          /*if(comment.depth === 0) { 
@@ -333,15 +339,24 @@ if (document.getElementById('download-all')) {
 
 //------------------------------------ 삭제 구현---------------------------------->>
 
+document.addEventListener('DOMContentLoaded', function() {
+	if(!document.getElementById('btn-remove')){
+		return;
+	}
+	
+    const fnRemoveBoard = () => {
+        document.getElementById('btn-remove').addEventListener('click', (evt) => {
+            if (confirm('해당 게시글을 삭제할까요?')) {
+                frmBtn.action = '${contextPath}/board/removeBoard.do';
+                frmBtn.submit();
+            }
+        });
+    };
+    fnRemoveBoard(); 
+}); 
 
-const fnRemoveBoard = () => {
-  document.getElementById('btn-remove').addEventListener('click', (evt) => {
-    if(confirm('해당 게시글을 삭제할까요?')){
-      frmBtn.action = '${contextPath}/board/removeBoard.do';
-      frmBtn.submit();
-    }
-  })
-}
+
+
 
 // 삭제시 DB에서 ATTACH_T 데이터 삭제되는 것 확인
 // 삭제시 로컬디스크 상에 업로드된 파일들 삭제되는 것 확인
@@ -354,7 +369,6 @@ $('#comment-contents').on('click', fnCheckSignin);
 fnRegisterComment();
 fnCommentList();
 fnDownload();
-fnRemoveBoard();
 
 </script>
 
