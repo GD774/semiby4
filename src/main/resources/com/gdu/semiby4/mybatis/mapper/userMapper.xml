@@ -64,7 +64,6 @@
       FROM USER_T
      WHERE USER_NO = #{userNo}
   </delete>
-  
 
 <select id="adminUserList"
          resultMap="UserMap">
@@ -140,5 +139,5 @@
   
   
    -->
-  
+
 </mapper>

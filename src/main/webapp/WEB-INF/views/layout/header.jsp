@@ -50,7 +50,8 @@
       </c:if>
       <!-- Sign In 된 경우 -->
       <c:if test="${sessionScope.user != null}">
-        ${sessionScope.user.name}님 반갑습니다
+        <!-- ${sessionScope.user.name}님 반갑습니다 -->
+		<a href="${contextPath}/mypage">마이페이지</a>
         <a href="${contextPath}/user/signout.do">로그아웃</a>
         <a href="${contextPath}/user/leave.do">회원탈퇴</a>
       </c:if>

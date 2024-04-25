@@ -14,7 +14,7 @@
         action="${contextPath}/board/search.do">
     <div>
       <select name="column">
-        <option value="U.EMPLOYEE_ID">작성자</option>
+        <option value="U.UESR_ID">작성자</option>
         <option value="B.CONTENTS">내용</option>
       </select>
       <input type="text" name="query" placeholder="검색어 입력">
