@@ -124,18 +124,14 @@
   <c:if test="${attach.hasThumbnail == 0}">
   <img src="${contextPath}/resources/images/attach.png" width="96px">
   </c:if>
-  <a><input type="text" class="form-control" value="${attach.originalFilename}" width="100px"></a>
+  <a><input type="text" class="form-control" value="${attach.originalFilename}" width="100px" style="margin-bottom:10px; border:none;" readonly></a>
   </div>
   </c:forEach>
   <div> 
-  
     <a id="download-all" href="${contextPath}/board/downloadAll.do?boardNo=${board.boardNo}"><button  class="btn btn-dark" style="margin-top: 10px;" >모두 다운로드</button></a>
-    
   </div>
   </c:if>
 </div>
-
-
 
 
 
@@ -168,8 +164,6 @@
 
 
 </div>
-
-
 </div>
 
 
@@ -223,7 +217,7 @@ const fnCheckSignin = () => {
 	        }
 	      },
 	      error: (jqXHR) => {
-	    	  alert(jqXHR.statusText + '(' + jqXHR.status + ')');
+	    	  alert('정상적인 접근이 아닙니다');
 	      }
 	    });
 	  });
@@ -296,7 +290,7 @@ const fnCommentList = () => {
       paging.append(resData.paging);
     },
     error: (jqXHR) => {
-      alert(jqXHR.statusText + '(' + jqXHR.status + ')');
+      alert('정상적인 접근이 아닙니다');
     }
   })
 }
@@ -335,15 +329,12 @@ if (document.getElementById('download-all')) {
 
 //<<<<----------------------------------------------- 다운로드 -------------------------------------------------------
 
-
-
 //------------------------------------ 삭제 구현---------------------------------->>
 
 document.addEventListener('DOMContentLoaded', function() {
 	if(!document.getElementById('btn-remove')){
 		return;
 	}
-	
     const fnRemoveBoard = () => {
         document.getElementById('btn-remove').addEventListener('click', (evt) => {
             if (confirm('해당 게시글을 삭제할까요?')) {
