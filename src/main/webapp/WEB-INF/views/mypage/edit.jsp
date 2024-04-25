@@ -26,9 +26,12 @@
       action="${contextPath}/mypage/edit.do"
       id="frm-signup">
 
+  <!-- 당연히 나중에 반드시 정상적으로 세션으로 userNo 를 받도록 수정해야 함 -->
+  <input type="hidden" name="userNo" value="${sessionScope.user.userNo}">
+
   <div>
     <label for="inp-email">아이디</label>
-    <input type="text" id="inp-email" name="userId" placeholder="{sessionScope.user.name}">
+    <input type="text" id="inp-email" name="userId" placeholder="${sessionScope.user.userId}">
   </div>
 
   <hr>
@@ -69,6 +72,8 @@
   </div>
 
   <hr>
+
+  <div><a href="${contextPath}/user/leave.do">회원탈퇴</a></div>
   
   <div>
     <button type="submit" id="btn-signup">수정 완료</button>

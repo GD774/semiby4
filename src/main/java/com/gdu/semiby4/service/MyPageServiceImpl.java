@@ -51,9 +51,11 @@ public class MyPageServiceImpl implements MyPageService {
 	@Override
   public void edit(HttpServletRequest request, HttpServletResponse response) {
 
-		HttpSession session = request.getSession();
-		UserDto userPrev = (UserDto) session.getAttribute("user");
-		int userNo = userPrev.getUserNo();
+		// 당연히 나중에 반드시 정상적으로 세션으로 userNo 를 받도록 수정해야 함
+		// HttpSession session = request.getSession();
+		// UserDto userPrev = (UserDto) session.getAttribute("user");
+		// int userNo = userPrev.getUserNo();
+		int userNo = Integer.parseInt(request.getParameter("userNo"));
 
     // 전달된 파라미터
 		String userId = request.getParameter("userId");
