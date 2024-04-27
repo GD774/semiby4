@@ -51,8 +51,13 @@
       <!-- Sign In 된 경우 -->
       <c:if test="${sessionScope.user != null}">
         <!-- ${sessionScope.user.name}님 반갑습니다 -->
-		<a href="${contextPath}/mypage">마이페이지</a>
-		<a href="${contextPath}/calendar">내 일정</a>
+		<c:if test="${sessionScope.user.role == 1}">
+          <a href="${contextPath}/admin/admin.page">관리자 페이지</a>
+		</c:if>
+        <!-- <input type="hidden" id="adminLink" value="${contextPath}/board/admin.page"> -->
+		<c:if test="${sessionScope.user.role == 0}">
+		  <a href="${contextPath}/mypage">마이페이지</a>
+		</c:if>
         <a href="${contextPath}/user/signout.do">로그아웃</a>
         <!-- <a href="${contextPath}/user/leave.do">회원탈퇴</a> -->
       </c:if>
@@ -71,10 +76,6 @@
     
       </ul>
     </div>
-      <c:if test="${sessionScope.user.role == 1}">
-            <a href="${contextPath}/admin/admin.page">관리자 페이지</a>
-      </c:if>
-            <input type="hidden" id="adminLink" value="${contextPath}/board/admin.page">
   </div>
 
   <div class="main-wrap">
