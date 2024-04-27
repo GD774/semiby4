@@ -125,14 +125,14 @@ public class BoardController {
 		
     return "redirect:/board/detail.do?boardNo=" + boardNo;
   }
-  
+
   // 게시글 수정 (지희)
   @PostMapping("/edit.do")
   public String edit(@RequestParam int boardNo, Model model) {
     model.addAttribute("board", boardService.getBoardByNo(boardNo));
     return "board/edit";
   }
-  
+
   // 게시글 수정 (지희)
   @PostMapping("/modify.do")
   public String modify(BoardDto board, RedirectAttributes redirectAttributes) {

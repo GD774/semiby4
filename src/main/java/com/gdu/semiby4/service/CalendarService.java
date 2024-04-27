@@ -1,15 +1,15 @@
 package com.gdu.semiby4.service;
 
+import java.util.Map;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.gdu.semiby4.dto.CalendarDto;
+import com.gdu.semiby4.dto.ScheduleDto;
 
 public interface CalendarService {
-   
-  List<CalendarDto> getAllEvents(HttpServletRequest request);
-  CalendarDto createEvent(HttpServletRequest request);
-  CalendarDto updateEvent(CalendarDto calendarDto);
-  void deleteEvent(Long userNo);
+  List<ScheduleDto> getAllEvents(HttpServletRequest request);
+  int createEvent(HttpServletRequest request);
+	int updateEvent(HttpServletRequest request);
+	int deleteEvent(HttpServletRequest request);
 }

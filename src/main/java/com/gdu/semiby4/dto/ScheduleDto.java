@@ -1,5 +1,7 @@
 package com.gdu.semiby4.dto;
 
+import java.sql.Date;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,11 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
-public class CalendarDto {
-  UserDto user;
-  int scheduleNo;
-  String title, contents,  startDate, endDate;
-
-
- 
+public class ScheduleDto {
+  int scheduleNo, reminder;
+	String title, contents;
+	Date startDate, endDate;
+	UserDto user;
 }

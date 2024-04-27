@@ -79,8 +79,7 @@
  <h1 class="title">글작성</h1>
  <hr>
  </div>
- 
- 
+
  <form id="frm-board-register"
        method="POST"
        enctype="multipart/form-data"

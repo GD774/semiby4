@@ -7,8 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import com.gdu.semiby4.dto.UserDto;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Data

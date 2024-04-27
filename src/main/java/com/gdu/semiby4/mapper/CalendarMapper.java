@@ -2,17 +2,14 @@ package com.gdu.semiby4.mapper;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.ibatis.annotations.Mapper;
 
-import com.gdu.semiby4.dto.CalendarDto;
+import com.gdu.semiby4.dto.ScheduleDto;
 
 @Mapper
 public interface CalendarMapper {
-
-    List<CalendarDto> getAllEvents();
-    CalendarDto createEvent(CalendarDto calendarDto);
-    CalendarDto updateEvent(CalendarDto calendarDto);
-    CalendarDto deleteEvent(Long userNo);
+    List<ScheduleDto> getAllEvents(int userNo);
+    int createEvent(ScheduleDto scheduleDto);
+    int updateEvent(ScheduleDto scheduleDto);
+    int deleteEvent(int scheduleNo);
 }
