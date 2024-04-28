@@ -22,12 +22,20 @@
       method="POST"
       enctype="multipart/form-data"
       action="${contextPath}/board/modify.do">
+<<<<<<< HEAD
       
  <div>
    <input type="hidden" name="boardNo" value="${board.boardNo}">
    <button type="submit">수정완료</button>
    <a href="${contextPath}/board/list.do"><button type="button">작성취소</button></a>
  </div>
+=======
+
+  <div>
+    <span>작성자</span>
+    <span >${sessionScope.user.email} </span>
+  </div>
+>>>>>>> d124c91 (수정 기능 구현)
 
   <div>
     <span>작성일자</span>
@@ -64,11 +72,18 @@
   </div>
   
     
+<<<<<<< HEAD
 <c:if test="${sessionScope.user.userNo == board.user.userNo}">
   <div id="files-wrap">
     <label for="files"></label>
     <input class="form-control" type="file" name="files" id="files" multiple>
     <button class="form-control" type="button" id="btn-add-attach">첨부추가하기</button>
+=======
+  <div>
+    <input type="hidden" name="boardNo" value="${board.boardNo}">
+    <button type="submit">수정완료</button>
+    <a href="${contextPath}/board/list.do"><button type="button">작성취소</button></a>
+>>>>>>> d124c91 (수정 기능 구현)
   </div>
   
   <div id="new-attach-list"></div>
@@ -80,6 +95,20 @@
 </form>
 
 <!-- 첨부 추가 -->
+<<<<<<< HEAD
+=======
+<c:if test="${sessionScope.user.userNo == board.user.userNo}">
+  <div>
+    <label for="files">첨부추가하기</label>
+    <input type="file" name="files" id="files" multiple>
+    <button type="button" id="btn-add-attach">첨부추가하기</button>
+  </div>
+  <div id="new-attach-list"></div>
+  <hr>
+  <h3>현재 첨부 목록</h3>
+  <div id="attach-list"></div>
+</c:if>
+>>>>>>> d124c91 (수정 기능 구현)
 
 <script>
 
@@ -103,7 +132,11 @@ const fnAttachList = () => {
       }
       str += '<span>' + attach.originalFilename + '</span>';
       if('${sessionScope.user.userNo}' === '${board.user.userNo}') {
+<<<<<<< HEAD
     	  str += '<a style="margin-left: 10px;" class="remove-attach" data-attach-no="' + attach.attachNo + '">X</a>';
+=======
+    	  str += '<a style="margin-left: 10px;" class="remove-attach" data-attach-no="' + attach.attachNo + '">x</a>';
+>>>>>>> d124c91 (수정 기능 구현)
     	  // <i class="fas fa-trash-alt"></i>
       }
       str += '</div>';
@@ -127,7 +160,11 @@ const fnAddAttach = () => {
     // FormData 객체를 보내서 저장한다.
     $.ajax({
       // 요청
+<<<<<<< HEAD
       type: 'POST',
+=======
+      type: 'post',
+>>>>>>> d124c91 (수정 기능 구현)
       url: '${contextPath}/board/addAttach.do',
       data: formData,
       contentType: false,

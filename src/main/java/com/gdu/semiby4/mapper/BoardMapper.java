@@ -15,7 +15,6 @@ public interface BoardMapper {
   int getBoardCount();
   List<BoardDto> getBoardList(Map<String, Object> map);
   BoardDto getBoardByNo(int boardNo);
-  List<AttachDto> getAttachList(int boardNo);
 	int insertBoard(BoardDto board);
   int insertAttach(AttachDto attach);
 	int insertComment(CommentDto comment);
@@ -27,6 +26,7 @@ public interface BoardMapper {
   List<BoardDto> getSearchDetailList(Map<String, Object> map);
   int updateHit(int boardNo);
   int updateBoard(BoardDto board);  // 게시글 수정 (지희)
+  List<AttachDto> getAttachList(int boardNo);
   AttachDto getAttachByNo(int attachNo);  // 지희 추가
   int deleteAttach(int attachNo);  // 지희 추가
   

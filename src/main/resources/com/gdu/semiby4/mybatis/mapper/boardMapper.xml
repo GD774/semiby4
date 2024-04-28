@@ -334,6 +334,7 @@
    WHERE BOARD_NO = #{boardNo}
 </update>
 
+<<<<<<< HEAD
 <!-- BEST HIT 게시판 (지희) -->
 <select id="getBestHitList" 
 		resultMap="BoardMap">
@@ -341,6 +342,15 @@
 	  FROM BOARD_T B JOIN USER_T U ON B.USER_NO = U.USER_NO
      ORDER BY HIT DESC
      FETCH FIRST 5 ROWS ONLY
+=======
+
+<!-- 첨부파일목록 (지희) -->
+<select id="getAttachList"
+        resultType="AttachDto">
+  SELECT ATTACH_NO, UPLOAD_PATH, FILESYSTEM_NAME, ORIGINAL_FILENAME, DOWNLOAD_COUNT, HAS_THUMBNAIL
+    FROM ATTACH_T
+   WHERE BOARD_NO = #{boardNo}
+>>>>>>> d124c91 (수정 기능 구현)
 </select>
 
 </mapper>

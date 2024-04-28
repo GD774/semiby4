@@ -4,8 +4,11 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+<<<<<<< HEAD
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+=======
+>>>>>>> d124c91 (수정 기능 구현)
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,7 +43,11 @@ public class BoardController {
   }
   
   @GetMapping(value="/attachList.do", produces="application/json")
+<<<<<<< HEAD
   public ResponseEntity<Map<String, Object>> attachList(@RequestParam int boardNo)  {
+=======
+  public ResponseEntity<Map<String, Object>> attachList(@RequestParam int boardNo) {
+>>>>>>> d124c91 (수정 기능 구현)
     return boardService.getAttachList(boardNo);
   }
 
@@ -90,6 +97,7 @@ public class BoardController {
     return boardService.download(request);
   }
   
+<<<<<<< HEAD
   @GetMapping("/downloadAll.do")
   public ResponseEntity<Resource> downloadAll(HttpServletRequest request) {
     return boardService.downloadAll(request);
@@ -137,27 +145,42 @@ public class BoardController {
   }
 
   // 게시글 수정 (지희)
+=======
+>>>>>>> d124c91 (수정 기능 구현)
   @PostMapping("/edit.do")
   public String edit(@RequestParam int boardNo, Model model) {
     model.addAttribute("board", boardService.getBoardByNo(boardNo));
     return "board/edit";
   }
+<<<<<<< HEAD
 
   // 게시글 수정 (지희)
+=======
+  
+>>>>>>> d124c91 (수정 기능 구현)
   @PostMapping("/modify.do")
   public String modify(BoardDto board, RedirectAttributes redirectAttributes) {
     redirectAttributes
       .addAttribute("boardNo", board.getBoardNo())
       .addFlashAttribute("modifyResult", boardService.modifyBoard(board) == 1 ? "수정되었습니다." : "수정을 하지 못했습니다.");
     return "redirect:/board/detail.do?boardNo={boardNo}";
+<<<<<<< HEAD
   }
+  
+  @PostMapping(value="/addAttach.do", produces="application/json")
+  public ResponseEntity<Map<String, Object>> addAttach(MultipartHttpServletRequest multipartRequest) throws Exception {
+    return boardService.addAttach(multipartRequest);
+=======
+>>>>>>> d124c91 (수정 기능 구현)
+  }
+  
   
   @PostMapping(value="/addAttach.do", produces="application/json")
   public ResponseEntity<Map<String, Object>> addAttach(MultipartHttpServletRequest multipartRequest) throws Exception {
     return boardService.addAttach(multipartRequest);
   }
   
-  @PostMapping(value="/removeAttach.do", produces="application/json" )
+  @PostMapping(value="/removeAttach.do", produces="application/json")
   public ResponseEntity<Map<String, Object>> removeAttach(@RequestBody AttachDto attach) {
     return boardService.removeAttach(attach.getAttachNo());
   }

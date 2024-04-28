@@ -18,11 +18,16 @@ public interface BoardService {
 
   void boardList(Model model);
   void boardListByNo(int boardNo, Model model);
+<<<<<<< HEAD
   ResponseEntity<Map<String, Object>> getAttachList(int boardNo);
   void loadboardSearchList(HttpServletRequest request, Model model);
   // 디테일리스트에서 검색기능 구현 (지희)
   void detailBoardSearchList(HttpServletRequest request, Model model);
   public boolean registerUpload(MultipartHttpServletRequest multipartRequest);
+=======
+	void loadboardSearchList(HttpServletRequest request, Model model);
+	public boolean registerUpload(MultipartHttpServletRequest multipartRequest);
+>>>>>>> d124c91 (수정 기능 구현)
   BoardDto getBoardByNo(int boardNo);
   int registerComment(HttpServletRequest request);
   Map<String, Object> getCommentList(HttpServletRequest request);
@@ -40,11 +45,19 @@ public interface BoardService {
   int removeBoard(int boardNo);
 
   int updateHit(int boardNo);
-  int modifyBoard(BoardDto board);  // 게시글 수정 (지희)
+  int modifyBoard(BoardDto board);
+  // 게시글 수정(지희)
+  ResponseEntity<Map<String, Object>> getAttachList(int boardNo);
+  ResponseEntity<Map<String, Object>> addAttach(MultipartHttpServletRequest multipartRequest) throws Exception;
   ResponseEntity<Map<String, Object>> removeAttach(int attachNo);
+<<<<<<< HEAD
   ResponseEntity<Map<String, Object>> addAttach(MultipartHttpServletRequest multipartRequest) throws Exception;
   
   // BEST HIT 게시판 (지희)
   void bestHitBoardList(Model model);
+=======
+  
+
+>>>>>>> d124c91 (수정 기능 구현)
 
 }
