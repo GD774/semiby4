@@ -6,74 +6,9 @@
 <c:set var="dt" value="<%=System.currentTimeMillis()%>"/>
 
 <jsp:include page="../layout/header.jsp"/>
+<link rel="stylesheet" href="${contextPath}/resources/css/board/write.css?dt=${dt}">
 
-  <style>
-  #main-wrap{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  }
-  
-  
-  #title{
-  width: 990px;
-  margin-left : 30px;
-  margin-bottom: 10px;
-  }
-  
-  #contents{
-  width: 990px;
-  height: 400px;
-  margin-left : 30px;
-  }
-  
-  #files{
-  width: 300px;
-  margin-left : 30px;
-  }
-  
-  #writer{
-  width: 300px;
-  margin-left : 30px;
-  }
-  
-  #files-wrap{
-  margin-top : 20px;
-  margin-botton: 100px;
-  }
-  
-  hr {
-    border: 2px solid black;
-}
 
-  label {
-    padding-left: 25px;
-    margin-top: 20px;
-  }
-  
-  #buttons {
-    margin-left: 25px;
-    margin-top: 10px;
-  }
-  
-  #file-list {
-    width: 300px;
-    margin-left : 30px;
-  }
-  
-  #select-div{
-    margin-botton : 10px;
-    width: 300px; 
-  }
-  
-  #select-box{
-   margin-left: 30px;
-  }
-  
-  </style>
-  
-
-     
  <div id="main-wrap">
  <div id="title-div">
  <h1 class="title">글작성</h1>

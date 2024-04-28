@@ -36,6 +36,8 @@
       <mapping path="/blog/write.page" />
       <mapping path="/board/write.page" />
       <mapping path="/admin/admin.page" />
+	  <mapping path="/calendar/list" />
+      <mapping path="/calendar/create" />
       <beans:bean class="com.gdu.semiby4.interceptor.RequiredSigninInterceptor" />
     </interceptor>
     

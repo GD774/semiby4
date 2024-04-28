@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gdu.semiby4.mapper.CalendarMapper">
+
+    <resultMap type="com.gdu.semiby4.dto.CalendarDto" id="CalendarMap">
+        <id property="scheduleNo" column="SCHEDULE_NO"/>
+        <result property="startDate" column="START_DATE" jdbcType="VARCHAR"/>
+        <result property="endDate"  column="END_DATE" jdbcType="VARCHAR"/>
+        <result property="title" column="TITLE"/>
+        <result property="contents" column="CONTENTS"/>
+        <association property="user" javaType="com.gdu.semiby4.dto.UserDto">
+            <id property="userNo" column="USER_NO"/>
+        </association>
+    </resultMap>
+
+  <select id="getAllEvents" resultMap="CalendarMap">
+    SELECT *
+    FROM CALENDAR_T 
+    WHERE USER_NO = #{userNo}
+  </select>
+
+    
+    <insert id="createEvent" parameterType="CalendarDto">
+      INSERT INTO CALENDAR_T VALUES(CALENDAR_SEQ.NEXTVAL, #{user.userNo} , #{title}, #{contents}, #{startDate}, #{endDate});
+    </insert>
+    
+    
+    
+    
+    
+    
+    
+</mapper>

@@ -6,7 +6,7 @@
 <c:set var="dt" value="<%=System.currentTimeMillis()%>"/>
 
 <jsp:include page="../layout/header.jsp"/>
-<link rel="stylesheet" href="${contextPath}/resources/css/boardlist.css?dt=${dt}">
+<link rel="stylesheet" href="${contextPath}/resources/css/board/boardlist.css?dt=${dt}">
 
 <br>
 
@@ -17,77 +17,62 @@
 
 <a href="${contextPath}/board/write.page" id="write" class="btn btn-secondary">게시물 작성</a>
 
+<!-- 
+<div>
+  <c:if test="${sessionScope.user != null}">
+  <input type="checkbox" name="deleteUser" value="deleteUser" id="deleteUser">
+  </c:if>
+</div>
+ -->
+ 
 <div>
   <form method="GET"
         action="${contextPath}/board/search.do">
+	<select id="sort" name="sort">
+	    <option value="DESC" ${sort == 'DESC' ? 'selected' : ''}>내림차순</option>
+	    <option value="ASC" ${sort == 'ASC' ? 'selected' : ''}>오름차순</option>
+	    <option value="VIEW_COUNT_DESC" ${sort == 'VIEW_COUNT_DESC' ? 'selected' : ''}>조회수순</option>
+	</select>
     <div class="searchspace">
       <select name="column">
-        <option value="U.USER_NO">작성자</option>
+        <option value="U.USER_ID">작성자</option>
         <option value="B.TITLE">제목</option>
         <option value="B.CONTENTS">내용</option>
       </select>
-       <!-- <img src="${contextPath}/resources/images/searchicon.png" width="20"> -->
         <input type="text" name="query" placeholder="검색어 입력">
         <input type="hidden" name="sort" value="${sort}">
         <button type="submit" id="search">검색</button>      
     </div>
   </form>
 </div>
-
-
-<div>
-  <div>
-    <c:if test="${sessionScope.user != null}">
-    <input type="checkbox" name="deleteUser" value="deleteUser" id="deleteUser">
-    </c:if>
-    <input type="radio" name="sort" value="DESC" id="descending" checked>
-    <!-- <input type="radio" name="sort" value="DESC" id="descending" checked>
-    <label for="descending">내림차순</label>
-    <input type="radio" name="sort" value="ASC" id="ascending">
-    <label for="ascending">오름차순</label>
-    <input type="radio" name="sort" value="VIEW_COUNT_DESC" id="viewDescending">
-  	<label for="viewDescending">조회수순</label> -->
-<select id="sort" name="sort">
-    <option value="DESC" ${sort == 'DESC' ? 'selected' : ''}>내림차순</option>
-    <option value="ASC" ${sort == 'ASC' ? 'selected' : ''}>오름차순</option>
-    <option value="VIEW_COUNT_DESC" ${sort == 'VIEW_COUNT_DESC' ? 'selected' : ''}>조회수순</option>
-</select>
-  </div>
-
-</div>
   
-  <!-- <div>
-    <select id="display" name="display">
-      <option>20</option>
-      <option>30</option>
-      <option>40</option>
-    </select>
-  </div> -->
  <div>
   <table class="table align-middle">
     <thead>
       <tr>
-        <td>게시글번호</td>
+      	<td>카테고리</td>
         <td>제목</td>
         <td>작성자</td>
         <td>조회수</td>
+        <td>작성일자</td>
       </tr>
     </thead>
     <tbody>
       <c:forEach items="${boardList}" var="board" varStatus="vs">
         <tr>
-          <td>${board.boardNo}</td>
+		  <td>${board.cateNames}</td>
           <td class="board" data-board-no="${board.boardNo}">
-            <a id="bold" href="${contextPath}/board/detail.do?boardNo=${board.boardNo}">${board.title}</a>
+            <a id="bold" href="${contextPath}/board/updateHit.do?boardNo=${board.boardNo}">${board.title}</a>
           </td>
-          <td>${board.user.email}</td>
+          <td>${board.user.userId}</td>
           <td>${board.hit}</td>
+          <td><fmt:formatDate value="${board.createDt}" pattern="yyyy-MM-dd" /></td>
         </tr>
       </c:forEach>
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="4">
+        <td colspan="5">
           <div class="paging-container">
             ${paging}
           </div>
@@ -100,19 +85,9 @@
 <input type="hidden" id="removeResult" value="${removeResult}">
 
 <script>
-
-  
-/* const fnDisplay = () => {
-  document.getElementById('display').value = '${display}';
-  document.getElementById('display').addEventListener('change', (evt) => {
-    location.href = '${contextPath}/board/list.do?page=1&sort=${sort}&display=' + evt.target.value;
-  })
-} */
-
-
 const fnSearchSort = () => {
 	document.getElementById('search').addEventListener('click', (evt) => {
-		const sort = '${sort}'; // 일반적으로 서버에서 템플릿 엔진을 통해 이 변수를 렌더링합니다.
+		const sort = '${sort}';
 	    $('#sort').val(sort);
 	})
 }
@@ -120,9 +95,9 @@ const fnSearchSort = () => {
 $(document).ready(function() {
     const sort = '${sort}';
     if (sort && sort !== '') {
-        $('#sort').val(sort); // 정렬 값 설정
+        $('#sort').val(sort);
     } else {
-        console.error('Sort parameter is missing or empty.');
+        console.error('sort 오류');
     }
 
     $('#sort').on('change', function() {
@@ -144,7 +119,6 @@ const fnResponse = () => {
 
 fnResponse();
 // fnDisplay();
-fnSort();
 
 </script>
 

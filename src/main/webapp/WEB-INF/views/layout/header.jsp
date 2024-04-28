@@ -41,38 +41,63 @@
   <div class="header-wrap">
   
     <div class="logo"></div>
+    
 
-    <div class="user-wrap">
-      <!-- Sign In 안 된 경우 -->
-      <c:if test="${sessionScope.user == null}">  
-        <a href="${contextPath}/user/signin.page"><i class="fa-solid fa-arrow-right-to-bracket"></i>Sign In</a>
-        <a href="${contextPath}/user/signup.page"><i class="fa-solid fa-user-plus"></i>Sign Up</a>
-      </c:if>
-      <!-- Sign In 된 경우 -->
-      <c:if test="${sessionScope.user != null}">
-        ${sessionScope.user.name}님 반갑습니다
-        <a href="${contextPath}/user/signout.do">로그아웃</a>
-        <a href="${contextPath}/user/leave.do">회원탈퇴</a>
-      </c:if>
-    </div>
-    
-    <div class="gnb-wrap">
-      <ul class="gnb">
-        <li><a href="${contextPath}/board/list.do">게시판</a></li>
-        <li><a href="${contextPath}/board/write.page">게시글 작성하기</a><li>
-        
-         <!-- 순지선이 멀티리스트를 위해 추가 -->
-        <li><a href="${contextPath}/board/multilist.do">다중게시판</a></li>
-        <span><a href="${contextPath}/board/detaillist.do?cateNo=1">취업정보</a></span>
-        <span><a href="${contextPath}/board/detaillist.do?cateNo=2">면접후기</a></span>
-        <span><a href="${contextPath}/board/detaillist.do?cateNo=3">이야기</a></span>
-    
+  
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="${contextPath}/board/multilist.do">
+    <img id="logo" src="${contextPath}/resources/images/logo.png">
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="${contextPath}/board/list.do">전체게시판</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="${contextPath}/board/multilist.do">멀티게시판</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="${contextPath}/board/detaillist.do?cateNo=1">취업정보</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="${contextPath}/board/detaillist.do?cateNo=2">면접후기</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="${contextPath}/board/detaillist.do?cateNo=3">이야기</a>
+        </li>
+      </ul>
+      <ul id="sign">
+        <c:if test="${sessionScope.user == null}">
+          <div class="nav-item individual-link">
+            <a id="sign-in" href="${contextPath}/user/signin.page"><i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In</a>
+          </div>
+          <div class="nav-item individual-link">
+            <a id="sign-up" href="${contextPath}/user/signup.page"><i class="fa-solid fa-user-plus"></i> Sign Up</a>
+          </div>
+        </c:if></li>
+        <c:if test="${sessionScope.user != null}">
+          <div class="nav-item individual-link" id="mypage">
+            <a href="${contextPath}/mypage"><i class="fa-solid fa-user"></i> 마이페이지</a>
+          </div>
+          <div class="nav-item individual-link">
+            <a href="${contextPath}/user/signout.do"><i class="fa-solid fa-sign-out-alt"></i> 로그아웃</a>
+          </div>
+        </c:if>
       </ul>
     </div>
-      <c:if test="${sessionScope.user.role == 1}">
-            <a href="${contextPath}/admin/admin.page">관리자 페이지</a>
+  </div>
+</nav>
+
+  </div>
+        <c:if test="${sessionScope.user.role == 1}">
+            <a id="admin" href="${contextPath}/admin/admin.page">관리자</a>
       </c:if>
             <input type="hidden" id="adminLink" value="${contextPath}/board/admin.page">
   </div>
+  
 
   <div class="main-wrap">

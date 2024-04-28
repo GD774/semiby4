@@ -203,7 +203,7 @@ public class UserServiceImpl implements UserService {
 			  HttpSession session = request.getSession();
 			  
 			  session.setAttribute("user", user);
-			  session.setMaxInactiveInterval(10);
+//			  session.setMaxInactiveInterval();
 			  
 			  // Sign In 후 페이지 이동
 			  response.sendRedirect(request.getParameter("url"));

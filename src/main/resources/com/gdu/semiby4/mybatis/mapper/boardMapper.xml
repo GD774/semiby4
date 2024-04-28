@@ -42,27 +42,35 @@
     SELECT COUNT(*)
       FROM BOARD_T
   </select>
+  
+   <select id="getCountByCate"
+   		   parameterType="Map">
+   SELECT COUNT(*)
+     FROM BOARD_T
+   WHERE CATE_NO = #{cateNo}
+ </select>
 
 <select id="getBoardList"
         parameterType="Map"
         resultMap="BoardMap">
-    SELECT BOARD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT, USER_NO, EMAIL, HIT, ATTACH_COUNT
-    FROM (
-        SELECT ROW_NUMBER() OVER (
-            ORDER BY
-                CASE WHEN #{sort} = 'ASC' THEN BOARD_NO END ASC,
-                CASE WHEN #{sort} = 'DESC' THEN BOARD_NO END DESC,
-                CASE WHEN #{sort} = 'VIEW_COUNT_DESC' THEN HIT END DESC
-        ) AS RN,
-        B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT, B.HIT,
-        U.USER_NO, U.EMAIL
-		, (SELECT COUNT(*)
-             FROM ATTACH_T ATC
-            WHERE B.BOARD_NO = ATC.BOARD_NO) AS ATTACH_COUNT
-		from user_t u inner join board_t b
-		  on u.user_no = b.user_no
+	SELECT 
+	    BOARD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT, HIT, CATE_NO,
+	    USER_NO, USER_ID, EMAIL
+	FROM (
+	    SELECT 
+	        B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT, B.HIT, B.CATE_NO,
+	        U.USER_NO, U.USER_ID, U.EMAIL,
+	        ROW_NUMBER() OVER (
+	            ORDER BY
+	                CASE WHEN #{sort} = 'ASC' THEN B.BOARD_NO END ASC,
+	                CASE WHEN #{sort} = 'DESC' THEN B.BOARD_NO END DESC,
+	                CASE WHEN #{sort} = 'VIEW_COUNT_DESC' THEN B.HIT END DESC,
+	                B.BOARD_NO DESC
+	        ) AS RN
+	    FROM BOARD_T B 
+	    INNER JOIN USER_T U ON B.USER_NO = U.USER_NO
 	)
-    WHERE RN BETWEEN #{begin} AND #{end}
+	WHERE RN BETWEEN #{begin} AND #{end}
 </select>
 
   <update id="updateHit">
@@ -216,13 +224,14 @@
   </update>  
   
    <!-- 순지선이 멀티리스트를 위해 추가 -->
+   <!-- HIT 값 추가 -->
     <select id="getBoardMultiList"
           parameterType="Map"
           resultMap="BoardMap">
-    SELECT BOARD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT
+    SELECT BOARD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT, HIT
          , USER_NO, USER_ID, EMAIL, CATE_NO, ATTACH_COUNT
     FROM (SELECT ROW_NUMBER() OVER (ORDER BY BOARD_NO DESC) AS RN
-             , B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT
+             , B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT, B.HIT
              , USR.USER_NO, USR.USER_ID, USR.EMAIL, CATE_NO
              , (SELECT COUNT(*)
                   FROM ATTACH_T ATC
@@ -235,21 +244,17 @@
   </select>
   
   <!-- 순지선이 멀티리스트를 위해 추가 -->
+   <!-- HIT 값 추가 -->
     <select id="getBoardDetailList"
           parameterType="Map"
           resultMap="BoardMap">
-    SELECT BOARD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT
-         , USER_NO, USER_ID, EMAIL, CATE_NO, ATTACH_COUNT
-      FROM (SELECT ROW_NUMBER() OVER (ORDER BY BOARD_NO ${sort}) AS RN
-                 , B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT
-                 , USR.USER_NO, USR.USER_ID, USR.EMAIL, CATE_NO
-                 , (SELECT COUNT(*)
-                      FROM ATTACH_T ATC
-                     WHERE B.BOARD_NO = ATC.BOARD_NO) AS ATTACH_COUNT
-              FROM USER_T USR INNER JOIN BOARD_T B
-                ON USR.USER_NO = B.USER_NO)
-      WHERE RN BETWEEN #{begin} AND #{end} AND CATE_NO = #{cateNo}
-    
+    	SELECT BOARD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT, HIT, CATE_NO, USER_NO, USER_ID, EMAIL
+	      FROM (SELECT B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT, B.HIT, B.CATE_NO, U.USER_NO, U.USER_ID, U.EMAIL,
+	               ROW_NUMBER() OVER (ORDER BY CASE WHEN #{sort} = 'ASC' THEN B.BOARD_NO END ASC,
+	                						   CASE WHEN #{sort} = 'DESC' THEN B.BOARD_NO END DESC,
+	                						   CASE WHEN #{sort} = 'VIEW_COUNT_DESC' THEN B.HIT END DESC, B.BOARD_NO DESC) AS RN
+	              FROM BOARD_T B INNER JOIN USER_T U ON B.USER_NO = U.USER_NO)
+	     WHERE RN BETWEEN #{begin} AND #{end} AND CATE_NO = #{cateNo}
   </select>
   
   <!-- 삭제를 위해 추가 -->
@@ -265,12 +270,13 @@
      WHERE BOARD_NO = #{boardNo}
   </delete>                   
 
+<!-- 디테일리스트에서 검색기능 구현 (지희) -->
 <select id="getSearchList" parameterType="Map" resultMap="BoardMap">
-   SELECT BOARD_NO, USER_NO, TITLE, CONTENTS, HIT, CREATE_DT, MODIFY_DT, EMAIL
+   SELECT BOARD_NO, USER_NO, TITLE, CONTENTS, HIT, CREATE_DT, MODIFY_DT, EMAIL, USER_ID, CATE_NO
     FROM (
         SELECT ROW_NUMBER() OVER(ORDER BY B.BOARD_NO DESC, U.USER_NO ASC) AS RN,
-               B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT, B.HIT,
-               U.USER_NO, U.EMAIL
+               B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT, B.HIT, B.CATE_NO,
+               U.USER_NO, U.EMAIL, U.USER_ID
         FROM USER_T U
         INNER JOIN BOARD_T B ON U.USER_NO = B.USER_NO
         WHERE 
@@ -278,8 +284,8 @@
                 <when test="column == 'B.TITLE'">
                     B.TITLE LIKE '%' || #{query} || '%'
                 </when>
-                <when test="column == 'U.EMAIL'">
-                    U.EMAIL LIKE '%' || #{query} || '%'
+                <when test="column == 'U.USER_ID'">
+                    U.USER_ID LIKE '%' || #{query} || '%'
                 </when>
                 <when test="column == 'B.CONTENTS'">
                     B.CONTENTS LIKE '%' || #{query} || '%'
@@ -292,6 +298,32 @@
    WHERE RN BETWEEN #{begin} AND #{end}
 </select>
 
+<!-- detailList 검색 기능 -->
+<select id="getSearchDetailList" parameterType="Map" resultMap="BoardMap">
+    SELECT BOARD_NO, USER_NO, TITLE, CONTENTS, HIT, CREATE_DT, MODIFY_DT, EMAIL, USER_ID, CATE_NO
+    FROM (
+        SELECT ROW_NUMBER() OVER(ORDER BY B.BOARD_NO DESC, U.USER_NO ASC) AS RN,
+               B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT, B.HIT, B.CATE_NO,
+               U.USER_NO, U.EMAIL, U.USER_ID
+        FROM USER_T U
+        INNER JOIN BOARD_T B ON U.USER_NO = B.USER_NO
+        WHERE B.CATE_NO = #{cateNo} AND (
+            <choose>
+                <when test="column == 'B.TITLE'">
+                    B.TITLE LIKE '%' || #{query} || '%'
+                </when>
+                <when test="column == 'U.USER_ID'">
+                    U.USER_ID LIKE '%' || #{query} || '%'
+                </when>
+                <when test="column == 'B.CONTENTS'">
+                    B.CONTENTS LIKE '%' || #{query} || '%'
+                </when>
+            </choose>
+        )
+    )
+    WHERE RN BETWEEN #{begin} AND #{end}
+</select>
+
 <!-- 게시글 수정(지희) -->
 <update id="updateBoard"
         parameterType="BoardDto">
@@ -301,5 +333,14 @@
        , MODIFY_DT = SYSTIMESTAMP
    WHERE BOARD_NO = #{boardNo}
 </update>
+
+<!-- BEST HIT 게시판 (지희) -->
+<select id="getBestHitList" 
+		resultMap="BoardMap">
+	SELECT B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT, B.CATE_NO, B.HIT, U.USER_NO, U.USER_ID, U.EMAIL
+	  FROM BOARD_T B JOIN USER_T U ON B.USER_NO = U.USER_NO
+     ORDER BY HIT DESC
+     FETCH FIRST 5 ROWS ONLY
+</select>
 
 </mapper>

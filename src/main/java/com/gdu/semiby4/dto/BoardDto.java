@@ -16,7 +16,7 @@ import com.gdu.semiby4.dto.UserDto;
 public class BoardDto {
   private int attachCount;
   int boardNo, hit;
-	String title, contents, cateNo;
+	String title, contents, cateNo, cateNames;
 	Timestamp createDt, modifyDt;
 	UserDto user;
 }
