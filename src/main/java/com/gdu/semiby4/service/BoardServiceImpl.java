@@ -192,7 +192,7 @@ public class BoardServiceImpl implements BoardService {
 	    
 	    // 뷰로 전달할 데이터
 	    model.addAttribute("beginNo", total - (page - 1) * display);
-	    model.addAttribute("detailboardList", boardDetailList);
+	    model.addAttribute("boardDetailList", boardDetailList);
 	    model.addAttribute("sort", sort);
 	    model.addAttribute("cateNo", cateNo);
 	    model.addAttribute("paging", myPageUtils.getPaging(request.getContextPath() + "/board/searchDetail.do"
