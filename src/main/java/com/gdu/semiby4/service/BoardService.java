@@ -19,12 +19,15 @@ public interface BoardService {
   void boardList(Model model);
   void boardListByNo(int boardNo, Model model);
 <<<<<<< HEAD
+<<<<<<< HEAD
   ResponseEntity<Map<String, Object>> getAttachList(int boardNo);
   void loadboardSearchList(HttpServletRequest request, Model model);
   // 디테일리스트에서 검색기능 구현 (지희)
   void detailBoardSearchList(HttpServletRequest request, Model model);
   public boolean registerUpload(MultipartHttpServletRequest multipartRequest);
 =======
+=======
+>>>>>>> 55d97c6c148e70a2df95ef624291a1bc4ab0c7a7
 	void loadboardSearchList(HttpServletRequest request, Model model);
 	public boolean registerUpload(MultipartHttpServletRequest multipartRequest);
 >>>>>>> d124c91 (수정 기능 구현)
@@ -51,6 +54,7 @@ public interface BoardService {
   ResponseEntity<Map<String, Object>> addAttach(MultipartHttpServletRequest multipartRequest) throws Exception;
   ResponseEntity<Map<String, Object>> removeAttach(int attachNo);
 <<<<<<< HEAD
+<<<<<<< HEAD
   ResponseEntity<Map<String, Object>> addAttach(MultipartHttpServletRequest multipartRequest) throws Exception;
   
   // BEST HIT 게시판 (지희)
@@ -59,5 +63,9 @@ public interface BoardService {
   
 
 >>>>>>> d124c91 (수정 기능 구현)
+=======
+  
+
+>>>>>>> 55d97c6c148e70a2df95ef624291a1bc4ab0c7a7
 
 }

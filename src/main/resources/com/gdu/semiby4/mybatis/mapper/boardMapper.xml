@@ -335,6 +335,7 @@
 </update>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 <!-- BEST HIT 게시판 (지희) -->
 <select id="getBestHitList" 
 		resultMap="BoardMap">
@@ -343,6 +344,8 @@
      ORDER BY HIT DESC
      FETCH FIRST 5 ROWS ONLY
 =======
+=======
+>>>>>>> 55d97c6c148e70a2df95ef624291a1bc4ab0c7a7
 
 <!-- 첨부파일목록 (지희) -->
 <select id="getAttachList"

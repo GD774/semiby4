@@ -5,10 +5,13 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 =======
 >>>>>>> d124c91 (수정 기능 구현)
+=======
+>>>>>>> 55d97c6c148e70a2df95ef624291a1bc4ab0c7a7
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -44,10 +47,14 @@ public class BoardController {
   
   @GetMapping(value="/attachList.do", produces="application/json")
 <<<<<<< HEAD
+<<<<<<< HEAD
   public ResponseEntity<Map<String, Object>> attachList(@RequestParam int boardNo)  {
 =======
   public ResponseEntity<Map<String, Object>> attachList(@RequestParam int boardNo) {
 >>>>>>> d124c91 (수정 기능 구현)
+=======
+  public ResponseEntity<Map<String, Object>> attachList(@RequestParam int boardNo) {
+>>>>>>> 55d97c6c148e70a2df95ef624291a1bc4ab0c7a7
     return boardService.getAttachList(boardNo);
   }
 
@@ -98,6 +105,7 @@ public class BoardController {
   }
   
 <<<<<<< HEAD
+<<<<<<< HEAD
   @GetMapping("/downloadAll.do")
   public ResponseEntity<Resource> downloadAll(HttpServletRequest request) {
     return boardService.downloadAll(request);
@@ -147,23 +155,30 @@ public class BoardController {
   // 게시글 수정 (지희)
 =======
 >>>>>>> d124c91 (수정 기능 구현)
+=======
+>>>>>>> 55d97c6c148e70a2df95ef624291a1bc4ab0c7a7
   @PostMapping("/edit.do")
   public String edit(@RequestParam int boardNo, Model model) {
     model.addAttribute("board", boardService.getBoardByNo(boardNo));
     return "board/edit";
   }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
   // 게시글 수정 (지희)
 =======
   
 >>>>>>> d124c91 (수정 기능 구현)
+=======
+  
+>>>>>>> 55d97c6c148e70a2df95ef624291a1bc4ab0c7a7
   @PostMapping("/modify.do")
   public String modify(BoardDto board, RedirectAttributes redirectAttributes) {
     redirectAttributes
       .addAttribute("boardNo", board.getBoardNo())
       .addFlashAttribute("modifyResult", boardService.modifyBoard(board) == 1 ? "수정되었습니다." : "수정을 하지 못했습니다.");
     return "redirect:/board/detail.do?boardNo={boardNo}";
+<<<<<<< HEAD
 <<<<<<< HEAD
   }
   
@@ -174,6 +189,10 @@ public class BoardController {
 >>>>>>> d124c91 (수정 기능 구현)
   }
   
+=======
+  }
+  
+>>>>>>> 55d97c6c148e70a2df95ef624291a1bc4ab0c7a7
   
   @PostMapping(value="/addAttach.do", produces="application/json")
   public ResponseEntity<Map<String, Object>> addAttach(MultipartHttpServletRequest multipartRequest) throws Exception {

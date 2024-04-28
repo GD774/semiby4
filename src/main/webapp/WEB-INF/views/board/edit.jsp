@@ -83,7 +83,10 @@
     <input type="hidden" name="boardNo" value="${board.boardNo}">
     <button type="submit">수정완료</button>
     <a href="${contextPath}/board/list.do"><button type="button">작성취소</button></a>
+<<<<<<< HEAD
 >>>>>>> d124c91 (수정 기능 구현)
+=======
+>>>>>>> 55d97c6c148e70a2df95ef624291a1bc4ab0c7a7
   </div>
   
   <div id="new-attach-list"></div>
@@ -96,7 +99,10 @@
 
 <!-- 첨부 추가 -->
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 55d97c6c148e70a2df95ef624291a1bc4ab0c7a7
 <c:if test="${sessionScope.user.userNo == board.user.userNo}">
   <div>
     <label for="files">첨부추가하기</label>
@@ -108,7 +114,10 @@
   <h3>현재 첨부 목록</h3>
   <div id="attach-list"></div>
 </c:if>
+<<<<<<< HEAD
 >>>>>>> d124c91 (수정 기능 구현)
+=======
+>>>>>>> 55d97c6c148e70a2df95ef624291a1bc4ab0c7a7
 
 <script>
 
@@ -133,10 +142,14 @@ const fnAttachList = () => {
       str += '<span>' + attach.originalFilename + '</span>';
       if('${sessionScope.user.userNo}' === '${board.user.userNo}') {
 <<<<<<< HEAD
+<<<<<<< HEAD
     	  str += '<a style="margin-left: 10px;" class="remove-attach" data-attach-no="' + attach.attachNo + '">X</a>';
 =======
     	  str += '<a style="margin-left: 10px;" class="remove-attach" data-attach-no="' + attach.attachNo + '">x</a>';
 >>>>>>> d124c91 (수정 기능 구현)
+=======
+    	  str += '<a style="margin-left: 10px;" class="remove-attach" data-attach-no="' + attach.attachNo + '">x</a>';
+>>>>>>> 55d97c6c148e70a2df95ef624291a1bc4ab0c7a7
     	  // <i class="fas fa-trash-alt"></i>
       }
       str += '</div>';
@@ -161,10 +174,14 @@ const fnAddAttach = () => {
     $.ajax({
       // 요청
 <<<<<<< HEAD
+<<<<<<< HEAD
       type: 'POST',
 =======
       type: 'post',
 >>>>>>> d124c91 (수정 기능 구현)
+=======
+      type: 'post',
+>>>>>>> 55d97c6c148e70a2df95ef624291a1bc4ab0c7a7
       url: '${contextPath}/board/addAttach.do',
       data: formData,
       contentType: false,

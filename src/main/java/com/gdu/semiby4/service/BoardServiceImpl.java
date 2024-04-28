@@ -1,6 +1,7 @@
 package com.gdu.semiby4.service;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import java.util.Map;
 import java.util.List;
 import java.util.HashMap;
@@ -16,6 +17,10 @@ import java.net.URLEncoder;
 import java.io.File;
 import java.io.IOException;
 >>>>>>> d124c91 (수정 기능 구현)
+=======
+import java.io.File;
+import java.io.IOException;
+>>>>>>> 55d97c6c148e70a2df95ef624291a1bc4ab0c7a7
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
@@ -25,11 +30,14 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 =======
 >>>>>>> d124c91 (수정 기능 구현)
+=======
+>>>>>>> 55d97c6c148e70a2df95ef624291a1bc4ab0c7a7
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -576,6 +584,9 @@ public class BoardServiceImpl implements BoardService {
   }
   
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 55d97c6c148e70a2df95ef624291a1bc4ab0c7a7
   @Override
   public ResponseEntity<Map<String, Object>> addAttach(MultipartHttpServletRequest multipartRequest) throws Exception {
     
@@ -631,6 +642,139 @@ public class BoardServiceImpl implements BoardService {
       return ResponseEntity.ok(Map.of("attachResult", files.size() == attachCount));
       
     }
+<<<<<<< HEAD
+=======
+  
+    @Override
+    public ResponseEntity<Map<String, Object>> removeAttach(int attachNo) {
+      
+      // 삭제할 첨부 파일 정보를 DB 에서 가져오기
+      AttachDto attach = boardMapper.getAttachByNo(attachNo);
+      
+      // 파일 삭제
+      File file = new File(attach.getUploadPath(), attach.getFilesystemName());
+      if(file.exists()) {
+        file.delete();
+      }
+      
+      // 썸네일 삭제
+      if(attach.getHasThumbnail() == 1) {
+        File thumbnail = new File(attach.getUploadPath(), "s_" + attach.getFilesystemName());
+        if(thumbnail.exists()) {
+          thumbnail.delete();
+        }
+      }
+      
+      // DB 삭제
+      int deleteCount = boardMapper.deleteAttach(attachNo);
+      
+      return ResponseEntity.ok(Map.of("deleteCount", deleteCount));
+    }
+  
+  
+  
+  
+  
+  
+//  // 게시글 수정 (지희)
+//  @Override
+//  public boolean modifyBoard(MultipartHttpServletRequest multipartRequest) {
+//    try {
+//      // 게시글 정보 읽기
+//      String title = multipartRequest.getParameter("title");
+//      String contents = multipartRequest.getParameter("contents");
+//      int boardNo = Integer.parseInt(multipartRequest.getParameter("boardNo")); // 게시글 번호도 파라미터로 받아야 합니다.
+//      
+//      // 게시글 정보 업데이트
+//      BoardDto board = BoardDto.builder()
+//          .boardNo(boardNo)
+//          .title(title)
+//          .contents(contents)
+//          .build();
+//      int updatedBoardCount = boardMapper.updateBoard(board); // 게시글 정보를 업데이트하는 메소드
+//      
+//      // 새로운 파일 처리
+//      List<MultipartFile> files = multipartRequest.getFiles("files");
+//      int insertAttachCount = 0;
+//      
+//
+//
+//   // 게시글 수정 로직 중 파일 처리 부분
+//      for (MultipartFile multipartFile : multipartRequest.getFiles("files")) {
+//          if (multipartFile != null && !multipartFile.isEmpty()) {
+//              String uploadPath = myFileUtils.getUploadPath(); // 파일 저장 경로
+//              File dir = new File(uploadPath);
+//              if (!dir.exists()) {
+//                  dir.mkdirs();
+//              }
+//
+//              String originalFilename = multipartFile.getOriginalFilename();
+//              String filesystemName = myFileUtils.getFilesystemName(originalFilename);
+//              File file = new File(dir, filesystemName);
+//              multipartFile.transferTo(file); // 파일 저장
+//
+//              // 썸네일 생성
+//              String contentType = Files.probeContentType(file.toPath());
+//              int hasThumbnail = contentType != null && contentType.startsWith("image") ? 1 : 0;
+//              if (hasThumbnail == 1) {
+//                  File thumbnail = new File(dir, "s_" + filesystemName);
+//                  Thumbnails.of(file).size(96, 64).toFile(thumbnail);
+//              }
+//
+//              // 첨부 파일 정보 데이터베이스 저장
+//              AttachDto attach = AttachDto.builder()
+//                                  .uploadPath(uploadPath)
+//                                  .filesystemName(filesystemName)
+//                                  .originalFilename(originalFilename)
+//                                  .hasThumbnail(hasThumbnail)
+//                                  .boardNo(boardNo)
+//                                  .build();
+//              insertAttachCount += boardMapper.insertAttach(attach);
+//          }
+//      }
+//
+//
+//      // 결과 반환
+//      return updatedBoardCount == 1 && (files.size() == 0 || insertAttachCount == files.size());
+//      
+//    } catch (IOException e) {
+//      e.printStackTrace();
+//      return false;
+//    }
+//  }
+//
+//  
+//  
+//  // 수정화면에서 첨부파일 삭제 (지희)
+//@Override
+//public ResponseEntity<Map<String, Object>> removeAttach(int attachNo) {
+//  
+////삭제할 첨부 파일 정보를 DB에서 가져오기
+//  AttachDto attach = boardMapper.getAttachByNo(attachNo);
+//  if (attach == null) {
+//      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Attachment not found with ID: " + attachNo));
+//  }
+//  // 파일 삭제
+//  File file = new File(attach.getUploadPath(), attach.getFilesystemName());
+//  if(file.exists()) {
+//    file.delete();
+//  }
+//  
+//  // 썸네일 삭제
+//  if(attach.getHasThumbnail() == 1) {
+//    File thumbnail = new File(attach.getUploadPath(), "s_" + attach.getFilesystemName()); 
+//    if(thumbnail.exists()) {
+//      thumbnail.delete();
+//    }      
+//  }
+//  
+//  // DB 삭제
+//  int deleteCount = boardMapper.deleteAttach(attachNo);
+//  
+//  return ResponseEntity.ok(Map.of("deleteCount", deleteCount));
+//}
+
+>>>>>>> 55d97c6c148e70a2df95ef624291a1bc4ab0c7a7
   
   // 수정화면에서 첨부파일 삭제 (지희)
 =======
