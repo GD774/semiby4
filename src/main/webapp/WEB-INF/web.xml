@@ -35,7 +35,7 @@
   <listener>
     <listener-class>com.gdu.semiby4.listener.MyHttpSessionListener</listener-class>
   </listener>
-  
+ 
   <!-- Processes application requests -->
   <servlet>
     <servlet-name>appServlet</servlet-name>

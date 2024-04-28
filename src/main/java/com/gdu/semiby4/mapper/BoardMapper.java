@@ -23,6 +23,8 @@ public interface BoardMapper {
   List<CommentDto> getCommentList(Map<String, Object> map);
 	int getSearchCount(Map<String, Object> map);
   List<BoardDto> getSearchList(Map<String, Object> map);
+  //디테일리스트에서 검색기능 구현 (지희)
+  List<BoardDto> getSearchDetailList(Map<String, Object> map);
   int updateHit(int boardNo);
   int updateBoard(BoardDto board);  // 게시글 수정 (지희)
   AttachDto getAttachByNo(int attachNo);  // 지희 추가
@@ -36,4 +38,10 @@ public interface BoardMapper {
  
  // 삭제를 위해 추가
  int deleteBoard(int boardNo);
+ 
+ // BEST HIT 게시판 (지희)
+ List<BoardDto> getBestHitList();
+ 
+ int getCountByCate(Map<String, Object> map);
+ 
 }

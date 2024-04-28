@@ -41,14 +41,19 @@ public class BoardController {
   
   @GetMapping(value="/attachList.do", produces="application/json")
   public ResponseEntity<Map<String, Object>> attachList(@RequestParam int boardNo)  {
-    Map<String, Object> attachList = boardService.getAttachList(boardNo);
-    return new ResponseEntity<>(attachList, HttpStatus.OK);
+    return boardService.getAttachList(boardNo);
   }
 
 	@GetMapping("/search.do")
 	public String search(HttpServletRequest request, Model model) {
 		boardService.loadboardSearchList(request, model);
 		return "board/list";
+	}
+	// 디테일리스트에서 검색기능 구현 (지희)
+	@GetMapping("/searchDetail.do")
+	public String detailsearch(HttpServletRequest request, Model model) {
+		boardService.detailBoardSearchList(request, model);
+		return "board/detaillist";
 	}
 
 	@GetMapping("/write.page") // 내꺼
@@ -96,19 +101,21 @@ public class BoardController {
   @GetMapping("/multilist.do")
   public String multiList(Model model) {
     boardService.boardMultiList(model);
+    boardService.bestHitBoardList(model);
     return "board/multilist";
   }
   
   // 멀티리스트를 위해 추가
+  // sort 위해 수정
   @GetMapping("detaillist.do")
-  public String detailList(@RequestParam(value="cateNo") String cateNo, HttpServletRequest request, Model model) {
-    model.addAttribute("request", request);
-    model.addAttribute("cateNo", cateNo);
-    boardService.boardDetailList(model);
-    
-    
-    
-    return "board/detaillist";
+  public String detailList(@RequestParam(value = "cateNo", required = false, defaultValue = "1") String cateNo,
+                           @RequestParam(value = "sort", required = false, defaultValue = "DESC") String sort,
+                           HttpServletRequest request, Model model) {
+      System.out.println("Received cateNo: " + cateNo + ", sort: " + sort);
+      model.addAttribute("request", request);
+      model.addAttribute("cateNo", cateNo);
+      boardService.boardDetailList(model);
+      return "board/detaillist";
   }
   
   // 삭제를 위해 추가
@@ -120,10 +127,13 @@ public class BoardController {
     return "redirect:/board/list.do";
   }
 
+  // updateHit 오류 위해 수정 (지희)
   @GetMapping("/updateHit.do")
-  public String updateHit(@RequestParam int boardNo) {
-		
-    return "redirect:/board/detail.do?boardNo=" + boardNo;
+  public String updateHit(@RequestParam int boardNo, Model model) {
+	  boardService.updateHit(boardNo);
+	  model.addAttribute("board", boardService.getBoardByNo(boardNo));
+	  model.addAttribute("attachList", boardService.getAttachByBoard(boardNo));
+      return "redirect:/board/detail.do?boardNo=" + boardNo;
   }
 
   // 게시글 수정 (지희)
@@ -136,9 +146,15 @@ public class BoardController {
   // 게시글 수정 (지희)
   @PostMapping("/modify.do")
   public String modify(BoardDto board, RedirectAttributes redirectAttributes) {
-    redirectAttributes.addFlashAttribute("updateCount", boardService.modifyBoard(board));
- // return "redirect:/board/list.do";
-    return "redirect:/board/detail.do?boardNo=" + board.getBoardNo();
+    redirectAttributes
+      .addAttribute("boardNo", board.getBoardNo())
+      .addFlashAttribute("modifyResult", boardService.modifyBoard(board) == 1 ? "수정되었습니다." : "수정을 하지 못했습니다.");
+    return "redirect:/board/detail.do?boardNo={boardNo}";
+  }
+  
+  @PostMapping(value="/addAttach.do", produces="application/json")
+  public ResponseEntity<Map<String, Object>> addAttach(MultipartHttpServletRequest multipartRequest) throws Exception {
+    return boardService.addAttach(multipartRequest);
   }
   
   @PostMapping(value="/removeAttach.do", produces="application/json" )

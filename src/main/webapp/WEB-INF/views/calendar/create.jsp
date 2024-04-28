@@ -114,54 +114,59 @@
 
 
  <div class="gnb-wrap">
- <button onclick="location.href='${contextPath}/calendar'">일정으로 돌아가기</button>
+ <button id="btn-golist" onclick="location.href='${contextPath}/calendar/list'">일정으로 돌아가기</button>
  </div>
-
+     
  <div id="main-wrap">
-   <div id="title">
-	 <h1 class="title">${pageTitle}</h1>
-	 <hr>
-   </div>
-
- <form id="frm-schedule-register"
+ <div id="title">
+ <h1 class="title">일정작성</h1>
+ <hr>
+ </div>
+ 
+ 
+ <form id="frm-board-register"
        method="POST"
        enctype="multipart/form-data"
-       action = "${contextPath}/calendar/registerSchedule.do">
+       action = "${contextPath}/calendar/register.do">
+       
+ <div>
+  <label for="writer" >작성자</label>
+  <input type="text" class="form-control" id="writer" value="${sessionScope.user.userNo}" readonly>
+ </div>
+ 
+ <div>
+  <h3 id="startword">시작 날짜</h3>
+  <input type="text" id="startDate" placeholder="YYYY-MM-DD로 입력하세요">
+ </div>
 
-   <div>
-	 <input type="hidden" name="userNo" value="${sessionScope.user.userNo}">
-   </div>
-
-   <div>
-	 <label for="title" id="titleword">제목</label>
-	 <input type="text" class="form-control" name="title" id="title" placeholder="제목을 입력하세요">
-   </div>
-
-   <div>
-	 <h3 id="startword">시작 날짜</h3>
-	 <input type="date" name="startDate" value="">
-   </div>
-
-   <div>
-	 <h3 id="endword">종료 날짜</h3>
-	 <input type="date" name="endDate">
-   </div>
-
-   <div>
-	 <input type="number" name="reminder">
-   </div>
-
-   <div>
-	 <textarea id="contents" class="form-control" name="contents" placeholder="내용을 입력하세요"></textarea>
-   </div>
-
-   <div>
-	 <button type="submit">작성</button>
-   </div>
-   
+ <div>
+  <h3 id="endword">종료 날짜</h3>
+  <input type="text" id="endDate" placeholder="YYYY-MM-DD로 입력하세요" >
+ </div>
+ 
+ 
+ <div>
+  <label for="title" id="titleword">일정이름</label>
+  <input type="text" class="form-control" name="title" id="title" placeholder="제목을 입력하세요">
+ </div>      
+ 
+ <div>
+  <textarea id="contents" class="form-control" name="contents" placeholder="내용을 입력하세요"></textarea>
+ </div>
+ 
+ 
+ 
+ 
+ <div id="buttons">
+ <input type="hidden" name="userNo" value="${sessionScope.user.userNo}">
+ <button id="#btn-register"
+	       onclick="location.href='${contextPath}/calendar/create.do'">작성완료</button>
+ <a href="${contextPath}/calendar/create.do"><button type="button">작성취소</button></a>
+ </div>
+ 
  </form>
  
- </div>
+</div>
 
 <script>
 
@@ -197,5 +202,6 @@ $(document).ready(function() {
 });
 
 </script>
+
 </body>
 </html>
