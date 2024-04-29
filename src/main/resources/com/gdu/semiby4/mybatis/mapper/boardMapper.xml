@@ -245,16 +245,17 @@
   
   <!-- 순지선이 멀티리스트를 위해 추가 -->
    <!-- HIT 값 추가 -->
-    <select id="getBoardDetailList"
+   <select id="getBoardDetailList"
           parameterType="Map"
           resultMap="BoardMap">
-    	SELECT BOARD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT, HIT, CATE_NO, USER_NO, USER_ID, EMAIL
-	      FROM (SELECT B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT, B.HIT, B.CATE_NO, U.USER_NO, U.USER_ID, U.EMAIL,
-	               ROW_NUMBER() OVER (ORDER BY CASE WHEN #{sort} = 'ASC' THEN B.BOARD_NO END ASC,
-	                						   CASE WHEN #{sort} = 'DESC' THEN B.BOARD_NO END DESC,
-	                						   CASE WHEN #{sort} = 'VIEW_COUNT_DESC' THEN B.HIT END DESC, B.BOARD_NO DESC) AS RN
-	              FROM BOARD_T B INNER JOIN USER_T U ON B.USER_NO = U.USER_NO)
-	     WHERE RN BETWEEN #{begin} AND #{end} AND CATE_NO = #{cateNo}
+      SELECT BOARD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT, HIT, CATE_NO, USER_NO, USER_ID, EMAIL
+        FROM (SELECT B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT, B.HIT, B.CATE_NO, U.USER_NO, U.USER_ID, U.EMAIL,
+                 ROW_NUMBER() OVER (ORDER BY CASE WHEN #{sort} = 'ASC' THEN B.BOARD_NO END ASC,
+                                 CASE WHEN #{sort} = 'DESC' THEN B.BOARD_NO END DESC,
+                                 CASE WHEN #{sort} = 'VIEW_COUNT_DESC' THEN B.HIT END DESC, B.BOARD_NO DESC) AS RN
+                FROM BOARD_T B INNER JOIN USER_T U ON B.USER_NO = U.USER_NO
+                WHERE CATE_NO = #{cateNo})
+       WHERE RN BETWEEN #{begin} AND #{end} AND CATE_NO = #{cateNo}
   </select>
   
   <!-- 삭제를 위해 추가 -->

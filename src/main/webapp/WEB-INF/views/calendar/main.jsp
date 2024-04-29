@@ -31,6 +31,11 @@
     max-width: 1100px;
     margin: 0 auto;
   }
+  
+  .modal-body{
+  margin: 8px;
+  
+  }
 
 </style>
 </head>
@@ -48,7 +53,7 @@
 			<h1 id="modalTitle" class="modal-title fs-5"></h1>
 			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		  </div>
-		  <input type="hidden" id="user-no" name="userNo" class="modal-body" value="${sessionScope.user.userNo}">
+		  <input type="hidden" id="user-no" name="userNo" class="form-control modal-body" value="${sessionScope.user.userNo}">
 		  <input type="hidden" id="schedule-no" name="scheduleNo" class="modal-body">
 		  <input type="text" id="scheduleTitle" name="title" class="modal-body">
 		  <input type="date" id="scheduleStart" name="startDate" class="modal-body">
