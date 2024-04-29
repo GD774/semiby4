@@ -32,10 +32,37 @@
     margin: 0 auto;
   }
   
+  .form-control{
+  width: 230px;
+  }
+  
   .modal-body{
   margin: 8px;
   
   }
+  .frm-schedule-register{
+   width: 200px;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+  }
+  
+  #date{
+  display: flex;
+  justify-content: center;
+  }
+  
+  #scheduleTitle{
+  margin-top: 10px;
+  width: 480px;
+  }
+  #scheduleContents{
+  width: 480px;
+  }
+  .fc-event-container{
+  background-color: grey;
+  }
+  
 
 </style>
 </head>
@@ -53,12 +80,16 @@
 			<h1 id="modalTitle" class="modal-title fs-5"></h1>
 			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		  </div>
-		  <input type="hidden" id="user-no" name="userNo" class="form-control modal-body" value="${sessionScope.user.userNo}">
+		  <input type="hidden" id="user-no" name="userNo" class="modal-body" value="${sessionScope.user.userNo}">
 		  <input type="hidden" id="schedule-no" name="scheduleNo" class="modal-body">
-		  <input type="text" id="scheduleTitle" name="title" class="modal-body">
-		  <input type="date" id="scheduleStart" name="startDate" class="modal-body">
-		  <input type="date" id="scheduleEnd" name="endDate" class="modal-body">
-		  <input type="text" id="scheduleContents" name="contents" class="modal-body">
+      
+      <div id="date">
+		  <input type="date" id="scheduleStart" name="startDate" class="form-control modal-body">
+		  <input type="date" id="scheduleEnd" name="endDate" class="form-control modal-body" >
+      </div>
+
+		  <input type="text" id="scheduleTitle" name="title" class="form-control modal-body" placeholder="일정">
+		  <input type="text" id="scheduleContents" name="contents" class="form-control modal-body" placeholder="상세내용">
 		  <div class="modal-footer">
 			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">close</button>
 			<button type="submit" id="btn-submit" class="btn btn-primary"></button>
