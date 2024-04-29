@@ -7,8 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import com.gdu.semiby4.dto.UserDto;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -16,7 +14,7 @@ import com.gdu.semiby4.dto.UserDto;
 public class BoardDto {
   private int attachCount;
   int boardNo, hit;
-	String title, contents, cateNo;
+	String title, contents, cateNo, cateNames;
 	Timestamp createDt, modifyDt;
 	UserDto user;
 }

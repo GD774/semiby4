@@ -8,7 +8,8 @@ public class MvcController {
 
   @GetMapping(value={"/", "/main.page"})
   public String welcome() {
-    return "redirect:/board/multilist.do";
+
+    return "redirect:board/multilist.do";
   }
 
 }

@@ -15,6 +15,7 @@ public class RequiredSigninInterceptor implements HandlerInterceptor {
     
     HttpSession session = request.getSession();
     if(session.getAttribute("user") == null) {
+      //if (session.getAttribute("user").getUserId().equals("admin"))
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
       out.println("<script>");
@@ -28,6 +29,8 @@ public class RequiredSigninInterceptor implements HandlerInterceptor {
       out.close();
       return false;
     }
+    
+    System.out.println("이게 머임" + session.getAttribute("user"));
     
     return true;
     

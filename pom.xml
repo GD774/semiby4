@@ -21,6 +21,12 @@
 
   <dependencies>
 
+	<dependency>
+      <groupId>org.webjars</groupId>
+      <artifactId>fullcalendar</artifactId>
+      <version>5.10.1</version>
+    </dependency>
+
 
 
     <!-- Thumbnail Generator -->

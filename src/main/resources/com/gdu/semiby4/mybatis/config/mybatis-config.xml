@@ -16,6 +16,7 @@
     <typeAlias alias="BoardDto"          type="com.gdu.semiby4.dto.BoardDto"/>
     <typeAlias alias="AttachDto"          type="com.gdu.semiby4.dto.AttachDto"/>
     <typeAlias alias="CommentDto"          type="com.gdu.semiby4.dto.CommentDto"/>
+	<typeAlias alias="ScheduleDto"          type="com.gdu.semiby4.dto.ScheduleDto"/>
   </typeAliases>
   
 </configuration>

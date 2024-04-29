@@ -18,10 +18,12 @@ public interface BoardService {
 
   void boardList(Model model);
   void boardListByNo(int boardNo, Model model);
-  Map<String, Object> getAttachList(int boardNo);
-	void loadboardSearchList(HttpServletRequest request, Model model);
-	public boolean registerUpload(MultipartHttpServletRequest multipartRequest);
-	BoardDto getBoardByNo(int boardNo);
+  ResponseEntity<Map<String, Object>> getAttachList(int boardNo);
+  void loadboardSearchList(HttpServletRequest request, Model model);
+  // 디테일리스트에서 검색기능 구현 (지희)
+  void detailBoardSearchList(HttpServletRequest request, Model model);
+  public boolean registerUpload(MultipartHttpServletRequest multipartRequest);
+  BoardDto getBoardByNo(int boardNo);
   int registerComment(HttpServletRequest request);
   Map<String, Object> getCommentList(HttpServletRequest request);
   
@@ -36,5 +38,13 @@ public interface BoardService {
   
   // 삭제를 위해 추가
   int removeBoard(int boardNo);
+
+  int updateHit(int boardNo);
+  int modifyBoard(BoardDto board);  // 게시글 수정 (지희)
+  ResponseEntity<Map<String, Object>> removeAttach(int attachNo);
+  ResponseEntity<Map<String, Object>> addAttach(MultipartHttpServletRequest multipartRequest) throws Exception;
   
+  // BEST HIT 게시판 (지희)
+  void bestHitBoardList(Model model);
+
 }

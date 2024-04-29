@@ -6,113 +6,124 @@
 <c:set var="dt" value="<%=System.currentTimeMillis()%>"/>
 
 <jsp:include page="../layout/header.jsp"/>
+<link rel="stylesheet" href="${contextPath}/resources/css/board/detaillist.css?dt=${dt}">
 
-<style>
-  .contents {
-    width: 500px;
-  }
-  
-  #bold:hover {
-    cursor: pointer;
-    font-weight: bold;
-  }
-  
-  .boardicon {
-  width: 70px;
-  height:70px;
-  text-align:center;
-  margin-left:auto;
-  margin-right:auto;
-  display: block;
-}
-  .title {
-  text-align: center;
-  }
-
-</style>
 
 <c:if test="${param.cateNo eq '1'}">
-    <h1 class="title"><img class="boardicon" src="${contextPath}/resources/images/boardicon.png"> 취업정보 게시판 </h1>
+    <h1 class="title"><img class="boardicon" src="${contextPath}/resources/images/jobinfoicon.png"> 취업정보 게시판 </h1>
 </c:if>
 <c:if test="${param.cateNo eq '2'}">
-    <h1 class="title"><img class="boardicon" src="${contextPath}/resources/images/boardicon.png"> 면접후기 게시판</h1>
+    <h1 class="title"><img class="boardicon" src="${contextPath}/resources/images/interviewicon.png"> 면접후기 게시판</h1>
 </c:if>
 <c:if test="${param.cateNo eq '3'}">
-    <h1 class="title"><img class="boardicon" src="${contextPath}/resources/images/boardicon.png"> 이야기 나눠요</h1>
+    <h1 class="title"><img class="boardicon" src="${contextPath}/resources/images/communicationicon.png"> 이야기 나눠요</h1>
 </c:if>
 
 
 
-<a href="${contextPath}/board/write.page">게시물 작성</a>
+<a href="${contextPath}/board/write.page" id="write" class="btn btn-secondary">게시물 작성</a>
 
+<!--
 <div>
-  <div>
-    <input type="radio" name="sort" value="DESC" id="descending" checked>
-    <label for="descending">내림차순</label>
-    <input type="radio" name="sort" value="ASC" id="ascending">
-    <label for="ascending">오름차순</label>
-    <input type="radio" name="sort" value="VIEW_COUNT_DESC" id="viewDescending">
-  <label for="viewDescending">조회수순</label>
+  <c:if test="${sessionScope.user != null}">
+  <input type="checkbox" name="deleteUser" value="deleteUser" id="deleteUser">
+  </c:if>
 </div>
-  </div>
-  <div>
-    <select id="display" name="display">
-      <option>20</option>
-      <option>30</option>
-      <option>40</option>
-    </select>
-  </div>
+-->
+<div>
+  <form method="GET"
+        action="${contextPath}/board/searchDetail.do">
+	<select id="sort" name="sort">
+	    <option value="DESC" ${sort == 'DESC' ? 'selected' : ''}>내림차순</option>
+	    <option value="ASC" ${sort == 'ASC' ? 'selected' : ''}>오름차순</option>
+	    <option value="VIEW_COUNT_DESC" ${sort == 'VIEW_COUNT_DESC' ? 'selected' : ''}>조회수순</option>
+	</select>
+    <div class="searchspace">
+      <select name="column">
+        <option value="U.USER_ID">작성자</option>
+        <option value="B.TITLE">제목</option>
+        <option value="B.CONTENTS">내용</option>
+      </select>
+        <input type="text" name="query" placeholder="검색어를 입력하세요">
+        <input type="hidden" name="hiddensort" value="${sort}" >
+        <input type="hidden" name="cateNo" value="${param.cateNo}" >
+        <button type="submit" id="search">검색</button>      
+    </div>
+  </form>
+</div>
+  
+ <div>
   <table class="table align-middle">
     <thead>
       <tr>
-        <td>순번</td>
         <td>제목</td>
         <td>작성자</td>
         <td>조회수</td>
+        <td>작성일자</td>
       </tr>
     </thead>
     <tbody>
       <c:forEach items="${boardDetailList}" var="board" varStatus="vs">
         <tr>
-          <td>${beginNo - vs.index}</td>
-          <td class="contents">
-            <a id="bold" href="${contextPath}/board/detail.do?boardNo=${board.boardNo}">${board.title}</a>
+          <td class="board" data-board-no="${board.boardNo}">
+            <a id="bold" href="${contextPath}/board/updateHit.do?boardNo=${board.boardNo}">${board.title}</a>
           </td>
-          <td>${board.user.email}</td>
+          <td>${board.user.userId}</td>
           <td>${board.hit}</td>
+          <td><fmt:formatDate value="${board.createDt}" pattern="yyyy-MM-dd" /></td>
         </tr>
       </c:forEach>
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="4">${paging}</td>
+        <td colspan="5">
+          <div class="paging-container">
+            ${paging}
+          </div>
+        </td>
       </tr>
     </tfoot>
   </table>
 </div>
 
+<input type="hidden" id="removeResult" value="${removeResult}">
+
 <script>
-  
-const fnDisplay = () => {
-  document.getElementById('display').value = '${display}';
-  document.getElementById('display').addEventListener('change', (evt) => {
-    location.href = '${contextPath}/board/list.do?page=1&sort=${sort}&display=' + evt.target.value;
-  })
+const fnSearchSort = () => {
+	document.getElementById('search').addEventListener('click', (evt) => {
+		const sort = '${sort}';
+	    $('#sort').val(sort);
+	})
 }
 
-const fnSort = () => {
-    $(':radio[value=${sort}]').prop('checked', true);
-    $(':radio').on('click', (evt) => {
-      let sortValue = evt.target.value;
-      let displayValue = document.getElementById('display').value;
-      let url = '${contextPath}/board/list.do?page=1&sort=' + sortValue + '&display=' + displayValue;
-      location.href = url;
-    });
-};
+$('#sort').on('change', function() {
+    const sortValue = this.value;
+    const cateNo = '${param.cateNo}';  // 카테고리 번호를 JavaScript 변수로 저장
+    const contextPath = '${contextPath}';
+    const url = `${contextPath}/board/detaillist.do?page=1&sort=` + sortValue + '&cateNo=' + cateNo;
+    location.href = url;
+});
+
+$(document).ready(function() {
+    const sort = '${sort}';
+    if (sort && sort !== '') {
+        $('#sort').val(sort);
+    } else {
+        console.error('sort 오류');
+    }
+
+});
 
 
-fnDisplay();
-fnSort();
+
+const fnResponse = () => {
+	const removeResult = document.getElementById('removeResult').value;
+	if(removeResult === '1') {
+	    alert("게시글이 삭제되었습니다");
+	}
+}
+
+fnResponse();
 
 
 </script>

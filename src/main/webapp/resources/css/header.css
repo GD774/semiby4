@@ -5,3 +5,75 @@
   min-height: 600px;
   margin: 20px auto;
 }
+
+.category-list a {
+  margin-top: 20px;
+  margin-right: 15px; /* 카테고리 링크 사이의 공간 */
+  display: inline-block; /* 링크를 행으로 표시 */
+}
+
+.category-list a:last-child {
+  margin-right: 0; /* 마지막 링크의 마진 제거 */
+}
+
+.navbar-nav {
+  /* display: flex; */
+  justify-content: center; /* 내비게이션 링크를 가운데 정렬 */
+  width: 100%; /* 전체 너비를 사용 */
+  min-height: 90px;
+  padding: 20px;
+  cursor: pointer;
+}
+
+.nav-item {
+  margin: 0 40px; /* 좌우 마진으로 간격 조절 */
+  font-size: 20px;
+}
+
+.nav-link:hover {
+  color: #333; /* 마우스 오버 시 색상을 더 진한 검정색으로 변경 */
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.sign-in-out{
+
+  margin-top: 15px;
+  width: 250px;
+}
+
+.individual-link {
+  display: inline-block;
+}
+
+#sign-in, #sign-up {
+  padding: 5px 10px; 
+  transition: all 0.3s ease;
+  font-size: 16px;
+}
+
+#sign-in:hover, #sign-up:hover {
+  font-weight: bold;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1); /* 텍스트에 가벼운 그림자 효과 추가 */
+}
+#logo {
+	width:75px;
+}
+
+#admin {
+	margin-right: 10px;
+}
+#mypage {
+	margin-bottom: 5px;
+}
+
+.individual-link a {
+  margin-top: 30px;
+  font-size: 15px;
+}
+
+.individual-link a:hover {
+  font-weight: bold;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}

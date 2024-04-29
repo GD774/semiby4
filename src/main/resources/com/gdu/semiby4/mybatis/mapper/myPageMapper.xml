@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gdu.semiby4.mapper.MyPageMapper">
+
+  <select id="myBoardList"
+		  resultType="BoardDto">
+	SELECT B.BOARD_NO, B.USER_NO, B.TITLE, B.CONTENTS, B.HIT, B.CREATE_DT, B.MODIFY_DT
+	  FROM BOARD_T B
+	 WHERE B.USER_NO = #{userNo}
+  </select>
+
+  <select id="userInfo"
+		  resultType="UserDto">
+	SELECT USER_NO, USER_ID, PW, EMAIL, NAME, GENDER, MOBILE, PW_MODIFY_DT, SIGNUP_DT
+	  FROM USER_T
+	 WHERE USER_NO = #{userNo}
+  </select>
+
+  <!-- <select id="myBookmarks" -->
+  <!-- 		  resultType="BoardDto"> -->
+  <!-- 	SELECT B.BOARD_NO, B.USER_NO, B.TITLE, B.CONTENTS, B.HIT, B.CREATE_DT, B.MODIFY_DT -->
+  <!-- 	  FROM BOARD_T B INNER JOIN ON USER_T U ON  -->
+  <!-- 	 WHERE B.USER_NO = #{userNo} AND BM. -->
+  <!-- </select> -->
+
+  <update id="editUser"
+		  parameterType="UserDto">
+	UPDATE USER_T
+	   SET USER_ID = #{userId},
+	            PW = #{pw},
+	          NAME = #{name},
+	        MOBILE = #{mobile},
+	        GENDER = #{gender}
+	 WHERE USER_NO = #{userNo}
+  </update>
+
+</mapper>
