@@ -56,8 +56,8 @@
 
  <div id="buttons">
  <input type="hidden" name="userNo" value="${sessionScope.user.userNo}">
- <button type="submit">작성완료</button>
- <a href="${contextPath}/board/list.do"><button type="button">작성취소</button></a>
+ <button type="submit" class="btn btn-light">작성완료</button>
+ <a href="${contextPath}/board/list.do"><button type="button" class="btn btn-dark">작성취소</button></a>
  </div>
  
  </form>
@@ -109,13 +109,13 @@ const fnAttachCheck = () => {
 
 const fnRegisterCate = () => {
 
-	  document.getElementById('frm-board-register').addEventListener('submit', (evt) => {
-		  if (document.getElementById('select-box').selectedIndex === 0) {
-	            alert('카테고리를 선택해주세요');
-	            evt.preventDefault();
-	     }
-	  })
-	}
+    document.getElementById('frm-board-register').addEventListener('submit', (evt) => {
+      if (document.getElementById('select-box').selectedIndex === 0) {
+              alert('카테고리를 선택해주세요');
+              evt.preventDefault();
+       }
+    })
+  }
 
 fnAttachCheck();
 fnRegisterBoard();

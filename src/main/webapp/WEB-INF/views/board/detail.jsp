@@ -39,8 +39,20 @@
         <div id="action-buttons">
             <c:if test="${not empty sessionScope.user}">
                 <c:if test="${sessionScope.user.userNo == board.user.userNo || sessionScope.user.userNo == '1'}">
-                    <button type="button" id="btn-edit" class="btn btn-warning btn-sm">게시글 수정</button>
+                
+                
+                <form id="frm-btn-remove" method="POST">
+                  <input type="hidden" name="boardNo" value="${board.boardNo}">
                     <button type="button" id="btn-remove" class="btn btn-danger btn-sm">게시글 삭제</button>
+           </form> 
+                    
+                    
+                    
+        <form id="frm-btn-edit" method="POST">
+                     <input type="hidden" name="boardNo" value="${board.boardNo}">
+                    <button type="button" id="btn-edit" class="btn btn-warning btn-sm">게시글 수정</button>
+
+           </form>
                 </c:if>
             </c:if>
         </div>
@@ -49,6 +61,10 @@
 <form id="frm-comment">
 <div id="comment-list"></div>
     <textarea id="comment-contents" name="contents" class="form-control" placeholder="인터넷은 여러분이 만들어가는 소중한 공간입니다."></textarea>
+    <input type="hidden" name="boardNo" value="${board.boardNo}">
+    <c:if test="${not empty sessionScope.user}">  
+    <input type="hidden" name="userNo" value="${sessionScope.user.userNo}">
+    </c:if>
     <button type="button" class="btn btn-light" id="btn-comment-register" style="margin-top: 10px;">댓글등록</button>
 </form>
 </div>
@@ -82,44 +98,13 @@
 </div>
 
 
-<!-- 첨부 목록 공간입니다.>>>>> ---------------------------------------------------------------------->
-
-<div>
-  <c:if test="${empty attachList}">
-  <div></div>
-  </c:if>
-  <c:if test="${not empty attachList}">
-  <div>
- <input type="text" id="attach-box" class="form-control" value="첨부파일" readonly>
-  </div>
-  <c:forEach items="${attachList}" var="attach">
-  <div class="attach" data-attach-no="${attach.attachNo}">
-  <c:if test="${attach.hasThumbnail == 1}">
-  <img src="${contextPath}${attach.uploadPath}/s_${attach.filesystemName}">
-  </c:if>
-  <c:if test="${attach.hasThumbnail == 0}">
-  <img src="${contextPath}/resources/images/attach.png" width="96px">
-  </c:if>
-  <a><input type="text" class="form-control" value="${attach.originalFilename}" width="100px" style="margin-bottom:10px; border:none;" readonly></a>
-  </div>
-  </c:forEach>
-  <div> 
-    <a id="download-all" href="${contextPath}/board/downloadAll.do?boardNo=${board.boardNo}"><button  class="btn btn-dark" style="margin-top: 10px;" >모두 다운로드</button></a>
-  </div>
-  </c:if>
-</div>
-
-
-
-<!-- <<<<< 첨부 목록 공간입니다. ---------------------------------------------------------------------->
-
 
 
 <div id="paging"></div>
 
 <script defer>
 var page = 1;
-var frmBtn = document.getElementById('frm-btn');
+
 
 
 const fnCheckSignin = () => {
@@ -131,39 +116,39 @@ const fnCheckSignin = () => {
 }
 
 
-	const fnRegisterComment = () => {  
-		
-	  $('#btn-comment-register').on('click', (evt) => {
-		  
-	        const commentContents = $('#comment-contents').val();
-	        if (commentContents === '') {
-	            alert('댓글 내용을 입력해주세요.');
-	            return;
-	        }
-	        
-	    fnCheckSignin();
-	    
-	    $.ajax({
-	      // 요청
-	      type: 'POST',
-	      url: '${contextPath}/board/registerComment.do',
-	      data: $('#frm-comment').serialize(),  
-	      dataType: 'json',
-	      success: (resData) => {  
-	        if(resData.insertCount === 1) {
-	          alert('댓글이 등록되었습니다.');
-	          $('#comment-contents').val('');
-	          fnCommentList();
-	        } else {
-	          alert('댓글 등록이 실패했습니다.');
-	        }
-	      },
-	      error: (jqXHR) => {
-	    	  alert('정상적인 접근이 아닙니다');
-	      }
-	    });
-	  });
-	};
+   const fnRegisterComment = () => {  
+      
+     $('#btn-comment-register').on('click', (evt) => {
+        
+           const commentContents = $('#comment-contents').val();
+           if (commentContents === '') {
+               alert('댓글 내용을 입력해주세요.');
+               return;
+           }
+           
+       fnCheckSignin();
+       
+       $.ajax({
+         // 요청
+         type: 'POST',
+         url: '${contextPath}/board/registerComment.do',
+         data: $('#frm-comment').serialize(),  
+         dataType: 'json',
+         success: (resData) => {  
+           if(resData.insertCount === 1) {
+             alert('댓글이 등록되었습니다.');
+             $('#comment-contents').val('');
+             fnCommentList();
+           } else {
+             alert('댓글 등록이 실패했습니다.');
+           }
+         },
+         error: (jqXHR) => {
+            alert('정상적인 접근이 아닙니다');
+         }
+       });
+     });
+   };
 
 
 
@@ -181,7 +166,6 @@ const fnCommentList = () => {
       commentList.empty();
       paging.empty();
       if(resData.commentList.length === 0) {
-        commentList.append('<div class="notyet">아직 등록된 댓글이 없습니다.</div>');
         paging.empty();
         return;
       }
@@ -264,7 +248,7 @@ const fnDownloadAll = () => {
         });
     }
 }
-	
+   
 if (document.getElementById('download-all')) {
     fnDownloadAll();
 }
@@ -274,14 +258,15 @@ if (document.getElementById('download-all')) {
 //------------------------------------ 삭제 구현---------------------------------->>
 
 document.addEventListener('DOMContentLoaded', function() {
-	if(!document.getElementById('btn-remove')){
-		return;
-	}
+   if(!document.getElementById('btn-remove')){
+      return;
+   }
     const fnRemoveBoard = () => {
+       const frmBtnRemove = document.getElementById('frm-btn-remove');
         document.getElementById('btn-remove').addEventListener('click', (evt) => {
             if (confirm('해당 게시글을 삭제할까요?')) {
-                frmBtn.action = '${contextPath}/board/removeBoard.do';
-                frmBtn.submit();
+                frmBtnRemove.action = '${contextPath}/board/removeBoard.do';
+                frmBtnRemove.submit();
             }
         });
     };
@@ -291,18 +276,18 @@ document.addEventListener('DOMContentLoaded', function() {
 //수정 화면으로 넘어가기 위해 추가
 
 const fnEditBoard = () => {
-	  document.getElementById('btn-edit').addEventListener('click', (evt) => {
-	    const frmBtn = document.getElementById('frm-edit'); // 수정할 폼의 ID를 확인하세요.
-	    if (frmBtn) {
-	      frmBtn.action = '${contextPath}/board/edit.do';
-	      frmBtn.submit();
-	    } else {
-	      console.error('Form not found'); // 폼이 없을 경우 오류 메시지 출력
-	    }
-	  });
-	}
+     document.getElementById('btn-edit').addEventListener('click', (evt) => {
+       const frmBtnEdit = document.getElementById('frm-btn-edit'); // 수정할 폼의 ID를 확인하세요.
+       if (frmBtnEdit) {
+         frmBtnEdit.action = '${contextPath}/board/edit.do';
+         frmBtnEdit.submit();
+       } else {
+         console.error('Form not found'); // 폼이 없을 경우 오류 메시지 출력
+       }
+     });
+   }
 
-	document.addEventListener('DOMContentLoaded', fnEditBoard);
+   document.addEventListener('DOMContentLoaded', fnEditBoard);
 
 
 // 삭제시 DB에서 ATTACH_T 데이터 삭제되는 것 확인

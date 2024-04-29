@@ -33,38 +33,99 @@
     max-width: 1100px;
     margin: 0 auto;
   }
+  
+  .form-control{
+  width: 230px;
+  }
+  
+  .modal-body{
+  margin: 8px;
+  
+  }
+  .frm-schedule-register{
+   width: 200px;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+  }
+  
+  #date{
+  display: flex;
+  justify-content: center;
+  }
+  
+  #scheduleTitle{
+  margin-top: 10px;
+  width: 480px;
+  }
+  #scheduleContents{
+  width: 480px;
+  }
+  .fc-event-container{
+  background-color: grey;
+  }
+  
+  #main-button{
+  margin-left: 1550px;
+  }
+  
+  a {
+  text-decoration-line: none;
+  text-decoration: none;
+  color: black;
+ }
+
+ .fc-day-sun a {
+    color: red;
+ }
+ 
+ .fc-day-sat a {
+    color: #013ADF;
+} 
+ 
+
+
 
 </style>
 </head>
 <body>
 
+
   <div id="calendar"></div>
 
   <!-- Modal -->
   <div id="editSchedule" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-scrollable">
+  <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
-		<form id="frm-schedule-register"
-			  method="POST">
-		  <div class="modal-header">
-			<h1 id="modalTitle" class="modal-title fs-5"></h1>
-			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-		  </div>
-		  <input type="hidden" id="user-no" name="userNo" class="modal-body" value="${sessionScope.user.userNo}">
-		  <input type="hidden" id="schedule-no" name="scheduleNo" class="modal-body">
-		  <input type="text" id="scheduleTitle" name="title" class="modal-body">
-		  <input type="date" id="scheduleStart" name="startDate" class="modal-body">
-		  <input type="date" id="scheduleEnd" name="endDate" class="modal-body">
-		  <input type="text" id="scheduleContents" name="contents" class="modal-body">
-		  <div class="modal-footer">
-			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">close</button>
-			<button type="submit" id="btn-submit" class="btn btn-primary"></button>
-		  </div>
-		</form>
+    <form id="frm-schedule-register"
+        method="POST">
+      <div class="modal-header">
+      <h1 id="modalTitle" class="modal-title fs-5"></h1>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-	</div>
+      <input type="hidden" id="user-no" name="userNo" class="modal-body" value="${sessionScope.user.userNo}">
+      <input type="hidden" id="schedule-no" name="scheduleNo" class="modal-body">
+      
+      <div id="date">
+      <input type="date" id="scheduleStart" name="startDate" class="form-control modal-body">
+      <input type="date" id="scheduleEnd" name="endDate" class="form-control modal-body" >
+      </div>
+
+      <input type="text" id="scheduleTitle" name="title" class="form-control modal-body" placeholder="일정">
+      <input type="text" id="scheduleContents" name="contents" class="form-control modal-body" placeholder="상세내용">
+      <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">close</button>
+      <button type="submit" id="btn-submit" class="btn btn-primary"></button>
+      </div>
+    </form>
+      </div>
+  </div>
   </div>
 
+ <div id="main-button">
+ <button type="button" class="btn btn-dark" id="btn-main">메인으로</button>
+ </div>
+ 
 <script>
 
   const fnInitialize = () => {
@@ -85,9 +146,9 @@
 
   function getAllEvents(calendar) {
       $.ajax({
-		  method: 'GET',
+      method: 'GET',
           url: '${contextPath}/calendar/getdata',
-		  data: 'userNo=${sessionScope.user.userNo}',
+      data: 'userNo=${sessionScope.user.userNo}',
           dataType: 'json',
           success: (data) => {
               var events = [];
@@ -98,7 +159,8 @@
                       title     : data[i].title,
                       contents  : data[i].contents,
                       start     : moment(data[i].startDate).format('YYYY-MM-DD'),
-                      end       : moment(data[i].endDate).format('YYYY-MM-DD')
+                      end       : moment(data[i].endDate).format('YYYY-MM-DD'),
+                      color: '#A9A9A9'
                   };
                   events.push(eventData);
               }
@@ -173,33 +235,33 @@
   }
 
   const fnDateClick = (info) => {
-	  $('#modalTitle').append('일정 등록');
-	  $('#btn-submit').append('등록');
-	  $('#frm-schedule-register').attr('action', "${contextPath}/calendar/registerSchedule.do");
-  	  $('#scheduleStart').attr('value', moment(Date.parse(info.date)).format('YYYY-MM-DD'));
-  	  $('#scheduleEnd').attr('value', moment(Date.parse(info.date)).format('YYYY-MM-DD'));
-  	  const modalSchedule = new bootstrap.Modal('#editSchedule');
-  	  modalSchedule.show();
+    $('#modalTitle').append('일정 등록');
+    $('#btn-submit').append('등록');
+    $('#frm-schedule-register').attr('action', "${contextPath}/calendar/registerSchedule.do");
+      $('#scheduleStart').attr('value', moment(Date.parse(info.date)).format('YYYY-MM-DD'));
+      $('#scheduleEnd').attr('value', moment(Date.parse(info.date)).format('YYYY-MM-DD'));
+      const modalSchedule = new bootstrap.Modal('#editSchedule');
+      modalSchedule.show();
   }
 
   const fnEventClick = (info) => {
-	  $('#modalTitle').append('일정 수정');
-	  $('#btn-submit').before('<button type="button" id="btn-delete" class="btn btn-secondary" data-bs-dismiss="modal">삭제</button>')
-	  // $('#btn-delete').append('삭제');
-	  $('#btn-submit').append('수정');
-	  $('#frm-schedule-register').attr('action', "${contextPath}/calendar/editSchedule.do");
-	  $('#schedule-no').attr('value', info.event.extendedProps.scheduleNo);
-	  $('#scheduleTitle').attr('value', info.event.title);
-	  $('#scheduleStart').attr('value', moment(Date.parse(info.event.start)).format('YYYY-MM-DD'));
-  	  $('#scheduleEnd').attr('value', moment(Date.parse(info.event.end)).format('YYYY-MM-DD'));
-	  $('#scheduleContents').attr('value', info.event.extendedProps.contents);
-	  const modalSchedule = new bootstrap.Modal('#editSchedule');
-	  modalSchedule.show();
+    $('#modalTitle').append('일정 수정');
+    $('#btn-submit').before('<button type="button" id="btn-delete" class="btn btn-secondary" data-bs-dismiss="modal">삭제</button>')
+    // $('#btn-delete').append('삭제');
+    $('#btn-submit').append('수정');
+    $('#frm-schedule-register').attr('action', "${contextPath}/calendar/editSchedule.do");
+    $('#schedule-no').attr('value', info.event.extendedProps.scheduleNo);
+    $('#scheduleTitle').attr('value', info.event.title);
+    $('#scheduleStart').attr('value', moment(Date.parse(info.event.start)).format('YYYY-MM-DD'));
+    $('#scheduleEnd').attr('value', moment(Date.parse(info.event.end)).format('YYYY-MM-DD'));
+    $('#scheduleContents').attr('value', info.event.extendedProps.contents);
+    const modalSchedule = new bootstrap.Modal('#editSchedule');
+    modalSchedule.show();
 
-	  document.getElementById('btn-delete').removeEventListener('click', fnDeleteSchedule);
-	  const deleteButton = document.getElementById('btn-delete');
-	  deleteButton.scheduleNo = info.event.extendedProps.scheduleNo;
-	  deleteButton.addEventListener('click', fnDeleteSchedule);
+    document.getElementById('btn-delete').removeEventListener('click', fnDeleteSchedule);
+    const deleteButton = document.getElementById('btn-delete');
+    deleteButton.scheduleNo = info.event.extendedProps.scheduleNo;
+    deleteButton.addEventListener('click', fnDeleteSchedule);
   }
 
   fnRenderCalendar();
@@ -209,7 +271,14 @@
 	  fnInitialize();
 	  fnRenderCalendar();
   })
+  
+  const fnBtnMain = () => {
+	  document.getElementById('btn-main').addEventListener('click', (evt) => {
+		  location.href = "${contextPath}/board/multilist.do";
+	  })
+  }
 
+ fnBtnMain();
 </script>
 </body>
 </html>

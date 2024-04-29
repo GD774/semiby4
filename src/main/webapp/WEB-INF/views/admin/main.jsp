@@ -4,46 +4,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <c:set var="contextPath" value="<%=request.getContextPath()%>"/>
 <c:set var="dt" value="<%=System.currentTimeMillis()%>"/>
-<!DOCTYPE html>
-<html>
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- 페이지마다 다른 제목 -->
-<title>
-  <c:choose>
-    <c:when test="${empty param.title}">Welcome</c:when>
-    <c:otherwise>${param.title}</c:otherwise>
-  </c:choose>
-</title>
-
-<!-- include libraries(jquery, bootstrap) -->
-<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-
-<!-- include moment.js -->
-<script src="${contextPath}/resources/moment/moment-with-locales.min.js"></script>
-
-<!-- include summernote css/js -->
-<link rel="stylesheet" href="${contextPath}/resources/summernote-0.8.18-dist/summernote.min.css">
-<script src="${contextPath}/resources/summernote-0.8.18-dist/summernote.min.js"></script>
-<script src="${contextPath}/resources/summernote-0.8.18-dist/lang/summernote-ko-KR.min.js"></script>
-
-<!-- include custom css/js -->
-<link rel="stylesheet" href="${contextPath}/resources/css/init.css?dt=${dt}">
-<link rel="stylesheet" href="${contextPath}/resources/css/header.css?dt=${dt}">
-
+<jsp:include page="../layout/header.jsp"/>
 <!-- <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.js" integrity="sha512-7DgGWBKHddtgZ9Cgu8aGfJXvgcVv4SWSESomRtghob4k4orCBUTSRQ4s5SaC2Rz+OptMqNk0aHHsaUBk6fzIXw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <!-- include fullCalendar -->
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
-
-</head>
-<body>
-
-<div class="main-wrap">
 
 <style>
   .main-wrap {
@@ -66,6 +31,7 @@
 <div id="main-frame">
   <h1 class="title">관리자 메인</h1>
 
+  <!--
   <div>
 	<select id="search-type" name="searchType">
 	  <option value="id">유저 아이디</option>
@@ -73,6 +39,7 @@
 	  <option value="reports">신고 내용</option>
 	</select>
   </div>
+  -->
   <div>
 	<input type="text" id="search-contents">
   </div>
@@ -306,16 +273,16 @@
 
   var userData = {};
 
-  const searchUri = {'id': '${contextPath}/admin/searchUsers.do',
-					 'contents': '${contextPath}/admin/searchUsersByContents.do',
-					 'reports': '${contextPath}/admin/searchUsersByReports.do'}
+  // const searchUri = {'id': '${contextPath}/admin/searchUsers.do',
+  // 					 'contents': '${contextPath}/admin/searchUsersByContents.do',
+  // 					 'reports': '${contextPath}/admin/searchUsersByReports.do'}
   const treatUri = {'btn-delete': '${contextPath}/admin/deleteUsers.do',
 					'btn-recover': '${contextPath}/admin/recoverUsers.do'}
 
   const fnSearchUsers = () => {
 	  $.ajax({
 		  method: 'POST',
-		  url: searchUri[$('#search-type')[0].value],
+		  url: '${contextPath}/admin/searchUsers.do', //searchUri[$('#search-type')[0].value],
 		  data: {searchContents: $('#search-contents').val()},
 		  dataType: 'json',
 		  success: (data) => {

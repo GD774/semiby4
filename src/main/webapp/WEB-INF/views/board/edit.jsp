@@ -25,8 +25,8 @@
       
  <div>
    <input type="hidden" name="boardNo" value="${board.boardNo}">
-   <button type="submit">수정완료</button>
-   <a href="${contextPath}/board/list.do"><button type="button">작성취소</button></a>
+   <button type="submit" class="btn btn-light">수정완료</button>
+   <a href="${contextPath}/board/list.do"><button type="button" class="btn btn-dark">작성취소</button></a>
  </div>
 
   <div>
@@ -44,13 +44,13 @@
  </div>
  
  <div id="select-div"> 
- 	<label for="selectBox">카테고리</label>
- 	<select name="cateNo" id="select-box" class="form-control">
-   		<option disabled selected hidden> 카테고리를 선택하세요</option>
-   		<option value="1">취업정보공유</option>
-  		 <option value="2">면접후기공유</option>
-  		 <option value="3">이야기나눠요</option>
- 	</select>
+  <label for="selectBox">카테고리</label>
+  <select name="cateNo" id="select-box" class="form-control">
+      <option disabled selected hidden> 카테고리를 선택하세요</option>
+      <option value="1">취업정보공유</option>
+       <option value="2">면접후기공유</option>
+       <option value="3">이야기나눠요</option>
+  </select>
 </div>
 
  <div>
@@ -103,8 +103,8 @@ const fnAttachList = () => {
       }
       str += '<span>' + attach.originalFilename + '</span>';
       if('${sessionScope.user.userNo}' === '${board.user.userNo}') {
-    	  str += '<a style="margin-left: 10px;" class="remove-attach" data-attach-no="' + attach.attachNo + '">X</a>';
-    	  // <i class="fas fa-trash-alt"></i>
+        str += '<a style="margin-left: 10px;" class="remove-attach" data-attach-no="' + attach.attachNo + '">X</a>';
+        // <i class="fas fa-trash-alt"></i>
       }
       str += '</div>';
       divAttachList.innerHTML += str;
@@ -189,6 +189,18 @@ const fnModifyBoard = () => {
     }
   })
 }
+
+// 파일 미첨부 상태로 파일 첨부하는거 막음
+const fnCheckAttachList = () => {
+  document.getElementById('btn-add-attach').addEventListener('click', (evt) => {
+      if(document.getElementById('files').value === '') {
+        alert('업로드 할 파일을 선택해주세요.');
+        evt.preventDefault();
+        return;
+      }
+    })
+}
+
  
 // 크기 제한 스크립트 + 첨부 목록 출력 스크립트
 const fnAttachCheck = () => {
@@ -224,6 +236,7 @@ fnAddAttach();
 fnRemoveAttach();
 fnModifyBoard();
 fnAttachCheck();
+fnCheckAttachList();
 
 </script>
 
