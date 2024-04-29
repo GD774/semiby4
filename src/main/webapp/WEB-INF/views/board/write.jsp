@@ -121,12 +121,5 @@ fnAttachCheck();
 fnRegisterBoard();
 fnRegisterCate();
 </script>
- 
 
- 
-
-
-
-        
-</body>
-</html>
+<%@ include file="../layout/footer.jsp" %>

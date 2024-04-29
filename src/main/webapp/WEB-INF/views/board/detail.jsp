@@ -98,34 +98,6 @@
 </div>
 
 
-<!-- 첨부 목록 공간입니다.>>>>> ---------------------------------------------------------------------->
-
-<div>
-  <c:if test="${empty attachList}">
-  <div></div>
-  </c:if>
-  <c:if test="${not empty attachList}">
-  <div>
- <input type="text" id="attach-box" class="form-control" value="첨부파일" readonly>
-  </div>
-  <c:forEach items="${attachList}" var="attach">
-  <div class="attach" data-attach-no="${attach.attachNo}">
-  <c:if test="${attach.hasThumbnail == 1}">
-  <img src="${contextPath}${attach.uploadPath}/s_${attach.filesystemName}">
-  </c:if>
-  <c:if test="${attach.hasThumbnail == 0}">
-  <img src="${contextPath}/resources/images/attach.png" width="96px">
-  </c:if>
-  <a><input type="text" class="form-control" value="${attach.originalFilename}" width="100px" style="margin-bottom:10px; border:none;" readonly></a>
-  </div>
-  </c:forEach>
-  <div> 
-    <a id="download-all" href="${contextPath}/board/downloadAll.do?boardNo=${board.boardNo}"><button  class="btn btn-dark" style="margin-top: 10px;" >모두 다운로드</button></a>
-  </div>
-  </c:if>
-</div>
-
-
 
 <!-- <<<<< 첨부 목록 공간입니다. ---------------------------------------------------------------------->
 
@@ -196,11 +168,7 @@ const fnCommentList = () => {
       let paging = $('#paging');
       commentList.empty();
       paging.empty();
-      if(resData.commentList.length === 0) {
-        commentList.append('<div class="notyet">아직 등록된 댓글이 없습니다.</div>');
-        paging.empty();
-        return;
-      }
+
       $.each(resData.commentList, (i, comment) => {
         let str = '';
         
@@ -245,7 +213,7 @@ const fnCommentList = () => {
         commentList.append(str);
       })
 
-      paging.append(resData.paging);
+    
     },
     error: (jqXHR) => {
       alert('정상적인 접근이 아닙니다');

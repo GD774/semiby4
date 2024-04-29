@@ -1,68 +1,79 @@
- @charset "UTF-8";
+#detail-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+    width: 1020px;
+    padding-left: 30px;
+}
 
-  #main-wrap{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  }
-  
-  
-  #title{
-  width: 990px;
-  margin-left : 30px;
-  margin-bottom: 10px;
-  }
-  
-  #contents{
-  width: 990px;
-  height: 400px;
-  margin-left : 30px;
-  }
-  
-  #files{
-  width: 300px;
-  margin-left : 30px;
-  }
-  
-  #writer{
-  width: 300px;
-  margin-left : 30px;
-  }
-  
-  #files-wrap{
-  margin-top : 20px;
-  margin-botton: 100px;
-  }
-  
-  hr {
+#title, #contents, #files-wrap {
+    width: 990px;
+}
+
+#title {
+    margin-bottom: 10px;
+}
+
+#contents {
+    height: 400px;
+    position: relative;
+}
+
+#info-wrap {
+    display: flex;
+    justify-content: space-between;
+    width: 990px;
+    margin-bottom: 10px;
+}
+
+.info-section {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+}
+
+#content-container {
+    position: relative;
+    padding-bottom: 40px;
+}
+
+#files-wrap {
+    margin-top: 20px;
+    display: flex;
+    align-items: center; /* 중앙 정렬을 위한 설정 */
+    justify-content: space-between; /* 파일 선택과 버튼 사이에 공간을 균등하게 배분 */
+    width: 990px; /* 전체 폭 설정 */
+}
+
+#action-buttons {
+    position: absolute;
+    right: 0; /* 오른쪽 정렬 */
+    bottom: 0; /* 내용 영역 하단에 버튼 위치 */
+    display: flex;
+    gap: 10px;
+}
+
+hr {
     border: 2px solid black;
 }
 
-  label {
-    padding-left: 25px;
-    margin-top: 20px;
-  }
-  
-  #buttons {
-    margin-left: 25px;
-    margin-top: 10px;
-  }
-  
-  #file-list {
-    width: 300px;
-    margin-left : 30px;
-  }
-  
-  #select-div{
-    margin-botton : 10px;
-    width: 300px; 
-  }
-  
-  #select-box{
-   margin-left: 30px;
-  }
-  #btn-add-attach {
-  margin-left: 30px;
-  width: 300px;
-  }
-  
+.form-control {
+    margin-bottom: 10px;
+}
+
+.btn {
+    padding: 5px 15px;
+    font-size: 16px;
+}
+
+input[type="file"], button[type="button"] {
+    height: 38px; /* 높이를 동일하게 설정 */
+    line-height: 1.5;
+    display: inline-block;
+    width: auto; /* 너비를 자동으로 조정하여 내용에 맞춤 */
+}
+#btn-add-attach {
+    margin-left: 10px; /* 버튼과 파일 입력 사이의 간격 */
+    padding: 5px 20px; /* 버튼의 패딩 조정 */
+}

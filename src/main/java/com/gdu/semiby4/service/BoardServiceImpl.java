@@ -520,7 +520,7 @@ public class BoardServiceImpl implements BoardService {
    
    model.addAttribute("beginNo", total - (page - 1) * display);
    model.addAttribute("boardDetailList", boardMapper.getBoardDetailList(map));
-   model.addAttribute("paging", myPageUtils.getPaging(request.getContextPath() + "/board/detaillist.do", sort, display));
+   model.addAttribute("paging", myPageUtils.getPagingDetail(request.getContextPath() + "/board/detaillist.do", sort, display, cateNo));
    model.addAttribute("display", display);
    model.addAttribute("sort", sort);
    model.addAttribute("page", page);

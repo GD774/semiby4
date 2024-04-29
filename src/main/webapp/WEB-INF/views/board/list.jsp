@@ -24,24 +24,24 @@
   </c:if>
 </div>
  -->
+
  
-<div>
-  <form method="GET"
-        action="${contextPath}/board/search.do">
-	<select id="sort" name="sort">
-	    <option value="DESC" ${sort == 'DESC' ? 'selected' : ''}>내림차순</option>
-	    <option value="ASC" ${sort == 'ASC' ? 'selected' : ''}>오름차순</option>
-	    <option value="VIEW_COUNT_DESC" ${sort == 'VIEW_COUNT_DESC' ? 'selected' : ''}>조회수순</option>
-	</select>
-    <div class="searchspace">
-      <select name="column">
-        <option value="U.USER_ID">작성자</option>
-        <option value="B.TITLE">제목</option>
-        <option value="B.CONTENTS">내용</option>
-      </select>
-        <input type="text" name="query" placeholder="검색어 입력">
-        <input type="hidden" name="sort" value="${sort}">
-        <button type="submit" id="search">검색</button>      
+ 
+<div style="display: flex; align-items: center; margin-bottom: 20px;">
+  <form method="GET" action="${contextPath}/board/search.do" style="display: flex; align-items: center; width: 100%;">
+    <select id="sort" name="sort" class="form-select">
+      <option value="DESC" ${sort == 'DESC' ? 'selected' : ''}>내림차순</option>
+      <option value="ASC" ${sort == 'ASC' ? 'selected' : ''}>오름차순</option>
+      <option value="VIEW_COUNT_DESC" ${sort == 'VIEW_COUNT_DESC' ? 'selected' : ''}>조회수순</option>
+    </select>
+    <select name="column" class="form-select">
+      <option value="U.USER_ID">작성자</option>
+      <option value="B.TITLE">제목</option>
+      <option value="B.CONTENTS">내용</option>
+    </select>
+    <div class="input-group">
+      <input type="text" class="form-control" placeholder="검색어를 입력하세요" name="query">
+      <button class="btn btn-outline-secondary" type="submit" id="search">검색</button>
     </div>
   </form>
 </div>
