@@ -507,8 +507,6 @@ public class BoardServiceImpl implements BoardService {
    int page = Integer.parseInt(optPage.orElse("1"));
    
    myPageUtils.setPaging(total, display, page);
-   System.out.println(total);
-   System.out.println(display);
    
    String sort = request.getParameter("sort");
    if (sort == null) {
@@ -520,8 +518,6 @@ public class BoardServiceImpl implements BoardService {
                                   , "sort", sort
                                   , "cateNo", cateNo);
    
-   System.out.println(myPageUtils.getBegin());
-   System.out.println(myPageUtils.getEnd());
    
    model.addAttribute("beginNo", total - (page - 1) * display);
    model.addAttribute("boardDetailList", boardMapper.getBoardDetailList(map));

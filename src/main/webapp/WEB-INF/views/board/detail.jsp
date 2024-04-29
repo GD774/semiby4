@@ -166,7 +166,6 @@ const fnCommentList = () => {
       commentList.empty();
       paging.empty();
       if(resData.commentList.length === 0) {
-        commentList.append('<div class="notyet">아직 등록된 댓글이 없습니다.</div>');
         paging.empty();
         return;
       }

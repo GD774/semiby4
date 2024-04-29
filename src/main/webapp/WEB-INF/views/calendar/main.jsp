@@ -66,6 +66,22 @@
   #main-button{
   margin-left: 1550px;
   }
+  
+  a {
+  text-decoration-line: none;
+  text-decoration: none;
+  color: black;
+ }
+
+ .fc-day-sun a {
+    color: red;
+ }
+ 
+ .fc-day-sat a {
+    color: #013ADF;
+} 
+ 
+
 
 
 </style>
