@@ -9,14 +9,16 @@
   <settings>
     <setting name="mapUnderscoreToCamelCase" value="true"/>
   </settings>
-  
+
   <!-- typeAliases -->
   <typeAliases>
     <typeAlias alias="UserDto"          type="com.gdu.semiby4.dto.UserDto"/>
     <typeAlias alias="BoardDto"          type="com.gdu.semiby4.dto.BoardDto"/>
     <typeAlias alias="AttachDto"          type="com.gdu.semiby4.dto.AttachDto"/>
     <typeAlias alias="CommentDto"          type="com.gdu.semiby4.dto.CommentDto"/>
+	<typeAlias alias="ReportDto"          type="com.gdu.semiby4.dto.ReportDto"/>
+	<typeAlias alias="PenaltyDto"          type="com.gdu.semiby4.dto.PenaltyDto"/>
 	<typeAlias alias="ScheduleDto"          type="com.gdu.semiby4.dto.ScheduleDto"/>
   </typeAliases>
-  
+
 </configuration>

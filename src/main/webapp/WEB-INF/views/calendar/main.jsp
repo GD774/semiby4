@@ -16,8 +16,10 @@
   <!-- include moment.js -->
   <script src="${contextPath}/resources/moment/moment-with-locales.min.js"></script>
 
+  <!-- include fullCalendar -->
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+
 <meta charset='utf-8' />
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 
 <style>
 
@@ -75,7 +77,7 @@
 	  $('#scheduleEnd').attr('value', '');
 	  $('#scheduleTitle').attr('value', '');
 	  $('#scheduleContents').attr('value', '');
-	  // $('#calendar').empty();
+	  $('#calendar').empty();
 	  $('#btn-delete').remove();
 	  $('#btn-submit').empty();
 	  $('#frm-schedule-register').attr('action', '');
@@ -109,6 +111,7 @@
       });
   }
 
+  /*
   const fnRenderCalendar = () => {
 	  document.addEventListener('DOMContentLoaded', () => {
 		  // FullCalendar 초기화
@@ -131,6 +134,28 @@
 		  getAllEvents(calendar);
 
 	  })};
+  */
+
+  const fnRenderCalendar = () => {
+	  // FullCalendar 초기화
+	  var calendarEl = document.getElementById('calendar');
+	  // var calendarEl = $('#calendar')[0];
+	  var calendar = new FullCalendar.Calendar(calendarEl, {
+		  headerToolbar: {
+			  left: 'prevYear,prev,next,nextYear today',
+			  center: 'title',
+			  right: 'dayGridMonth,dayGridWeek,dayGridDay'
+		  },
+		  initialDate: moment(Date.now()).format('YYYY-MM-DD'),
+		  navLinks: true, // can click day/week names to navigate views
+		  dayMaxEvents: true, // allow "more" link when too many events
+		  dateClick: fnDateClick,
+		  eventClick: fnEventClick
+	  });
+	  calendar.render();
+
+	  getAllEvents(calendar);
+  }
 
   const fnDeleteSchedule = (evt) => {
 	  // evt.preventDefault();
@@ -142,7 +167,7 @@
 		  data: {scheduleNo: scheduleNo},
 		  success: (data) => {},
 		  error: (jqXHR) => {
-			  alert('you\'ve got one part of that wrong: ' + jqXHR.status + jqXHR.statusText);
+			  alert('you\'ve got one part of that wrong: ' + jqXHR.status + ', ' + jqXHR.statusText);
 		  }
 	  });
   }
@@ -182,7 +207,7 @@
   const scheduleModalEl = document.getElementById('editSchedule');
   scheduleModalEl.addEventListener('hidden.bs.modal', event => {
 	  fnInitialize();
-	  // fnRenderCalendar();
+	  fnRenderCalendar();
   })
 
 </script>

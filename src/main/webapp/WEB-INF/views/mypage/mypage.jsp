@@ -25,7 +25,6 @@
   <div id="main-wrap">
 	<h2>나의 정보</h2>
 	<div id="my-info">
-	  <!-- ${sessionScope.user.userNo} -->
 	</div>
 	<h2>나의 게시물 목록</h2>
 	<div id="my-boards">

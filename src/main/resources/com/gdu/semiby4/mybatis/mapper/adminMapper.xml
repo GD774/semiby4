@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gdu.semiby4.mapper.AdminMapper">
+
+  <resultMap type="UserDto" id="UserMap">
+    <id      property="userNo"       column="USER_NO" />
+    <result  property="userId"       column="USER_ID"/>
+    <result  property="role"         column="ROLE" />
+    <result  property="pw"           column="PW"/>
+    <result  property="email"        column="EMAIL" />
+    <result  property="name"         column="NAME" />
+    <result  property="gender"       column="GENDER"/>
+    <result  property="mobile"       column="MOBILE" />
+    <result  property="pwModifyDt"   column="PW_MODIFY_DT" />
+    <result  property="signupDt"     column="SIGNUP_DT" />
+    <result  property="deletedDt"    column="DELETED_DT" />
+  </resultMap>
+
+  <select id="searchUsers"
+          resultType="UserDto">
+    SELECT USER_NO, USER_ID, ROLE, PW, EMAIL, NAME, GENDER, MOBILE, PW_MODIFY_DT, SIGNUP_DT, DELETED_DT
+      FROM USER_T
+	 WHERE USER_ID LIKE '%' || #{keyword} || '%'
+  </select>
+
+  <select id="adminUserList"
+          resultMap="UserMap">
+    SELECT U.USER_NO, U.USER_ID, U.NAME, U.EMAIL, U.SIGNUP_DT, U.DELETED_DT,
+    <!-- board_cnt, comment_cnt 로 추가 작업 혹은 삭제 예정 -->
+    COUNT(DISTINCT B.BOARD_NO) AS BOARD_CNT,     
+    COUNT(DISTINCT C.COMMENT_NO) AS COMMENT_CNT
+    FROM USER_T U
+	LEFT JOIN BOARD_T B ON U.USER_NO = B.USER_NO
+	LEFT JOIN COMMENT_T C ON U.USER_NO = C.USER_NO
+    GROUP BY U.USER_NO, U.USER_ID, U.NAME, U.EMAIL, U.SIGNUP_DT, U.DELETED_DT
+    ORDER BY U.SIGNUP_DT DESC
+  </select>
+
+  <update id="deleteUsers"
+		  parameterType="list">
+	UPDATE USER_T
+	SET DELETED_DT = CURRENT_DATE
+	WHERE
+	<if test="userNos.size()==0">USER_ID = -1</if>
+	<foreach item="userNo" index="index" collection="userNos" open="USER_NO IN (" separator=", " close=")" nullable="true">
+	  #{userNo}
+	</foreach>
+  </update>
+
+  <update id="recoverUsers"
+		  parameterType="list">
+	UPDATE USER_T
+	SET DELETED_DT = NULL
+	WHERE
+	<if test="userNos.size()==0">USER_ID = -1</if>
+	<foreach item="userNo" index="index" collection="userNos" open="USER_NO IN (" separator=", " close=")" nullable="true">
+	  #{userNo}
+	</foreach>
+  </update>
+
+  <select id="getBoardReportsByUser"
+          resultType="ReportDto">
+	SELECT R.REPORT_NO, R.REPORTER_NO, R.USER_NO, R.BOARD_NO, R.TITLE, R.CONTENTS, R.CREATE_DT
+	  FROM USER_T U INNER JOIN BOARD_T B ON U.USER_NO = B.USER_NO
+	                INNER JOIN REPORT_T R ON B.BOARD_NO = R.BOARD_NO
+	 WHERE U.USER_NO = #{userNo}
+  </select>
+
+  <select id="getUserReportsByUser"
+          resultType="ReportDto">
+	SELECT REPORT_NO, REPORTER_NO, USER_NO, BOARD_NO, TITLE, CONTENTS, CREATE_DT
+	  FROM REPORT_T
+	 WHERE USER_NO = #{userNo}
+  </select>
+
+  <select id="getPenalties"
+          resultType="PenaltyDto">
+	SELECT PENALTY_NO, USER_NO, NOTE, ACTIONED_DT
+	  FROM PENALTY_T
+	 WHERE USER_NO = #{userNo}
+  </select>
+
+</mapper>

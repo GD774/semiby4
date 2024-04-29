@@ -21,10 +21,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
+
 import com.gdu.semiby4.dto.UserDto;
 import com.gdu.semiby4.mapper.UserMapper;
 import com.gdu.semiby4.utils.MySecurityUtils;
 
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -194,33 +197,43 @@ public class UserServiceImpl implements UserService {
 			
 			// email/pw 가 일치하는 회원 정보 가져오기
 			UserDto user = userMapper.getUserByMap(params);
-			
+
 			// 일치하는 회원 있음 (Sign In 성공)
-			if(user != null && user.getDeletedDt() == null) {
-			
-			  
-			  // 회원 정보를 세션(브라우저 닫기 전까지 정보가 유지되는 공간, 기본 30분 정보 유지)에 보관하기
-			  HttpSession session = request.getSession();
-			  
-			  session.setAttribute("user", user);
-			  session.setMaxInactiveInterval(1000);
-			  
-			  // Sign In 후 페이지 이동
-			  response.sendRedirect(request.getParameter("url"));
-			
+			if (user != null) {
+				if (user.getDeletedDt() == null) {
+
+					// 회원 정보를 세션(브라우저 닫기 전까지 정보가 유지되는 공간, 기본 30분 정보 유지)에 보관하기
+					HttpSession session = request.getSession();
+
+					session.setAttribute("user", user);
+					session.setMaxInactiveInterval(1000);
+
+					// Sign In 후 페이지 이동
+					response.sendRedirect(request.getParameter("url"));
+				} else {
+					response.setContentType("text/html; charset=UTF-8");
+					PrintWriter out = response.getWriter();
+
+					out.println("<script>");
+					out.println("alert('정지 당한 회원.');");
+					out.println("location.href='" + request.getContextPath() + "/main.page';");
+					out.println("</script>");
+					out.flush();
+					out.close();
+				}
 			// 일치하는 회원 없음 (Sign In 실패)
 			} else {
 			  response.setContentType("text/html; charset=UTF-8");
 			  PrintWriter out = response.getWriter();
 			  
 			  out.println("<script>");
-			  out.println("alert('일치하는 회원 정보가 없습니다.')");
-			  out.println("location.href='" + request.getContextPath() + "/main.page'");
+				out.println("alert('일치하는 회원 정보가 없습니다.');");
+				out.println("location.href='" + request.getContextPath() + "/main.page';");
 			  out.println("</script>");
 			  out.flush();
 			  out.close();
 			}
-      
+
     } catch (Exception e) {
       e.printStackTrace();
     }

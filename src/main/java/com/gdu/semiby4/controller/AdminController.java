@@ -1,5 +1,9 @@
 package com.gdu.semiby4.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,12 +25,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.extern.slf4j.Slf4j;
+
+import com.gdu.semiby4.dto.PenaltyDto;
+import com.gdu.semiby4.dto.ReportDto;
 import com.gdu.semiby4.dto.UserDto;
 import com.gdu.semiby4.mapper.UserMapper;
 import com.gdu.semiby4.service.AdminService;
 import com.gdu.semiby4.service.BoardService;
 import com.gdu.semiby4.service.UserService;
 
+@Slf4j
 @RequestMapping("/admin")
 @Controller
 public class AdminController {
@@ -38,13 +47,60 @@ public class AdminController {
     super();
     this.adminService = adminService;
   }
-  
-  @GetMapping("/admin.page")
+
+  @GetMapping("")
   public String adminPage(Model model) {
-    System.out.println("메인 페이지로");
-    return "admin/admin";
+    return "admin/main";
   }
-  
+
+	@PostMapping("/searchUsers.do")
+	@ResponseBody
+	public List<UserDto> searchUsers(HttpServletRequest request) {
+		return adminService.searchUsers(request);
+	}
+
+	@PostMapping("/searchUsersByContents.do")
+	@ResponseBody
+	public List<UserDto> searchUsersByContents(HttpServletRequest request) {
+		return adminService.searchUsersByContents(request);
+	}
+
+	@PostMapping("/searchUsersByReports.do")
+	@ResponseBody
+	public List<UserDto> searchUsersByReports(HttpServletRequest request) {
+		return adminService.searchUsersByReports(request);
+	}
+
+	@GetMapping("/getBoardReportsByUser.do")
+	@ResponseBody
+	public List<ReportDto> getBoardReportsByUser(HttpServletRequest request) {
+		return adminService.getBoardReportsByUser(request);
+	}
+
+	@GetMapping("/getUserReportsByUser.do")
+	@ResponseBody
+	public List<ReportDto> getUserReportsByUser(HttpServletRequest request) {
+		return adminService.getUserReportsByUser(request);
+	}
+
+	@GetMapping("/getPenalties.do")
+	@ResponseBody
+	public List<PenaltyDto> getPenalties(HttpServletRequest request) {
+		return adminService.getPenalties(request);
+	}
+
+	@PostMapping("/deleteUsers.do")
+	@ResponseBody
+	public int deleteUsers(HttpServletRequest request) {
+		return adminService.deleteUsers(request);
+	}
+
+	@PostMapping("/recoverUsers.do")
+	@ResponseBody
+	public int recoverUsers(HttpServletRequest request) {
+		return adminService.recoverUsers(request);
+	}
+
   @GetMapping("/adminUserList.do")
     public ResponseEntity<List<UserDto>> userList() {
     System.out.println("유저 인포, 컨트롤러");
@@ -61,36 +117,7 @@ public class AdminController {
       }
       return new ResponseEntity<>(userList, HttpStatus.OK);
   }
- 
-/*
- // 기존 식
-  @GetMapping("/adminUserList.do")      // 기존 controller는 Ajax에서 data 요청 보낸 것을 받을 때 문제가 있었음.
-  public ResponseEntity<Map<String, Object>> userList(HttpServletRequest request, Model model) {
-    System.out.println("유저 인포, 컨트롤러");
-    Map<String, Object> params = new HashMap<String, Object>();
-    String userId = request.getParameter("userId");
-    if(userId != null) {
-      params.put("userId", userId);
-      model.addAttribute("userId", userId);
-    }
-    return adminService.adminuserList(params);
-  }
-*/
-  //기존 사용자 비활성화 식 : 미완성
-  /*
-  @DeleteMapping("/{userId}")
-  public ResponseEntity<Map<String, Object>> dropUser(@PathVariable String userId) {
-      try {
-          UserDto user = new UserDto();
-          user.setUserId(userId);
-          adminService.dropUser(user);  // 서비스 호출
-          return ResponseEntity.ok(Map.of("success", true, "message", "사용자 비활성 성공"));
-      } catch (Exception e) {
-          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                  .body(Map.of("success", false, "message", "사용자 비활성 실패: " + e.getMessage()));
-      }
-  }
-  */
+
   @PostMapping("/dropId")
   @ResponseBody
   public String dropID(String userId) {
@@ -99,7 +126,5 @@ public class AdminController {
     System.out.println("최대한 알아볼 수 없음");
     return "arbitrary message";
   }
-  
 
-  
 }

@@ -17,7 +17,7 @@
 </style>
 
 <h1 class="title">관리자 메인</h1>
- 
+
 <form class="searchForm1" id="search-form1">
   <div>
   <input type="text" id="search-id1" placeholder="유저아이디를 입력하세요.">
@@ -46,9 +46,9 @@
      </c:forEach>
     </tbody>
 </table>
-  
-  </div>  
-            
+
+  </div>
+
 </form>
 <form class="search-form2" id="searchForm2">
   <div>
@@ -77,9 +77,7 @@
      </c:forEach>
     </tbody>
 </table>
-  
-  </div>  
-            
+  </div>
 </form>
 
 
@@ -98,8 +96,8 @@ const fngetuserInfo = (userId) => {
       },  error: function() {
         console.log(123);
       }
-    }) 
-  
+    })
+
 }
 
 $('#search').click(function() {

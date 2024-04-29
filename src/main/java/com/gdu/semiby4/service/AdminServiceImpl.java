@@ -1,22 +1,31 @@
 package com.gdu.semiby4.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import com.gdu.semiby4.dto.PenaltyDto;
+import com.gdu.semiby4.dto.ReportDto;
 import com.gdu.semiby4.dto.UserDto;
 import com.gdu.semiby4.mapper.UserMapper;
+import com.gdu.semiby4.mapper.AdminMapper;
 
+@Slf4j
+@RequiredArgsConstructor
 @Service
 public class AdminServiceImpl implements AdminService {
 
   private final UserMapper userMapper;
-  
-  public AdminServiceImpl(UserMapper userMapper) {
-    super();
-    this.userMapper = userMapper;
-  }
-  
+	private final AdminMapper adminMapper;
+
   /*
   @Override
   public void dropUser(UserDto user) {
@@ -57,6 +66,66 @@ public ResponseEntity<Map<String, Object>> getuserInfo(Map<String, Object> param
   public List<UserDto> adminUserList() {
     return userMapper.adminUserList();
   }
+
+	@Override
+	public List<UserDto> searchUsers(HttpServletRequest request) {
+		Optional<String> opt = Optional.ofNullable(request.getParameter("searchContents"));
+		return adminMapper.searchUsers(opt.orElse(""));
+	}
+
+	@Override
+	public List<UserDto> searchUsersByContents(HttpServletRequest request) {
+		Optional<String> opt = Optional.ofNullable(request.getParameter("searchContents"));
+		return adminMapper.searchUsers(opt.orElse(""));
+	}
+
+	@Override
+	public List<UserDto> searchUsersByReports(HttpServletRequest request) {
+		Optional<String> opt = Optional.ofNullable(request.getParameter("searchContents"));
+		return adminMapper.searchUsers(opt.orElse(""));
+	}
+
+	@Override
+	public List<ReportDto> getBoardReportsByUser(HttpServletRequest request) {
+		int userNo = Integer.parseInt(request.getParameter("userNo"));
+		return adminMapper.getBoardReportsByUser(userNo);
+	}
+
+	@Override
+	public List<ReportDto> getUserReportsByUser(HttpServletRequest request) {
+		int userNo = Integer.parseInt(request.getParameter("userNo"));
+		return adminMapper.getUserReportsByUser(userNo);
+	}
+
+	@Override
+	public List<PenaltyDto> getPenalties(HttpServletRequest request) {
+		int userNo = Integer.parseInt(request.getParameter("userNo"));
+		return adminMapper.getPenalties(userNo);
+	}
+
+	@Override
+	public int deleteUsers(HttpServletRequest request) {
+		String targetString = request.getParameter("userNos");
+		if (targetString.length() == 0)
+			return -1;
+		String[] targetArray = targetString.split(",");
+		ArrayList<Integer> targets = new ArrayList<>();
+		for (String userNo: targetArray)
+			targets.add(Integer.parseInt(userNo));
+		return adminMapper.deleteUsers(targets);
+	}
+
+	@Override
+	public int recoverUsers(HttpServletRequest request) {
+		String targetString = request.getParameter("userNos");
+		if (targetString.length() == 0)
+			return -1;
+		String[] targetArray = targetString.split(",");
+		ArrayList<Integer> targets = new ArrayList<>();
+		for (String userNo: targetArray)
+			targets.add(Integer.parseInt(userNo));
+		return adminMapper.recoverUsers(targets);
+	}
 
   @Override
   public List<UserDto> getuserInfo(String userId) {

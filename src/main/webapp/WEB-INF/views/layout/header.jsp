@@ -84,7 +84,7 @@
 			  <a href="${contextPath}/calendar"><i class="fa-solid fa-user"></i>일정</a>
 			</c:if>
 			<c:if test="${sessionScope.user.role == 1}">
-              <a href="${contextPath}/admin/admin.page"><i class="fa-solid fa-user"></i>관리자</a>
+              <a href="${contextPath}/admin"><i class="fa-solid fa-user"></i>관리자</a>
 			</c:if>
           </div>
           <div class="nav-item individual-link">
@@ -95,13 +95,5 @@
     </div>
   </div>
 </nav>
-
-  </div>
-        <c:if test="${sessionScope.user.role == 1}">
-            <a id="admin" href="${contextPath}/admin/admin.page">관리자</a>
-      </c:if>
-            <input type="hidden" id="adminLink" value="${contextPath}/board/admin.page">
-  </div>
-  
 
   <div class="main-wrap">
