@@ -16,11 +16,46 @@
 	  justify-content: space-around;
   }
 
-  .searchForm1 {
-    float: left;
+  #controller-bar {
+	  display: flex;
+	  justify-content: space-between;
+	  align-items: center;
   }
-  .selected {
-  background-color: #e0e0e0;  // 선택된 행의 배경색
+
+  #search-contents {
+	  flex: 1; /* This will make the search input take up all available space */
+  }
+
+  #btn-search {
+	  /* margin-right: 10px; /\* Add some spacing between search bar and search button *\/ */
+	  float: left;
+  }
+
+  #btn-delete,
+  #btn-recover {
+	  /* margin-left: 10px; /\* Add some spacing between ban button and recover button *\/ */
+	  float: right;
+  }
+
+  #main-frame {
+	  display: flex;
+	  flex-direction: column;
+  }
+
+  #search-result {
+	  flex-grow: 1; /* This will make the search result take up remaining space */
+  }
+
+  #user-table {
+	  width: 100%; /* Make table fill the available space */
+  }
+
+  #user-profile {
+	  width: 800px;
+  }
+
+  #user-state-banned {
+	  color: #FF0000;
   }
 
   .fc-day-today {
@@ -29,26 +64,23 @@
 </style>
 
 <div id="main-frame">
-  <h1 class="title">관리자 메인</h1>
-
+  <h4 class="title">BIG BROTHER IS WATCHING YOU</h4>
   <!--
-  <div>
-	<select id="search-type" name="searchType">
-	  <option value="id">유저 아이디</option>
-	  <option value="contents">작성 내용</option>
-	  <option value="reports">신고 내용</option>
-	</select>
-  </div>
-  -->
-  <div>
+	  <div>
+		<select id="search-type" name="searchType">
+		  <option value="id">유저 아이디</option>
+		  <option value="contents">작성 내용</option>
+		  <option value="reports">신고 내용</option>
+		</select>
+	  </div>
+	  -->
+  <div id="controller-bar">
 	<input type="text" id="search-contents">
-  </div>
-  <div>
 	<button type="submit" id="btn-search">검색</button>
+	<button type="click" id="btn-delete">정지</button>
+	<button type="click" id="btn-recover">복구</button>
+	<!-- <button type="click" id="btn-redeem">면제</button> -->
   </div>
-  <button type="click" id="btn-delete">정지</button>
-  <button type="click" id="btn-recover">복구</button>
-  <!-- <button type="click" id="btn-redeem">면제</button> -->
   <div id="search-result">
 	<form id="frm-users-list">
 	  <!--
@@ -61,9 +93,10 @@
 			<th>선택</th>
 			<th>아이디</th>
 			<th>이름</th>
-			<th>이메일</th>
-			<th>가입날짜</th>
-			<th>정지날짜</th>
+			<!-- <th>이메일</th> -->
+			<!-- <th>가입날짜</th> -->
+			<th>상태</th>
+			<!-- <th>정지날짜</th> -->
 		  </tr>
 		</thead>
 		<tbody id="tbody-user-list">
@@ -76,7 +109,9 @@
 <div id="user-profile">
 </div>
 
-<script>
+<script type="module">
+
+  var globaltestvar = null;
 
   class UserProfile {
 	  constructor(htmlEl, userDto) {
@@ -199,6 +234,15 @@
 				  }]
 			  },
 			  options: {
+				  plugins: {
+					  title: {
+						  display: true,
+						  text: '신고 게시물 차트',
+						  font: {
+							  size: 30
+						  }
+					  }
+				  },
 				  scales: {
 					  y: {
 						  beginAtZero: true
@@ -215,6 +259,9 @@
 				  left: 'prev,next',
 				  center: 'title',
 				  right: ''
+			  },
+			  titleFormat: (date) => {
+				  return moment(date['date']).format('MMM YYYY') + ' 신고 차트';
 			  }
 		  });
 		  calendar.render();
@@ -243,10 +290,10 @@
 		  summary += '<div>name: ' + this.info.name + '</div>';
 		  summary += '<div>mobile: ' + this.info.mobile + '</div>';
 		  // 신고 당한 횟수 x축, 신고 횟수에 대한 게시물 수 y축
-		  summary += '<div>신고 당한 게시물 차트</div>';
+		  // summary += '<div>신고 당한 게시물 차트</div>';
 		  summary += '<canvas id="boardReports"></canvas>'
 		  // fullcalendar 를 판떼기로 heatmap
-		  summary += '<div>신고 당한 날짜 차트</div>';
+		  // summary += '<div>신고 당한 날짜 차트</div>';
 		  summary += '<div id="dateReports"></div>'
 		  summary += '</div>';
 		  this.el.innerHTML = summary;
@@ -263,6 +310,8 @@
 	  }
   }
 
+  var userData = {};
+
   async function fnRenderUserProfile(evt) {
 	  var profileEl = document.getElementById('user-profile');
 	  var profile = new UserProfile(profileEl, userData[evt.currentTarget.getAttribute('value')]);
@@ -270,8 +319,6 @@
 	  profile.processTotal();
 	  profile.render();
   }
-
-  var userData = {};
 
   // const searchUri = {'id': '${contextPath}/admin/searchUsers.do',
   // 					 'contents': '${contextPath}/admin/searchUsersByContents.do',
@@ -290,17 +337,29 @@
 			  let resultBody = target.find('#tbody-user-list');
 			  resultBody.empty();
 			  let results = '';
+			  data.sort((a, b) => { return a.userNo - b.userNo });
 			  for (var ind = 0; ind < data.length; ind++) {
-				  d = data[ind];
+				  var d = data[ind];
 				  userData[ind+1] = d;
 				  results += '<tr class="userField" value="' + d.userNo + '">';
 				  results += '<td><input type="checkbox" name="userNos" value="'+ d.userNo +'"></td>';
 				  results += '<td>' + d.userId + '</td>';
 				  results += '<td>' + d.name + '</td>';
+				  /*
 				  results += '<td>' + d.email + '</td>';
-				  results += '<td>' + moment(d.signupDt).format('YYYY-MM-DD') + '</td>';
-				  results += '<td>' + moment(d.deletedDt).format('YYYY-MM-DD') + '</td>';
+				  if (d.signupDt)
+					  results += '<td>' + moment(d.signupDt).format('YYYY년 MM월 DD일') + '</td>';
+				  else
+					  results += '<td>미상</td>';
+				  */
+				  if (d.deletedDt)
+					  results += '<td id="user-state-banned">정지';
+				  else
+					  results += '<td id="user-state-normal">정상';
+				  results += '</td>';
 				  results += '</tr>';
+				  if (ind > 20)
+					  break;
 			  }
 			  if (data.length === 0)
 				  results = '<td>일치하는 유저 없음.</td>';
@@ -321,7 +380,7 @@
   }
 
   const fnTreatUsers = (evt) => {
-	  nodes = document.querySelectorAll('input[name=userNos]:checked');
+	  var nodes = document.querySelectorAll('input[name=userNos]:checked');
 	  var values = [];
 	  for (var ind = 0; ind < nodes.length; ind++)
 		  values.push(nodes[ind].value);

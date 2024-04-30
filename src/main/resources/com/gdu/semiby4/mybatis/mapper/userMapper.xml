@@ -91,6 +91,27 @@
      ORDER BY U.SIGNUP_DT DESC
 </select>
 
+<insert id="report">
+  INSERT INTO REPORT_T (
+    REPORT_NO,
+    REPORTER_NO,
+    USER_NO,
+    BOARD_NO,
+    TITLE,
+    CONTENTS,
+    CREATE_DT
+	) VALUES (
+	REPORT_SEQ.NEXTVAL,
+	#{reporterNo},
+	#{userNo},
+	#{boardNo},
+	#{title},
+	#{contents},
+	<if test="createDt==null">CURRENT_DATE</if>
+	<if test="createDt!=null">#{createDt}</if>
+  )
+</insert>
+
 <update id="dropUser">
   UPDATE USER_T
      SET DELETED_DT = CURRENT_DATE

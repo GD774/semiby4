@@ -37,6 +37,10 @@
 
   </resultMap>
 
+  <select id="getAllBoards">
+	SELECT BOARD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT, HIT, CATE_NO, USER_NO FROM BOARD_T
+  </select>
+
   <select id="getBoardCount"
           resultType="int">
     SELECT COUNT(*)

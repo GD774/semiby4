@@ -13,6 +13,7 @@ import com.gdu.semiby4.dto.UserDto;
 
 @Mapper
 public interface AdminMapper {
+	List<UserDto> getAllUsers();
 	List<UserDto> searchUsers(String keyword);
 	int deleteUsers(@Param("userNos") ArrayList<Integer> userNos);
 	int recoverUsers(@Param("userNos") ArrayList<Integer> userNos);

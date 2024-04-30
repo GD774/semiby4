@@ -19,6 +19,11 @@
     <result  property="deletedDt"    column="DELETED_DT" />
   </resultMap>
 
+  <select id="getAllUsers">
+	SELECT USER_NO, USER_ID, ROLE, PW, EMAIL, NAME, GENDER, MOBILE, PW_MODIFY_DT, SIGNUP_DT, DELETED_DT
+    FROM USER_T
+  </select>
+
   <select id="searchUsers"
           resultType="UserDto">
     SELECT USER_NO, USER_ID, ROLE, PW, EMAIL, NAME, GENDER, MOBILE, PW_MODIFY_DT, SIGNUP_DT, DELETED_DT

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class ReportDto {
-	int reportNo, userNo, boardNo;
+	int reportNo, reporterNo, userNo, boardNo;
 	String title, contents;
 	Date createDt;
 }

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.gdu.semiby4.dto.ReportDto;
 import com.gdu.semiby4.dto.UserDto;
 
 @Mapper
@@ -14,6 +15,6 @@ public interface UserMapper {
   int deleteUser(int userNo);
   List<UserDto> getuserInfo(String userId);
   List<UserDto> adminUserList();
+	int report(ReportDto report);
   void dropUser(String userId);
 }
-  

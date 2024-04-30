@@ -30,20 +30,6 @@
 	<div id="my-boards">
 	  {boardList}
 	</div>
-	<h2>나의 북마크</h2>
-	<div id="my-bookmarks">
-	  {boardList}
-	</div>
-	<h2>팔로우 팔로워</h2>
-	<div id="followers">
-	  {sessionScope.userList}
-	</div>
-	<div id="followings">
-	  {sessionScope.userList}
-	</div>
-	<div id="go-edit">
-	  <a href="${contextPath}/mypage/edit">정보수정</a>
-	</div>
   </div>
 
   <script>

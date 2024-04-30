@@ -11,7 +11,7 @@ import com.gdu.semiby4.dto.CommentDto;
 
 @Mapper
 public interface BoardMapper {
-  
+	List<BoardDto> getAllBoards();
   int getBoardCount();
   List<BoardDto> getBoardList(Map<String, Object> map);
   BoardDto getBoardByNo(int boardNo);

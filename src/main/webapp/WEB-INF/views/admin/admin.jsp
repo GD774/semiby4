@@ -16,7 +16,7 @@
   }
 </style>
 
-<h1 class="title">관리자 메인</h1>
+<h1 class="title">BIG BROTHER IS WATCHING YOU</h1>
 
 <form class="searchForm1" id="search-form1">
   <div>
