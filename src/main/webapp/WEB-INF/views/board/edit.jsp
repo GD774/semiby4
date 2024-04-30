@@ -1,6 +1,4 @@
-
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <c:set var="contextPath" value="<%=request.getContextPath()%>"/>
@@ -9,75 +7,57 @@
 <jsp:include page="../layout/header.jsp"/>
 <link rel="stylesheet" href="${contextPath}/resources/css/board/edit.css?dt=${dt}">
 
-<style>
-  .remove-attach {
-    cursor: pointer;
-    margin-left: 10px;
-  }
-</style>
+<div id="detail-wrap">
+    <div id="title-div">
+        <h1 class="title">게시글 수정하기</h1>
+        <hr>
+    </div>
 
-<h1 class="title">게시글 수정하기</h1>
+    <div id="info-wrap">
+        <div class="info-section">
+            <span>작성자</span>
+            <input type="text" class="form-control" id="writer" name="writer" value="${sessionScope.user.email}" readonly>
+        </div>
+        <div class="info-section">
+            <span>작성일자</span>
+            <input type="text" value="<fmt:formatDate value='${board.createDt}' pattern='yyyy-MM-dd HH:mm' />" class="form-control" readonly>
+        </div>
+        <div class="info-section">
+            <span>최종수정일</span>
+            <input type="text" value="<fmt:formatDate value='${board.modifyDt}' pattern='yyyy-MM-dd HH:mm' />" class="form-control" readonly>
+        </div>
+    </div>
 
-<form id="frm-board-modify"
-      method="POST"
-      enctype="multipart/form-data"
-      action="${contextPath}/board/modify.do">
-      
- <div>
-   <input type="hidden" name="boardNo" value="${board.boardNo}">
-   <button type="submit" class="btn btn-light">수정완료</button>
-   <a href="${contextPath}/board/list.do"><button type="button" class="btn btn-dark">작성취소</button></a>
- </div>
 
-  <div>
-    <span>작성일자</span>
-    <span><fmt:formatDate value="${board.createDt}" pattern="yyyy-MM-dd HH:mm" /></span>
-  </div>
-  
-  <div>
-    <span>최종수정일</span>
-    <span><fmt:formatDate value="${board.modifyDt}" pattern="yyyy-MM-dd HH:mm" /></span>
-  </div>
- <div>
-  <label for="writer" >작성자</label>
-  <input type="text" class="form-control" id="writer" value="${sessionScope.user.email}" readonly>
- </div>
- 
- <div id="select-div"> 
-  <label for="selectBox">카테고리</label>
-  <select name="cateNo" id="select-box" class="form-control">
-      <option disabled selected hidden> 카테고리를 선택하세요</option>
-      <option value="1">취업정보공유</option>
-       <option value="2">면접후기공유</option>
-       <option value="3">이야기나눠요</option>
-  </select>
+    <form id="frm-board-modify" method="POST" enctype="multipart/form-data" action="${contextPath}/board/modify.do">
+        <input type="hidden" name="boardNo" value="${board.boardNo}">
+
+        <div>
+            <label for="title"></label>
+            <input type="text" class="form-control" id="title" name="title" value="${board.title}">
+        </div>
+
+		<div id="content-container">
+		    <textarea id="contents" class="form-control" name="contents">${board.contents}</textarea>
+		    <div id="action-buttons">
+		        <button type="submit" class="btn btn-light">수정 완료</button>
+		        <button type="button" class="btn btn-secondary" onclick="location.href='${contextPath}/board/list.do'">수정 취소</button>
+		    </div>
+		</div>
+
+        <c:if test="${sessionScope.user.userNo == board.user.userNo}">
+			<div id="files-wrap">
+			    <input type="file" name="files" id="files" class="form-control" style="width: 70%; display: inline-block;">
+			    <button type="button" id="btn-add-attach" class="btn btn-outline-secondary" style="width: 25%; display: inline-block;">첨부 추가</button>
+			</div>
+            <div id="new-attach-list"></div>
+            <hr>
+            <h3>현재 첨부 목록</h3>
+            <div id="attach-list"></div>
+        </c:if>
+    </form>
+
 </div>
-
- <div>
-  <label for="title">제목</label>
-  <input type="text" class="form-control" name="title" id="title" value="${board.title}">
- </div> 
-
-  
-  <div>
-    <textarea id="contents" class="form-control" name="contents">${board.contents}</textarea>
-  </div>
-  
-    
-<c:if test="${sessionScope.user.userNo == board.user.userNo}">
-  <div id="files-wrap">
-    <label for="files"></label>
-    <input class="form-control" type="file" name="files" id="files" multiple>
-    <button class="form-control" type="button" id="btn-add-attach">첨부추가하기</button>
-  </div>
-  
-  <div id="new-attach-list"></div>
-  <hr>
-  <h3>현재 첨부 목록</h3>
-  <div id="attach-list"></div>
-</c:if>
-      
-</form>
 
 <!-- 첨부 추가 -->
 
@@ -192,6 +172,7 @@ const fnModifyBoard = () => {
 
 // 파일 미첨부 상태로 파일 첨부하는거 막음
 const fnCheckAttachList = () => {
+<<<<<<< HEAD
   document.getElementById('btn-add-attach').addEventListener('click', (evt) => {
       if(document.getElementById('files').value === '') {
         alert('업로드 할 파일을 선택해주세요.');
@@ -199,6 +180,17 @@ const fnCheckAttachList = () => {
         return;
       }
     })
+=======
+	document.getElementById('btn-add-attach').addEventListener('click', (evt) => {
+	    if(document.getElementById('files').value === '') {
+	      alert('업로드 할 파일을 선택해주세요.');
+	      evt.preventDefault();
+	      return;
+	    }
+	  })
+	
+	
+>>>>>>> d5c6d3c9b89aaf70e8cef2c07d7f10714ff48c30
 }
 
  

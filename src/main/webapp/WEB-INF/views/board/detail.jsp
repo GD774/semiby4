@@ -100,6 +100,7 @@
 
 
 
+
 <div id="paging"></div>
 
 <script defer>
@@ -165,10 +166,6 @@ const fnCommentList = () => {
       let paging = $('#paging');
       commentList.empty();
       paging.empty();
-      if(resData.commentList.length === 0) {
-        paging.empty();
-        return;
-      }
       $.each(resData.commentList, (i, comment) => {
         let str = '';
         
@@ -213,7 +210,7 @@ const fnCommentList = () => {
         commentList.append(str);
       })
 
-      paging.append(resData.paging);
+    
     },
     error: (jqXHR) => {
       alert('정상적인 접근이 아닙니다');

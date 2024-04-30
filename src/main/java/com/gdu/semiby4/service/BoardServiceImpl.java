@@ -153,6 +153,7 @@ public class BoardServiceImpl implements BoardService {
                                                      , 20
                                                      , "column=" + column + "&query=" + query));
   }
+
   
   // 디테일리스트에서 검색기능 구현 (지희)
   @Override
