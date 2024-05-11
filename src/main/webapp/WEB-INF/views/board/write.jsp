@@ -57,7 +57,7 @@
  <div id="buttons">
  <input type="hidden" name="userNo" value="${sessionScope.user.userNo}">
  <button type="submit" class="btn btn-light">작성완료</button>
- <a href="${contextPath}/board/list.do"><button type="button" class="btn btn-dark">작성취소</button></a>
+ <a href="${contextPath}/board/list.do"><button type="button" class="btn btn-secondary">작성취소</button></a>
  </div>
  
  </form>
@@ -121,12 +121,5 @@ fnAttachCheck();
 fnRegisterBoard();
 fnRegisterCate();
 </script>
- 
 
- 
-
-
-
-        
-</body>
-</html>
+<%@ include file="../layout/footer.jsp" %>

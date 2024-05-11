@@ -49,43 +49,41 @@ public class BoardServiceImpl implements BoardService {
 
   @Override
   public void boardList(Model model) {
-    Map<String, Object> modelMap = model.asMap();
-      HttpServletRequest request = (HttpServletRequest) modelMap.get("request");
-      
-      int total = boardMapper.getBoardCount();
-      int display = 20;
-      
-      Optional<String> optPage = Optional.ofNullable(request.getParameter("page"));
-      int page = Integer.parseInt(optPage.orElse("1"));
-      
-      myPageUtils.setPaging(total, display, page);
-      String sort = request.getParameter("sort");
-      if (sort == null) {
-        sort = "DESC";
-      }
-      
-      Map<String, Object> map = Map.of("begin", myPageUtils.getBegin(),
-                                       "end", myPageUtils.getEnd(),
-                                       "sort", sort);
-      
-      List<BoardDto> boards = boardMapper.getBoardList(map);
-      
-      Map<String, String> cateNames = new HashMap<>();
-      cateNames.put("1", "취업정보");
-      cateNames.put("2", "면접후기");
-      cateNames.put("3", "이야기나눠요");
-      
-      boards.forEach(board -> board.setCateNames(cateNames.get(board.getCateNo())));
-  
-      model.addAttribute("boardList", boards);
-      model.addAttribute("beginNo", total - (page - 1) * display);
-      model.addAttribute("paging", myPageUtils.getPaging(request.getContextPath() + "/board/list.do", sort, display));
-      model.addAttribute("display", display);
-      model.addAttribute("sort", sort);
-      model.addAttribute("page", page);
-  
+	  Map<String, Object> modelMap = model.asMap();
+	    HttpServletRequest request = (HttpServletRequest) modelMap.get("request");
+	    
+	    int total = boardMapper.getBoardCount();
+	    int display = 10;
+	    
+	    Optional<String> optPage = Optional.ofNullable(request.getParameter("page"));
+	    int page = Integer.parseInt(optPage.orElse("1"));
+	    
+	    myPageUtils.setPaging(total, display, page);
+	    String sort = request.getParameter("sort");
+	    if (sort == null) {
+	    	sort = "DESC";
+	    }
+	    
+	    Map<String, Object> map = Map.of("begin", myPageUtils.getBegin(),
+	                                     "end", myPageUtils.getEnd(),
+	                                     "sort", sort);
+	    
+	    List<BoardDto> boards = boardMapper.getBoardList(map);
+	    
+	    Map<String, String> cateNames = new HashMap<>();
+	    cateNames.put("1", "취업정보");
+	    cateNames.put("2", "면접후기");
+	    cateNames.put("3", "이야기나눠요");
+	    
+	    boards.forEach(board -> board.setCateNames(cateNames.get(board.getCateNo())));
+	
+	    model.addAttribute("boardList", boards);
+	    model.addAttribute("beginNo", total - (page - 1) * display);
+	    model.addAttribute("paging", myPageUtils.getPaging(request.getContextPath() + "/board/list.do", sort, display));
+	    model.addAttribute("display", display);
+	    model.addAttribute("sort", sort);
+	    model.addAttribute("page", page);
   }
-
 
   @Override
   public void boardListByNo(int boardNo, Model model) {
@@ -153,55 +151,55 @@ public class BoardServiceImpl implements BoardService {
                                                      , 20
                                                      , "column=" + column + "&query=" + query));
   }
-  
-  // 디테일리스트에서 검색기능 구현 (지희)
-  @Override
-    public void detailBoardSearchList(HttpServletRequest request, Model model) {
-    // 요청 파라미터
-      String column = request.getParameter("column");
-      String query = request.getParameter("query");
-      String sort = request.getParameter("sort");
-      String cateNo = request.getParameter("cateNo");
-      
-      // 검색 데이터 개수를 구할 때 사용할 Map 생성
-      Map<String, Object> map = new HashMap<String, Object>();
-      map.put("column", column);
-      map.put("query", query);
-      map.put("sort", sort);
-      map.put("cateNo", cateNo);
-      
-      // 검색 데이터 개수 구하기
-      int total = boardMapper.getSearchCount(map);
-      
-      // 한 페이지에 표시할 검색 데이터 개수
-      int display = 20;
-      
-      // 현재 페이지 번호
-      Optional<String> opt = Optional.ofNullable(request.getParameter("page"));
-      int page = Integer.parseInt(opt.orElse("1"));
-      
-      // 페이징 처리에 필요한 처리
-      myPageUtils.setPaging(total, display, page);
-      
-      // 검색 목록을 가져오기 위해서 기존 Map 에 begin 과 end 를 추가
-      map.put("begin", myPageUtils.getBegin());
-      map.put("end", myPageUtils.getEnd());
-      
-      // 검색 목록 가져오기
-      List<BoardDto> boardDetailList = boardMapper.getSearchDetailList(map);
-      
-      // 뷰로 전달할 데이터
-      model.addAttribute("beginNo", total - (page - 1) * display);
-      model.addAttribute("detailboardList", boardDetailList);
-      model.addAttribute("sort", sort);
-      model.addAttribute("cateNo", cateNo);
-      model.addAttribute("paging", myPageUtils.getPaging(request.getContextPath() + "/board/searchDetail.do"
-                                                       , ""
-                                                       , 20
-                                                       , "column=" + column + "&query=" + query));
-    }
-  
-  @Override
+	
+	// 디테일리스트에서 검색기능 구현 (지희)
+	@Override
+		public void detailBoardSearchList(HttpServletRequest request, Model model) {
+		// 요청 파라미터
+	    String column = request.getParameter("column");
+	    String query = request.getParameter("query");
+	    String sort = request.getParameter("sort");
+	    String cateNo = request.getParameter("cateNo");
+	    
+	    // 검색 데이터 개수를 구할 때 사용할 Map 생성
+	    Map<String, Object> map = new HashMap<String, Object>();
+	    map.put("column", column);
+	    map.put("query", query);
+	    map.put("sort", sort);
+	    map.put("cateNo", cateNo);
+	    
+	    // 검색 데이터 개수 구하기
+	    int total = boardMapper.getSearchCount(map);
+	    
+	    // 한 페이지에 표시할 검색 데이터 개수
+	    int display = 10;
+	    
+	    // 현재 페이지 번호
+	    Optional<String> opt = Optional.ofNullable(request.getParameter("page"));
+	    int page = Integer.parseInt(opt.orElse("1"));
+	    
+	    // 페이징 처리에 필요한 처리
+	    myPageUtils.setPaging(total, display, page);
+	    
+	    // 검색 목록을 가져오기 위해서 기존 Map 에 begin 과 end 를 추가
+	    map.put("begin", myPageUtils.getBegin());
+	    map.put("end", myPageUtils.getEnd());
+	    
+	    // 검색 목록 가져오기
+	    List<BoardDto> boardDetailList = boardMapper.getSearchDetailList(map);
+	    
+	    // 뷰로 전달할 데이터
+	    model.addAttribute("beginNo", total - (page - 1) * display);
+	    model.addAttribute("boardDetailList", boardDetailList);
+	    model.addAttribute("sort", sort);
+	    model.addAttribute("cateNo", cateNo);
+	    model.addAttribute("paging", myPageUtils.getPaging(request.getContextPath() + "/board/searchDetail.do"
+	                                                     , ""
+	                                                     , 20
+	                                                     , "column=" + column + "&query=" + query));
+	  }
+
+	@Override
   public boolean registerUpload(MultipartHttpServletRequest multipartRequest) {
     
     // Upload_T 테이블에 추가하기(ATTACH_T 삽입을 위해 이걸 가장 먼저 처리해줌)
@@ -501,7 +499,7 @@ public class BoardServiceImpl implements BoardService {
    int total = boardMapper.getCountByCate(mapGetCateNo);
    
    Optional<String> optDisplay = Optional.ofNullable(request.getParameter("display"));
-   int display = Integer.parseInt(optDisplay.orElse("20"));
+   int display = Integer.parseInt(optDisplay.orElse("10"));
    
    Optional<String> optPage = Optional.ofNullable(request.getParameter("page"));
    int page = Integer.parseInt(optPage.orElse("1"));

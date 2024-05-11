@@ -83,7 +83,7 @@
           <div class="nav-item individual-link" id="mypage">
 			<c:if test="${sessionScope.user.role == 0}">
               <a href="${contextPath}/mypage"><i class="fa-solid fa-user"></i> 마이페이지</a>
-			  <a href="${contextPath}/calendar"><i class="fa-solid fa-user"></i>일정</a>
+			  <a href="${contextPath}/calendar"><i class="fa-regular fa-calendar"></i> 일정관리</a>
 			</c:if>
 			<c:if test="${sessionScope.user.role == 1}">
               <a href="${contextPath}/admin"><i class="fa-solid fa-user"></i>빅브라더</a>

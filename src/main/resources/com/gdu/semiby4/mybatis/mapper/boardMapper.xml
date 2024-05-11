@@ -48,7 +48,7 @@
   </select>
   
    <select id="getCountByCate"
-   		   parameterType="Map">
+            parameterType="Map">
    SELECT COUNT(*)
      FROM BOARD_T
    WHERE CATE_NO = #{cateNo}
@@ -57,24 +57,24 @@
 <select id="getBoardList"
         parameterType="Map"
         resultMap="BoardMap">
-	SELECT 
-	    BOARD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT, HIT, CATE_NO,
-	    USER_NO, USER_ID, EMAIL
-	FROM (
-	    SELECT 
-	        B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT, B.HIT, B.CATE_NO,
-	        U.USER_NO, U.USER_ID, U.EMAIL,
-	        ROW_NUMBER() OVER (
-	            ORDER BY
-	                CASE WHEN #{sort} = 'ASC' THEN B.BOARD_NO END ASC,
-	                CASE WHEN #{sort} = 'DESC' THEN B.BOARD_NO END DESC,
-	                CASE WHEN #{sort} = 'VIEW_COUNT_DESC' THEN B.HIT END DESC,
-	                B.BOARD_NO DESC
-	        ) AS RN
-	    FROM BOARD_T B 
-	    INNER JOIN USER_T U ON B.USER_NO = U.USER_NO
-	)
-	WHERE RN BETWEEN #{begin} AND #{end}
+   SELECT 
+       BOARD_NO, TITLE, CONTENTS, CREATE_DT, MODIFY_DT, HIT, CATE_NO,
+       USER_NO, USER_ID, EMAIL
+   FROM (
+       SELECT 
+           B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT, B.HIT, B.CATE_NO,
+           U.USER_NO, U.USER_ID, U.EMAIL,
+           ROW_NUMBER() OVER (
+               ORDER BY
+                   CASE WHEN #{sort} = 'ASC' THEN B.BOARD_NO END ASC,
+                   CASE WHEN #{sort} = 'DESC' THEN B.BOARD_NO END DESC,
+                   CASE WHEN #{sort} = 'VIEW_COUNT_DESC' THEN B.HIT END DESC,
+                   B.BOARD_NO DESC
+           ) AS RN
+       FROM BOARD_T B 
+       INNER JOIN USER_T U ON B.USER_NO = U.USER_NO
+   )
+   WHERE RN BETWEEN #{begin} AND #{end}
 </select>
 
   <update id="updateHit">
@@ -341,9 +341,9 @@
 
 <!-- BEST HIT 게시판 (지희) -->
 <select id="getBestHitList" 
-		resultMap="BoardMap">
-	SELECT B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT, B.CATE_NO, B.HIT, U.USER_NO, U.USER_ID, U.EMAIL
-	  FROM BOARD_T B JOIN USER_T U ON B.USER_NO = U.USER_NO
+      resultMap="BoardMap">
+   SELECT B.BOARD_NO, B.TITLE, B.CONTENTS, B.CREATE_DT, B.MODIFY_DT, B.CATE_NO, B.HIT, U.USER_NO, U.USER_ID, U.EMAIL
+     FROM BOARD_T B JOIN USER_T U ON B.USER_NO = U.USER_NO
      ORDER BY HIT DESC
      FETCH FIRST 5 ROWS ONLY
 </select>

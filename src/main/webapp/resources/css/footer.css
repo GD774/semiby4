@@ -1,0 +1,61 @@
+@charset "UTF-8";
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;  /* 화면의 가로 전체 크기로 설정 */
+    height: 100%; /* 화면의 세로 전체 크기로 설정 */
+    margin: 0;    /* 바깥쪽 여백 제거 */
+    
+}
+
+.content-wrap {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    width: 100%; /* 내부 요소가 가로 전체를 차지하도록 설정 */
+}
+
+.content {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.footer {
+    background-color: #333333; /* 연회색 배경 */
+    color: #666; /* 글자색 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+    padding: 20px 0; /* 상하 패딩 */
+    width: 100%; /* 푸터의 너비를 화면 가로 전체로 설정 */
+    border-top: 1px solid #aaa; /* 상단에 구분선 추가 */
+
+}
+
+#saramin {
+	width: 90px;
+	margin-right: 20px;
+	margin-top: -10px;
+}
+
+#jobkorea {
+	width: 100px;
+	margin-top: -10px;
+	margin-bottom: 10px;
+	margin-right: 20px;
+	
+}
+
+#jobplanet {
+	width: 100px;
+	margin-top: -10px;
+
+}
+
+#wanted {
+	width: 150px;
+	margin-top: -10px;
+}
