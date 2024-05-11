@@ -53,7 +53,7 @@ public class BoardServiceImpl implements BoardService {
 	    HttpServletRequest request = (HttpServletRequest) modelMap.get("request");
 	    
 	    int total = boardMapper.getBoardCount();
-	    int display = 20;
+	    int display = 10;
 	    
 	    Optional<String> optPage = Optional.ofNullable(request.getParameter("page"));
 	    int page = Integer.parseInt(optPage.orElse("1"));
@@ -174,7 +174,7 @@ public class BoardServiceImpl implements BoardService {
 	    int total = boardMapper.getSearchCount(map);
 	    
 	    // 한 페이지에 표시할 검색 데이터 개수
-	    int display = 20;
+	    int display = 10;
 	    
 	    // 현재 페이지 번호
 	    Optional<String> opt = Optional.ofNullable(request.getParameter("page"));
@@ -501,7 +501,7 @@ public class BoardServiceImpl implements BoardService {
    int total = boardMapper.getCountByCate(mapGetCateNo);
    
    Optional<String> optDisplay = Optional.ofNullable(request.getParameter("display"));
-   int display = Integer.parseInt(optDisplay.orElse("20"));
+   int display = Integer.parseInt(optDisplay.orElse("10"));
    
    Optional<String> optPage = Optional.ofNullable(request.getParameter("page"));
    int page = Integer.parseInt(optPage.orElse("1"));

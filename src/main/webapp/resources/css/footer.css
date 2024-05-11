@@ -10,6 +10,7 @@ html, body {
     width: 100%;  /* 화면의 가로 전체 크기로 설정 */
     height: 100%; /* 화면의 세로 전체 크기로 설정 */
     margin: 0;    /* 바깥쪽 여백 제거 */
+    
 }
 
 .content-wrap {
@@ -31,6 +32,7 @@ html, body {
     padding: 20px 0; /* 상하 패딩 */
     width: 100%; /* 푸터의 너비를 화면 가로 전체로 설정 */
     border-top: 1px solid #aaa; /* 상단에 구분선 추가 */
+
 }
 
 #saramin {
